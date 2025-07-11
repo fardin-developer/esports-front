@@ -53,16 +53,18 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
 
     setIsLoading(true)
     
-    // Simulate API call to send OTP
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      const res = await fetch('http://localhost:3000/api/v1/user/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: mobileNumber })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.message || 'Failed to send OTP')
       setStep('otp')
       setTimer(60) // 60 seconds timer
-      // Print OTP to console for dev
-      const dummyOtp = '123456'
-      console.log('Your OTP is:', dummyOtp)
     } catch (err) {
-      setError('Failed to send OTP. Please try again.')
+      setError(err.message || 'Failed to send OTP. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -73,31 +75,24 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     setIsLoading(true)
     
     const otpValue = otp.join('')
-    console.log('Submitted OTP value:', otpValue)
-    
-    // Simulate API call to verify OTP
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      if (otpValue === '123456') {
-        console.log('OTP matched, dispatching login...')
-        dispatch(login({ token: 'demo-token', userMobile: mobileNumber }))
-        console.log('Login dispatched, onLoginSuccess:', onLoginSuccess)
-        try {
-          console.log('Calling onLoginSuccess...')
-          onLoginSuccess?.(mobileNumber)
-          console.log('onLoginSuccess called, calling onClose...')
-        } catch (err) {
-          console.error('Error calling onLoginSuccess:', err)
-        }
-        onClose()
-        console.log('onClose called, login flow should complete.')
-      } else {
-        setError('Invalid OTP. Please try again.')
+      const res = await fetch('http://localhost:3000/api/v1/user/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: mobileNumber, otp: otpValue })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.message || 'Invalid OTP. Please try again.')
+      // Success: dispatch login, call onLoginSuccess, close modal
+      dispatch(login({ token: data.token || 'demo-token', userMobile: mobileNumber }))
+      try {
+        onLoginSuccess?.(mobileNumber)
+      } catch (err) {
+        // ignore
       }
+      onClose()
     } catch (err) {
-      console.error('Error in handleOtpSubmit:', err)
-      setError('Invalid OTP. Please try again.')
+      setError(err.message || 'Invalid OTP. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -127,12 +122,18 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     setIsLoading(true)
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const res = await fetch('http://localhost:3000/api/v1/user/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: mobileNumber })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.message || 'Failed to resend OTP')
       setTimer(60)
       setOtp(['', '', '', '', '', ''])
       otpRefs.current[0]?.focus()
     } catch (err) {
-      setError('Failed to resend OTP. Please try again.')
+      setError(err.message || 'Failed to resend OTP. Please try again.')
     } finally {
       setIsLoading(false)
     }

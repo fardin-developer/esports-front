@@ -19,18 +19,19 @@ const BottomNavbar = ({ balance, userMobile }) => {
       icon: '🎮',
       activeIcon: '🎮'
     },
+   
+    {
+      name: 'Support',
+      href: '/support',
+      icon: '💬',
+      activeIcon: '💬'
+    },
     {
       name: 'Profile',
       href: '/profile',
       icon: '👤',
       activeIcon: '👤'
     },
-    {
-      name: 'Support',
-      href: '/support',
-      icon: '💬',
-      activeIcon: '💬'
-    }
   ]
 
   return (
