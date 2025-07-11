@@ -8,29 +8,29 @@ const BottomNavbar = ({ balance, userMobile }) => {
   
   const navItems = [
     {
-      name: 'Wallet',
-      href: '/wallet',
-      icon: '💰',
-      activeIcon: '💰'
+      name: 'Home',
+      href: '/home',
+      icon: 'public/home2.png',
+      activeIcon: 'public/home2.png'
     },
     {
-      name: 'Games',
-      href: '/games',
-      icon: '🎮',
-      activeIcon: '🎮'
+      name: 'Search',
+      href: '/search',
+      icon: 'public/search-white.png',
+      activeIcon: 'public/search-white.png'
     },
    
     {
       name: 'Support',
       href: '/support',
-      icon: '💬',
-      activeIcon: '💬'
+      icon: 'public/chat-white.png',
+      activeIcon: 'public/chat-white.png'
     },
     {
       name: 'Profile',
       href: '/profile',
-      icon: '👤',
-      activeIcon: '👤'
+      icon: 'public/profile-white.png',
+      activeIcon: 'public/profile-white.png'
     },
   ]
 
@@ -52,8 +52,19 @@ const BottomNavbar = ({ balance, userMobile }) => {
                   : 'text-white/70 hover:text-white/90 hover:bg-[rgba(100,255,218,0.05)]'
               }`}
             >
-              <span className="text-lg">{isActive ? item.activeIcon : item.icon}</span>
-              <span className="text-xs font-medium">{item.name}</span>
+              <span className="text-lg">
+                {typeof (isActive ? item.activeIcon : item.icon) === 'string' && (isActive ? item.activeIcon : item.icon).match(/\.(png|svg|jpg|jpeg|gif)$/i)
+                  ? (
+                    <img
+                      src={`/${(isActive ? item.activeIcon : item.icon).replace(/^public\//, '')}`}
+                      alt={item.name}
+                      className="w-6 h-6 object-contain"
+                    />
+                  ) : (
+                    isActive ? item.activeIcon : item.icon
+                  )}
+              </span>
+              {/* <span className="text-xs font-medium">{item.name}</span> */}
               {isActive && (
                 <div className="w-1 h-1 bg-[#64ffda] rounded-full"></div>
               )}

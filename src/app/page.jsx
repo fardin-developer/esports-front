@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 
 import Hero from './components/Hero'
 import GamesSection from './components/gameSection'
+import AnimatedBackground from './components/AnimatedBackground'
 
 
 
@@ -21,6 +22,7 @@ export default function RootPage() {
 
   return (
     <>
+      <AnimatedBackground />
       <Hero />
       <GamesSection />
 

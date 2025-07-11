@@ -19,7 +19,10 @@ export default function HomePage() {
 
       {/* Main action buttons in a row */}
       <div className="flex gap-2 w-full px-2 mb-4">
-        <button className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] text-[var(--color-text)] py-3 font-medium text-sm shadow hover:bg-[var(--color-primary)/.08] transition-all">+ add money</button>
+        <button className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] text-[var(--color-text)] py-3 font-medium text-sm shadow hover:bg-[var(--color-primary)/.08] transition-all flex flex-col justify-center items-center">
+          <img className='w-8' src="/add-money.png" alt="" />
+          <span>add money</span>
+        </button>
         <button className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] text-[var(--color-text)] py-3 font-medium text-sm shadow hover:bg-[var(--color-primary)/.08] transition-all">Transaction</button>
         <button className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] text-[var(--color-text)] py-3 font-medium text-sm shadow hover:bg-[var(--color-primary)/.08] transition-all">Orders</button>
         <button className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] text-[var(--color-text)] py-3 font-medium text-sm shadow hover:bg-[var(--color-primary)/.08] transition-all">History</button>
@@ -30,16 +33,14 @@ export default function HomePage() {
         <div className="text-[var(--color-text)] text-base font-medium mb-1">All Games</div>
       </div>
 
-      {/* Games grid: 3 in a row, edge-to-edge, less gap, more square */}
       <div className="grid grid-cols-3 gap-2 w-full px-2">
         {games.map((game, idx) => (
           <div key={idx}>
-            {game.title ? <GameCard game={game} /> : <div className="aspect-square rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)]" />}
+            {game.title ? <GameCard game={game} /> : ''}
           </div>
         ))}
       </div>
 
-      {/* Bottom Navbar */}
       <BottomNavbar />
     </div>
   )

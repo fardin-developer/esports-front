@@ -85,12 +85,12 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
       if (!res.ok) throw new Error(data.message || 'Invalid OTP. Please try again.')
       // Success: dispatch login, call onLoginSuccess, close modal
       dispatch(login({ token: data.token || 'demo-token', userMobile: mobileNumber }))
-      try {
-        onLoginSuccess?.(mobileNumber)
-      } catch (err) {
+        try {
+          onLoginSuccess?.(mobileNumber)
+        } catch (err) {
         // ignore
-      }
-      onClose()
+        }
+        onClose()
     } catch (err) {
       setError(err.message || 'Invalid OTP. Please try again.')
     } finally {
