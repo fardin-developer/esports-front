@@ -1,13 +1,16 @@
 // src/components/GameCard.jsx
 'use client'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
-const GameCard = ({ game }) => {
+const GameCard = ({ game, gameId }) => {
   const [isHovered, setIsHovered] = useState(false)
+  const router = useRouter()
 
-  const handleBuyNow = () => {
-    // Handle purchase logic here
-    alert(`Purchasing ${game.title}...`)
+  const handleCardClick = () => {
+    if (gameId) {
+      router.push(`/game/${gameId}`)
+    }
   }
 
   return (
@@ -17,12 +20,15 @@ const GameCard = ({ game }) => {
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={handleCardClick}
     >
       {/* Hover overlay */}
       <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-[rgba(100,255,218,0.1)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
       {/* Game Image */}
       <div className={`flex-1 flex items-center justify-center bg-gradient-to-r ${game.gradient} text-6xl relative overflow-hidden`}>
-        <div className="relative z-10">{game.emoji}</div>
+        <div className="relative z-10">
+          <img src={game.img} alt="" />
+        </div>
         <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.2)] to-transparent transform transition-transform duration-500 ${
           isHovered ? 'translate-x-full' : '-translate-x-full'
         }`}></div>
