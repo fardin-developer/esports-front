@@ -45,6 +45,8 @@ const AddBalanceModal = ({ open, onClose }) => {
     try {
       const auth = JSON.parse(localStorage.getItem('auth'))
       const token = auth?.token
+      console.log(token);
+      
       const data = await apiClient.post('/wallet/add', {
         amount: Number(amount),
         redirectUrl: 'http://localhost:3001/payment/success',

@@ -1,10 +1,21 @@
 import { API_BASE_URL } from './config';
 
 export async function apiFetch(path, options = {}) {
+  // Add Bearer token from localStorage if available (client-side only)
+  let authHeaders = {};
+  if (typeof window !== 'undefined') {
+    const auth = JSON.parse(localStorage.getItem('auth'));
+    const token = auth?.token;
+    if (token) {
+      authHeaders['Authorization'] = `Bearer ${token}`;
+    }
+  }
+
   try {
     const res = await fetch(`${API_BASE_URL}${path}`, {
       headers: {
         'Content-Type': 'application/json',
+        ...authHeaders,
         ...options.headers,
       },
       ...options,

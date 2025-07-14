@@ -166,7 +166,7 @@ const Navbar = () => {
                 className={`block text-text/90 hover:text-primary transition-all duration-300 text-lg font-medium py-2 px-4 rounded-lg hover:bg-primary/10 transform ${isMobileMenuOpen
                   ? 'translate-y-0 opacity-100'
                   : '-translate-y-4 opacity-0'
-                }`}
+                  }`}
               >
                 {item.name}
               </Link>
