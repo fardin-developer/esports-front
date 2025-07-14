@@ -3,11 +3,15 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { apiClient } from '../../apiClient'
 import BottomNavbar from '../../components/BottomNavbar'
+import { FaBolt } from 'react-icons/fa'
 
 export default function GameDiamondPacksPage() {
   const [diamondPacks, setDiamondPacks] = useState([])
   const [loading, setLoading] = useState(true)
   const [gameInfo, setGameInfo] = useState(null)
+  const [userId, setUserId] = useState('')
+  const [serverId, setServerId] = useState('')
+  const [selectedPack, setSelectedPack] = useState(null)
   const params = useParams()
   const gameId = params.gameId
 
@@ -33,74 +37,124 @@ export default function GameDiamondPacksPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)]">
-        <div className="text-[var(--color-text)]">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-bg">
+        <div className="text-text text-lg">Loading...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen flex flex-col pb-24 relative pt-6 bg-[var(--color-bg)] w-full lg:w-5/6 mx-auto">
-      {/* Header */}
-      <div className="px-4 mb-6">
-        <div className="text-[var(--color-text)] text-2xl font-bold mb-2">Diamond Packs</div>
-        <div className="text-gray-400 text-sm">Choose your diamond pack</div>
+    <div className="min-h-screen flex flex-col pb-24 relative pt-6 bg-bg w-full max-w-7xl mx-auto">
+      {/* Check User ID Section */}
+      <div className="px-4 mb-8">
+        <div className="text-text text-lg md:text-xl font-bold mb-4">CHECK USER ID</div>
+        <div className="mb-4">
+          <label className="block text-gray font-semibold mb-1" htmlFor="userId">User ID</label>
+          <input
+            id="userId"
+            type="text"
+            value={userId}
+            onChange={e => setUserId(e.target.value)}
+            placeholder="Enter User ID"
+            className="w-full bg-[#23272f] text-white placeholder:text-text/40 rounded-lg px-4 py-3 mb-4 border border-border focus:outline-none focus:border-primary transition"
+          />
+          <label className="block text-gray font-semibold mb-1" htmlFor="serverId">Server ID</label>
+          <input
+            id="serverId"
+            type="text"
+            value={serverId}
+            onChange={e => setServerId(e.target.value)}
+            placeholder="Enter Server ID"
+            className="w-full bg-[#23272f] text-white placeholder:text-text/40 rounded-lg px-4 py-3 border border-border focus:outline-none focus:border-primary transition"
+          />
+        </div>
+        <button
+          className="w-full bg-gradient-to-r from-primary to-blue-500 text-white font-semibold py-3 rounded-xl shadow-md hover:from-blue-500 hover:to-primary transition-all duration-300"
+          onClick={() => {/* Add validation logic here if needed */}}
+        >
+          Validate Now
+        </button>
       </div>
 
-      {/* Diamond Packs Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4">
-        {diamondPacks.map((pack) => (
-          <div
-            key={pack._id}
-            className="bg-[rgba(255,255,255,0.05)] rounded-2xl p-6 border border-[rgba(100,255,218,0.1)] hover:border-[rgba(100,255,218,0.3)] transition-all duration-300 cursor-pointer"
-          >
-            {/* Pack Logo */}
-            <div className="flex justify-center mb-4">
-              <img 
-                src="https://miro.medium.com/v2/resize:fit:1100/format:webp/1*cl5528JBPb6Gg5o8yOLUZA.jpeg" 
-                alt="Pack Logo" 
-                className="w-16 h-16 rounded-lg object-cover"
-                onError={(e) => {
-                  e.target.src = 'https://via.placeholder.com/64x64/64ffda/000000?text=D'
-                }}
-              />
-            </div>
+      {/* Select Amount Section Title */}
+      <div className="px-4 mb-4">
+        <div className="text-text text-lg md:text-xl font-bold mb-2">SELECT THE AMOUNT YOU WANT TO BUY</div>
+      </div>
 
-            {/* Pack Details */}
-            <div className="text-center">
-              <h3 className="text-lg font-semibold text-[#64ffda] mb-2">
-                {pack.amount} Diamonds
-              </h3>
-              <p className="text-gray-400 text-sm mb-4 line-clamp-2">
-                {pack.description}
-              </p>
-
-              {/* Stats */}
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="bg-[rgba(100,255,218,0.1)] rounded-lg p-2">
-                  <div className="text-[#64ffda] font-semibold">{pack.commission}%</div>
-                  <div className="text-gray-400">Commission</div>
-                </div>
-                <div className="bg-[rgba(100,255,218,0.1)] rounded-lg p-2">
-                  <div className="text-[#64ffda] font-semibold">{pack.cashback}%</div>
-                  <div className="text-gray-400">Cashback</div>
-                </div>
+      {/* Diamond Packs Selectable Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 px-4 mb-8">
+        {diamondPacks.map((pack) => {
+          const isSelected = selectedPack === pack._id
+          return (
+            <div
+              key={pack._id}
+              className={`relative flex flex-col justify-between bg-[#23272f] rounded-2xl p-4 border-2 transition-all duration-200 cursor-pointer min-h-[90px] ${isSelected ? 'border-primary shadow-lg' : 'border-border hover:border-primary'}`}
+              onClick={() => setSelectedPack(pack._id)}
+            >
+              {/* Green Lightning Icon */}
+              <div className="absolute top-3 right-3">
+                <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-500 bg-opacity-20">
+                  <FaBolt className="text-green-400 text-lg" />
+                </span>
               </div>
+              {/* Radio Circle */}
+              <div className="absolute top-3 left-3">
+                <span className={`inline-block w-5 h-5 rounded-full border-2 ${isSelected ? 'border-primary bg-primary' : 'border-border bg-bg'}`}></span>
+              </div>
+              {/* Pack Info */}
+              <div className="flex flex-col items-center justify-center">
+                <div className="text-text font-semibold text-base md:text-lg mb-1">
+                  {pack.amount} {pack.bonusAmount ? `+ ${pack.bonusAmount} ` : ''}Diamond{pack.amount > 1 ? 's' : ''}
+                </div>
+                <div className="text-primary font-bold text-lg md:text-xl mb-1">₹ {pack.amount}</div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
 
-              {/* Buy Button */}
-              <button className="w-full mt-4 bg-gradient-to-r from-[#64ffda] to-[#00b894] text-black font-semibold py-2 px-4 rounded-lg hover:from-[#00b894] hover:to-[#64ffda] transition-all duration-300">
-                Buy Now
+      {/* Payment Section */}
+      <div className="w-full max-w-xl mx-auto mt-4 mb-8">
+        <div className="rounded-2xl border border-border bg-surface-light/80 backdrop-blur-md shadow-lg p-4 md:p-6 flex flex-col gap-6">
+          {/* Payment Option */}
+          <div>
+            <div className="text-white text-lg font-bold mb-4 text-center tracking-wide">SELECT PAYMENT OPTION</div>
+            <div className="flex gap-4 justify-center">
+              <button className="flex-1 min-w-0 rounded-xl border-2 border-primary/30 bg-surface py-4 px-2 flex flex-col items-center gap-2 transition-all duration-200 hover:border-primary focus:border-primary outline-none">
+                <span className="flex items-center gap-2 text-2xl mb-1">
+                  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTo4x8kSTmPUq4PFzl4HNT0gObFuEhivHOFYg&s" alt="UPI" className="w-6 h-6" />
+                  <img src="https://i.pinimg.com/736x/76/a8/17/76a81707455d435794782797a7fedf67.jpg" alt="GPay" className="w-6 h-6" />
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/UPI-Logo.png" alt="PhonePe" className="w-6 h-6" />
+                </span>
+                <span className="text-text font-semibold text-base">GPay,Phonepe,UPI</span>
+              </button>
+              <button className="flex-1 min-w-0 rounded-xl border-2 border-border bg-surface py-4 px-2 flex flex-col items-center gap-2 transition-all duration-200 hover:border-primary focus:border-primary outline-none">
+                <span className="flex items-center gap-2 text-2xl mb-1">
+                  <img src="/wallet.svg" alt="Wallet" className="w-6 h-6" />
+                </span>
+                <span className="text-text font-semibold text-base">Wallet</span>
+                <span className="text-text-muted text-xs">Balance: ₹0</span>
               </button>
             </div>
           </div>
-        ))}
+          {/* Payment Summary */}
+          <div className="rounded-xl border border-border bg-surface p-4">
+            <div className="text-white font-bold mb-2 text-base">PAYMENT SUMMARY</div>
+            <div className="border-t border-border mb-2"></div>
+            <div className="text-text-muted text-sm">Select a service and payment method to see details</div>
+          </div>
+          {/* Buy Now Button */}
+          <button className="w-full py-3 rounded-xl bg-primary text-white font-bold text-lg tracking-wide shadow-lg hover:bg-primary-dark transition-all duration-200">
+            + BUY NOW
+          </button>
+        </div>
       </div>
 
       {diamondPacks.length === 0 && !loading && (
-        <div className="flex items-center justify-center flex-1">
-          <div className="text-center text-gray-400">
-            <div className="text-2xl mb-2">No diamond packs available</div>
-            <div className="text-sm">Check back later for new packs</div>
+        <div className="flex items-center justify-center flex-1 px-4">
+          <div className="text-center text-text opacity-70">
+            <div className="text-xl md:text-2xl mb-2">No diamond packs available</div>
+            <div className="text-sm md:text-base">Check back later for new packs</div>
           </div>
         </div>
       )}

@@ -14,23 +14,23 @@ const BottomNavbar = ({ balance, userMobile }) => {
       activeIcon: 'public/home2.png'
     },
     {
-      name: 'Search',
-      href: '/search',
-      icon: 'public/search-white.png',
-      activeIcon: 'public/search-white.png'
-    },
-   
-    {
       name: 'Support',
       href: '/support',
       icon: 'public/chat-white.png',
       activeIcon: 'public/chat-white.png'
     },
+   
     {
-      name: 'Profile',
-      href: '/profile',
-      icon: 'public/profile-white.png',
-      activeIcon: 'public/profile-white.png'
+      name: 'feed',
+      href: '/feed',
+      icon: 'public/feed2.png',
+      activeIcon: 'public/feed2.png'
+    },
+    {
+      name: 'Settings',
+      href: '/settings',
+      icon: 'public/settings.png',
+      activeIcon: 'public/settings.png'
     },
   ]
 

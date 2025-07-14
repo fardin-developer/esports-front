@@ -1,34 +1,55 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&family=Sora:wght@400;700&display=swap');
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #38bdf8; /* Modern blue/cyan */
+  --color-primary-dark: #0ea5e9;
+  --color-secondary: #fbbf24; /* Gold/yellow */
+  --color-accent: #f472b6; /* Pink accent */
+  --color-success: #22c55e;
+  --color-warning: #f59e42;
+  --color-error: #ef4444;
+  --color-surface: #18181b; /* Main card/bg surface */
+  --color-surface-light: #23272f;
+  --color-border: #334155;
+  --color-text: #f1f5f9;
+  --color-text-muted: #94a3b8;
+  --color-bg: #101014;
+}
+
 :root {
-  --color-bg: #0f0f23;
-  --color-primary: #64ffda;
-  --color-secondary: #ffd700;
-  --color-accent: #ff6b6b;
-  --color-card: rgba(255,255,255,0.04);
-  --color-border: rgba(100,255,218,0.2);
-  --color-text: #ffffff;
+  /* --color-bg: #0f0f23; */
 }
 
 body.light {
-  --color-bg: #ffffff;
-  --color-primary: #0070f3;
-  --color-secondary: #ffb300;
-  --color-accent: #e17055;
-  --color-card: #f5f5f5;
-  --color-border: #e0e0e0;
-  --color-text: #222222;
+  --color-bg: #f8fafc;
+  --color-primary: #2563eb;
+  --color-primary-dark: #1d4ed8;
+  --color-secondary: #fbbf24;
+  --color-accent: #f472b6;
+  --color-success: #22c55e;
+  --color-warning: #f59e42;
+  --color-error: #ef4444;
+  --color-surface: #fff;
+  --color-surface-light: #f1f5f9;
+  --color-border: #e5e7eb;
+  --color-text: #18181b;
+  --color-text-muted: #64748b;
 }
 
 body.dark {
-  --color-bg: #0f0f23;
-  --color-primary: #64ffda;
-  --color-secondary: #ffd700;
-  --color-accent: #ff6b6b;
-  --color-card: rgba(255,255,255,0.04);
-  --color-border: rgba(100,255,218,0.2);
-  --color-text: #ffffff;
+  --color-bg: #101014;
+  --color-primary: #38bdf8;
+  --color-primary-dark: #0ea5e9;
+  --color-secondary: #fbbf24;
+  --color-accent: #f472b6;
+  --color-success: #22c55e;
+  --color-warning: #f59e42;
+  --color-error: #ef4444;
+  --color-surface: #18181b;
+  --color-surface-light: #23272f;
+  --color-border: #334155;
+  --color-text: #f1f5f9;
+  --color-text-muted: #94a3b8;
 }
 
 @theme inline {
@@ -39,8 +60,8 @@ body.dark {
 }
 
 body {
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-  color: var(--foreground);
+  background: var(--color-bg);
+  color: var(--color-text);
   font-family: 'Sora', 'Manrope', 'Satoshi', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
