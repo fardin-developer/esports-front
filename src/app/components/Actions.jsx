@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { apiClient } from '../apiClient'
 
 const actions = [
   {
@@ -44,19 +45,15 @@ const AddBalanceModal = ({ open, onClose }) => {
     try {
       const auth = JSON.parse(localStorage.getItem('auth'))
       const token = auth?.token
-      const res = await fetch('http://localhost:3000/api/v1/wallet/add', {
-        method: 'POST',
+      const data = await apiClient.post('/wallet/add', {
+        amount: Number(amount),
+        redirectUrl: 'http://localhost:3001/payment/success',
+      }, {
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          amount: Number(amount),
-          redirectUrl: 'http://localhost:3001/payment/success',
-        })
       })
-      const data = await res.json()
-      if (!res.ok || !data.success) throw new Error(data.message || 'Failed to create payment')
+      if (!data.success || !data.transaction?.paymentUrl) throw new Error(data.message || 'Failed to create payment')
       window.location.href = data.transaction.paymentUrl
     } catch (err) {
       setError(err.message || 'Failed to create payment')
