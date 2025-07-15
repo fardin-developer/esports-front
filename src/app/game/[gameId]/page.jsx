@@ -4,6 +4,8 @@ import { useParams } from 'next/navigation'
 import { apiClient } from '../../apiClient'
 import BottomNavbar from '../../components/BottomNavbar'
 import { FaBolt } from 'react-icons/fa'
+import { useDispatch } from 'react-redux'
+import { fetchWalletBalance } from '../../features/auth/authSlice'
 
 export default function GameDiamondPacksPage() {
   const [diamondPacks, setDiamondPacks] = useState([])
@@ -14,6 +16,7 @@ export default function GameDiamondPacksPage() {
   const [selectedPack, setSelectedPack] = useState(null)
   const params = useParams()
   const gameId = params.gameId
+  const dispatch = useDispatch()
 
   useEffect(() => {
     async function fetchDiamondPacks() {
@@ -41,6 +44,29 @@ export default function GameDiamondPacksPage() {
         <div className="text-text text-lg">Loading...</div>
       </div>
     )
+  }
+
+  const handleBuyNow = async () => {
+    if (!selectedPack) return;
+    // Add your order creation logic here
+    try {
+      // Example: replace with your actual API call
+      const res = await apiClient.post(`/order/create`, {
+        gameId,
+        packId: selectedPack,
+        userId,
+        serverId,
+      })
+      if (res.success) {
+        // Order created, update wallet balance
+        dispatch(fetchWalletBalance())
+        // Optionally show success message
+      } else {
+        // Optionally show error
+      }
+    } catch (e) {
+      // Optionally show error
+    }
   }
 
   return (
@@ -117,7 +143,7 @@ export default function GameDiamondPacksPage() {
       <div className="w-full max-w-xl mx-auto mt-4 mb-8">
         <div className="rounded-2xl border border-border bg-surface-light/80 backdrop-blur-md shadow-lg p-4 md:p-6 flex flex-col gap-6">
           {/* Payment Option */}
-          <div>
+          {/* <div>
             <div className="text-white text-lg font-bold mb-4 text-center tracking-wide">SELECT PAYMENT OPTION</div>
             <div className="flex gap-4 justify-center">
               <button className="flex-1 min-w-0 rounded-xl border-2 border-primary/30 bg-surface py-4 px-2 flex flex-col items-center gap-2 transition-all duration-200 hover:border-primary focus:border-primary outline-none">
@@ -136,15 +162,15 @@ export default function GameDiamondPacksPage() {
                 <span className="text-text-muted text-xs">Balance: ₹0</span>
               </button>
             </div>
-          </div>
+          </div> */}
           {/* Payment Summary */}
-          <div className="rounded-xl border border-border bg-surface p-4">
+          {/* <div className="rounded-xl border border-border bg-surface p-4">
             <div className="text-white font-bold mb-2 text-base">PAYMENT SUMMARY</div>
             <div className="border-t border-border mb-2"></div>
             <div className="text-text-muted text-sm">Select a service and payment method to see details</div>
-          </div>
+          </div> */}
           {/* Buy Now Button */}
-          <button className="w-full py-3 rounded-xl bg-primary text-white font-bold text-lg tracking-wide shadow-lg hover:bg-primary-dark transition-all duration-200">
+          <button className="w-full py-3 rounded-xl bg-primary text-white font-bold text-lg tracking-wide shadow-lg hover:bg-primary-dark transition-all duration-200" onClick={handleBuyNow}>
             + BUY NOW
           </button>
         </div>

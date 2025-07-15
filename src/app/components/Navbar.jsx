@@ -3,17 +3,17 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import LoginModal from './LoginModal'
 import { useSelector, useDispatch } from 'react-redux'
-import { logout, rehydrateAuth } from '../features/auth/authSlice'
+import { logout, rehydrateAuth, fetchWalletBalance } from '../features/auth/authSlice'
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [balance, setBalance] = useState(0.00)
   // Redux state
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn)
   const userMobile = useSelector((state) => state.auth.userMobile)
   const hydrated = useSelector((state) => state.auth.hydrated)
+  const balance = useSelector((state) => state.auth.balance)
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -37,20 +37,24 @@ const Navbar = () => {
     }
   }, [dispatch])
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      dispatch(fetchWalletBalance())
+    }
+  }, [dispatch, isLoggedIn])
+
   if (!hydrated) return null // or a spinner
 
   // Handle successful login
   const handleLoginSuccess = (mobileNumber) => {
     setIsLoggedIn(true)
     setUserMobile(mobileNumber)
-    setBalance(1250.75) // Set initial balance or fetch from API
     setIsLoginOpen(false)
   }
 
   // Handle logout
   const handleLogout = () => {
     dispatch(logout())
-    setBalance(0.00)
   }
 
   const navItems = [

@@ -1,4 +1,7 @@
-import React from 'react'
+"use client"
+import React, { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { fetchWalletBalance } from '../features/auth/authSlice'
 
 const user = {
   name: 'Joanne',
@@ -22,6 +25,13 @@ const aboutOptions = [
 ]
 
 export default function SettingsPage() {
+  const balance = useSelector((state) => state.auth.balance)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(fetchWalletBalance())
+  }, [dispatch])
+
   return (
     <main className="min-h-screen bg-bg py-4 px-2 md:px-0">
       <div className="max-w-md mx-auto flex flex-col gap-6">
@@ -35,7 +45,7 @@ export default function SettingsPage() {
           </div>
           <div className="flex flex-col items-end">
             <span className="text-xs text-text-muted">Balance</span>
-            <span className="font-bold text-primary text-lg">${user.balance.toFixed(2)}</span>
+            <span className="font-bold text-primary text-lg">${balance.toFixed(2)}</span>
           </div>
         </div>
 
