@@ -1,15 +1,8 @@
 "use client"
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { fetchWalletBalance } from '../features/auth/authSlice'
-
-const user = {
-  name: 'Joanne',
-  email: 'katherine_joa@gmail.com',
-  avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-  balance: 1250.75,
-  status: 'New Update',
-}
+import { apiClient } from '../apiClient'
 
 const generalOptions = [
   { icon: '🛒', label: 'My Orders', href: '/orders' },
@@ -27,21 +20,44 @@ const aboutOptions = [
 export default function SettingsPage() {
   const balance = useSelector((state) => state.auth.balance)
   const dispatch = useDispatch()
+  const [profile, setProfile] = useState({
+    name: '',
+    email: '',
+    avatar: '',
+    status: '',
+  })
 
   useEffect(() => {
     dispatch(fetchWalletBalance())
   }, [dispatch])
+
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const data = await apiClient.get('/user/me')
+        setProfile({
+          name: data.name || '',
+          email: data.email || '',
+          avatar: data.avatar || 'https://randomuser.me/api/portraits/lego/1.jpg',
+          status: data.status || 'check',
+        })
+      } catch (e) {
+        // fallback or error handling
+      }
+    }
+    fetchProfile()
+  }, [])
 
   return (
     <main className="min-h-screen bg-bg py-4 px-2 md:px-0">
       <div className="max-w-md mx-auto flex flex-col gap-6">
         {/* Profile Card */}
         <div className="rounded-2xl bg-surface-light border border-border shadow-md p-5 flex items-center gap-4 relative mt-2">
-          <img src={user.avatar} alt="avatar" className="w-16 h-16 rounded-full border-2 border-primary object-cover" />
+          <img src={profile.avatar} alt="avatar" className="w-16 h-16 rounded-full border-2 border-primary object-cover" />
           <div className="flex-1">
-            <div className="font-semibold text-lg text-text mb-0.5">{user.name}</div>
-            <div className="text-sm text-text-muted mb-1">{user.email}</div>
-            <span className="inline-block text-xs px-2 py-0.5 rounded bg-primary/10 text-primary font-medium">{user.status}</span>
+            <div className="font-semibold text-lg text-text mb-0.5">{profile.name}</div>
+            <div className="text-sm text-text-muted mb-1">{profile.email}</div>
+            <span className="inline-block text-xs px-2 py-0.5 rounded bg-primary/10 text-primary font-medium">{profile.status}</span>
           </div>
           <div className="flex flex-col items-end">
             <span className="text-xs text-text-muted">Balance</span>

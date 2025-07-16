@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { apiClient } from '../apiClient'
+import { useRouter } from 'next/navigation'
 
 const actions = [
   {
@@ -14,18 +15,24 @@ const actions = [
     icon: '/add-money1.png',
     color: 'bg-secondary/20 text-secondary',
     iconBg: 'bg-secondary/80',
+    action: 'navigate',
+    href: '/transactions',
   },
   {
     label: 'History',
     icon: '/add-money2.png',
     color: 'bg-accent/20 text-accent',
     iconBg: 'bg-accent/80',
+    action: 'navigate',
+    href: '/orders',
   },
   {
     label: 'Report',
     icon: '/file.svg',
     color: 'bg-error/20 text-error',
     iconBg: 'bg-error/80',
+    action: 'navigate',
+    href: '/report',
   },
 ]
 
@@ -97,6 +104,7 @@ const AddBalanceModal = ({ open, onClose }) => {
 
 const Actions = () => {
   const [showAddBalance, setShowAddBalance] = useState(false)
+  const router = useRouter()
   return (
     <div className="w-full px-2 mb-6">
       <AddBalanceModal open={showAddBalance} onClose={() => setShowAddBalance(false)} />
@@ -106,7 +114,13 @@ const Actions = () => {
             key={action.label}
             className={`flex-1 flex flex-col items-center justify-center gap-2 py-3 md:py-4 rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-xl ${action.color} font-semibold text-xs md:text-base min-w-0 max-w-[110px] overflow-hidden`}
             style={{ minWidth: 0 }}
-            onClick={action.action === 'add-balance' ? () => setShowAddBalance(true) : undefined}
+            onClick={
+              action.action === 'add-balance'
+                ? () => setShowAddBalance(true)
+                : action.action === 'navigate' && action.href
+                ? () => router.push(action.href)
+                : undefined
+            }
           >
             <span className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full shadow-md mb-1 ${action.iconBg}`}>
               <img className="w-5 h-5 md:w-6 md:h-6" src={action.icon} alt={action.label} />

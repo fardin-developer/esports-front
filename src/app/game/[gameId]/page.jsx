@@ -6,13 +6,18 @@ import BottomNavbar from '../../components/BottomNavbar'
 import { FaBolt } from 'react-icons/fa'
 import { useDispatch } from 'react-redux'
 import { fetchWalletBalance } from '../../features/auth/authSlice'
+import React from 'react';
 
 export default function GameDiamondPacksPage() {
   const [diamondPacks, setDiamondPacks] = useState([])
   const [loading, setLoading] = useState(true)
   const [gameInfo, setGameInfo] = useState(null)
-  const [userId, setUserId] = useState('')
-  const [serverId, setServerId] = useState('')
+  // Remove userId and serverId states
+  // const [userId, setUserId] = useState('')
+  // const [serverId, setServerId] = useState('')
+  const [validationValues, setValidationValues] = useState({})
+  const [validationLoading, setValidationLoading] = useState(false);
+  const [validationResult, setValidationResult] = useState(null);
   const [selectedPack, setSelectedPack] = useState(null)
   const params = useParams()
   const gameId = params.gameId
@@ -24,7 +29,17 @@ export default function GameDiamondPacksPage() {
         setLoading(true)
         const data = await apiClient.get(`/games/${gameId}/diamond-packs`)
         if (data.success && Array.isArray(data.diamondPacks)) {
+          console.log(data);
           setDiamondPacks(data.diamondPacks)
+          setGameInfo(data.gameData)
+          // Initialize validation values
+          if (data.gameData?.validationFields) {
+            const initialVals = {}
+            data.gameData.validationFields.forEach(field => {
+              initialVals[field] = ''
+            })
+            setValidationValues(initialVals)
+          }
         }
       } catch (err) {
         console.error('Failed to fetch diamond packs:', err)
@@ -54,8 +69,7 @@ export default function GameDiamondPacksPage() {
       const res = await apiClient.post(`/order/create`, {
         gameId,
         packId: selectedPack,
-        userId,
-        serverId,
+        ...validationValues,
       })
       if (res.success) {
         // Order created, update wallet balance
@@ -69,37 +83,83 @@ export default function GameDiamondPacksPage() {
     }
   }
 
+  const handleValidateUser = async () => {
+    if (!selectedPack) {
+      setValidationResult({ status: false, message: "Please select a diamond pack first." });
+      return;
+    }
+    // Find the selected pack object
+    const pack = diamondPacks.find(p => p._id === selectedPack);
+    if (!pack) {
+      setValidationResult({ status: false, message: "Invalid pack selected." });
+      return;
+    }
+    // Prepare data for validation API
+    const data = {
+      "product-id": pack.productId,
+      // Map validation fields to API keys (capitalize and add spaces if needed)
+      ...Object.fromEntries(
+        Object.entries(validationValues).map(([key, value]) => [
+          key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim(),
+          value
+        ])
+      )
+    };
+
+    setValidationLoading(true);
+    setValidationResult(null);
+    try {
+      const response = await fetch("https://moogold.com/wp-json/v1/api/product/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ path: "product/validate", data })
+      });
+      const result = await response.json();
+      setValidationResult(result);
+    } catch (err) {
+      setValidationResult({ status: false, message: "Validation failed. Please try again." });
+    } finally {
+      setValidationLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col pb-24 relative pt-6 bg-bg w-full max-w-7xl mx-auto">
       {/* Check User ID Section */}
       <div className="px-4 mb-8">
         <div className="text-text text-lg md:text-xl font-bold mb-4">CHECK USER ID</div>
         <div className="mb-4">
-          <label className="block text-gray font-semibold mb-1" htmlFor="userId">User ID</label>
-          <input
-            id="userId"
-            type="text"
-            value={userId}
-            onChange={e => setUserId(e.target.value)}
-            placeholder="Enter User ID"
-            className="w-full bg-[#23272f] text-white placeholder:text-text/40 rounded-lg px-4 py-3 mb-4 border border-border focus:outline-none focus:border-primary transition"
-          />
-          <label className="block text-gray font-semibold mb-1" htmlFor="serverId">Server ID</label>
-          <input
-            id="serverId"
-            type="text"
-            value={serverId}
-            onChange={e => setServerId(e.target.value)}
-            placeholder="Enter Server ID"
-            className="w-full bg-[#23272f] text-white placeholder:text-text/40 rounded-lg px-4 py-3 border border-border focus:outline-none focus:border-primary transition"
-          />
+          {gameInfo?.validationFields?.map(field => (
+            <div key={field} className="mb-4">
+              <label className="block text-gray font-semibold mb-1" htmlFor={field}>
+                {field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+              </label>
+              <input
+                id={field}
+                type="text"
+                value={validationValues[field] || ''}
+                onChange={e => setValidationValues(vals => ({ ...vals, [field]: e.target.value }))}
+                placeholder={`Enter ${field.replace(/([A-Z])/g, ' $1')}`}
+                className="w-full bg-[#23272f] text-white placeholder:text-text/40 rounded-lg px-4 py-3 mb-4 border border-border focus:outline-none focus:border-primary transition"
+              />
+            </div>
+          ))}
         </div>
         <button
           className="w-full bg-gradient-to-r from-primary to-blue-500 text-white font-semibold py-3 rounded-xl shadow-md hover:from-blue-500 hover:to-primary transition-all duration-300"
-          onClick={() => {/* Add validation logic here if needed */}}
+          onClick={handleValidateUser}
+          disabled={validationLoading}
         >
-          Validate Now
+          {validationLoading ? "Validating..." : "Validate Now"}
         </button>
+        {validationResult && (
+          <div className={`mt-2 text-sm ${validationResult.status ? "text-green-400" : "text-red-400"}`}>
+            {validationResult.message}
+            {validationResult.username && (
+              <div className="font-bold">Username: {validationResult.username}</div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Select Amount Section Title */}

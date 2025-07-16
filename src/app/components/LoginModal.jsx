@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch } from 'react-redux'
 import { login } from '../features/auth/authSlice'
+import { apiClient } from '../apiClient'
 
 const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const [step, setStep] = useState('mobile') // 'mobile' or 'otp'
@@ -9,6 +10,8 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [timer, setTimer] = useState(0)
+  const [registrationData, setRegistrationData] = useState({ name: '', email: '' })
+  const [pendingPhone, setPendingPhone] = useState('')
   
   const otpRefs = useRef([])
   const dispatch = useDispatch()
@@ -54,13 +57,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     setIsLoading(true)
     
     try {
-      const res = await fetch('http://localhost:3000/api/v1/user/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: mobileNumber })
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.message || 'Failed to send OTP')
+      await apiClient.post('/user/send-otp', { phone: mobileNumber })
       setStep('otp')
       setTimer(60) // 60 seconds timer
     } catch (err) {
@@ -76,23 +73,44 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     
     const otpValue = otp.join('')
     try {
-      const res = await fetch('http://localhost:3000/api/v1/user/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: mobileNumber, otp: otpValue })
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.message || 'Invalid OTP. Please try again.')
-      // Success: dispatch login, call onLoginSuccess, close modal
-      dispatch(login({ token: data.token || 'demo-token', userMobile: mobileNumber }))
+      const data = await apiClient.post('/user/verify-otp', { phone: mobileNumber, otp: otpValue })
+      if (data.requiresRegistration) {
+        setPendingPhone(data.phone)
+        setStep('register')
+      } else {
+        // Success: dispatch login, call onLoginSuccess, close modal
+        dispatch(login({ token: data.token || 'demo-token', userMobile: mobileNumber }))
         try {
           onLoginSuccess?.(mobileNumber)
         } catch (err) {
-        // ignore
+          // ignore
         }
         onClose()
+      }
     } catch (err) {
       setError(err.message || 'Invalid OTP. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleRegistrationSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+    setIsLoading(true)
+    try {
+      const data = await apiClient.post('/user/complete-registration', {
+        name: registrationData.name,
+        email: registrationData.email,
+        phone: pendingPhone,
+      })
+      dispatch(login({ token: data.token || 'demo-token', userMobile: pendingPhone }))
+      try {
+        onLoginSuccess?.(pendingPhone)
+      } catch (err) {}
+      onClose()
+    } catch (err) {
+      setError(err.message || 'Registration failed. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -122,13 +140,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     setIsLoading(true)
     
     try {
-      const res = await fetch('http://localhost:3000/api/v1/user/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: mobileNumber })
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.message || 'Failed to resend OTP')
+      await apiClient.post('/user/send-otp', { phone: mobileNumber })
       setTimer(60)
       setOtp(['', '', '', '', '', ''])
       otpRefs.current[0]?.focus()
@@ -286,6 +298,44 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
               </div>
             )}
           </div>
+        )}
+
+        {/* Registration Step */}
+        {step === 'register' && (
+          <form className="space-y-6" onSubmit={handleRegistrationSubmit}>
+            <div>
+              <label className="block text-sm font-medium text-white/90 mb-2">Name</label>
+              <input
+                type="text"
+                value={registrationData.name}
+                onChange={e => setRegistrationData({ ...registrationData, name: e.target.value })}
+                placeholder="Enter your name"
+                className="w-full px-4 py-3 bg-[rgba(100,255,218,0.05)] border border-[rgba(100,255,218,0.2)] rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-[#64ffda] focus:ring-2 focus:ring-[rgba(100,255,218,0.2)] transition-all duration-300"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-white/90 mb-2">Email</label>
+              <input
+                type="email"
+                value={registrationData.email}
+                onChange={e => setRegistrationData({ ...registrationData, email: e.target.value })}
+                placeholder="Enter your email"
+                className="w-full px-4 py-3 bg-[rgba(100,255,218,0.05)] border border-[rgba(100,255,218,0.2)] rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-[#64ffda] focus:ring-2 focus:ring-[rgba(100,255,218,0.2)] transition-all duration-300"
+                required
+              />
+            </div>
+            {error && (
+              <div className="text-red-400 text-sm bg-red-400/10 p-3 rounded-lg border border-red-400/20">{error}</div>
+            )}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 bg-gradient-to-r from-[#64ffda] to-[#00bcd4] text-[#0f0f23] rounded-lg font-semibold hover:shadow-lg hover:shadow-[rgba(100,255,218,0.4)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? 'Registering...' : 'Complete Registration'}
+            </button>
+          </form>
         )}
       </div>
     </div>
