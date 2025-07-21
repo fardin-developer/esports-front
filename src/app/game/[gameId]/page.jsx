@@ -7,6 +7,7 @@ import { FaBolt } from 'react-icons/fa'
 import { useDispatch } from 'react-redux'
 import { fetchWalletBalance } from '../../features/auth/authSlice'
 import React from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function GameDiamondPacksPage() {
   const [diamondPacks, setDiamondPacks] = useState([])
@@ -19,15 +20,86 @@ export default function GameDiamondPacksPage() {
   const [validationLoading, setValidationLoading] = useState(false);
   const [validationResult, setValidationResult] = useState(null);
   const [selectedPack, setSelectedPack] = useState(null)
+  const [orderLoading, setOrderLoading] = useState(false);
+  const [orderResult, setOrderResult] = useState(null);
   const params = useParams()
   const gameId = params.gameId
   const dispatch = useDispatch()
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchDiamondPacks() {
       try {
         setLoading(true)
         const data = await apiClient.get(`/games/${gameId}/diamond-packs`)
+        //response format
+      //   {
+      //     "success": true,
+      //     "count": 2,
+      //     "diamondPacks": [
+      //         {
+      //             "_id": "6879ceee945264d1108abd9e",
+      //             "game": "687608aa0ddc00776fe1a72b",
+      //             "amount": 1,
+      //             "commission": 1,
+      //             "cashback": 5,
+      //             "logo": "https://example.com/logo.png",
+      //             "description": "100 Diamonds Pack",
+      //             "status": "active",
+      //             "apiMappings": [
+      //                 {
+      //                     "apiProvider": {
+      //                         "_id": "6871caa609fd118035159e32",
+      //                         "name": "moogold",
+      //                         "apiUrl": "https://moogold.com/wp-json/v1/api",
+      //                         "description": "Optional description"
+      //                     },
+      //                     "productId": "15145",
+      //                     "_id": "6879ceee945264d1108abd9f"
+      //                 }
+      //             ],
+      //             "createdAt": "2025-07-18T04:34:54.568Z",
+      //             "updatedAt": "2025-07-18T04:34:54.568Z",
+      //             "__v": 0
+      //         },
+      //         {
+      //             "_id": "68749f18509af83912b68ea5",
+      //             "game": "687608aa0ddc00776fe1a72b",
+      //             "amount": 13,
+      //             "commission": 3,
+      //             "cashback": 0.2,
+      //             "logo": "https://example.com/logo.png",
+      //             "description": "100 Diamonds Pack for counter strike 3",
+      //             "status": "active",
+      //             "apiProviders": [
+      //                 "6871caa609fd118035159e32"
+      //             ],
+      //             "productId": "15145",
+      //             "createdAt": "2025-07-14T06:09:28.527Z",
+      //             "updatedAt": "2025-07-14T06:09:28.527Z",
+      //             "__v": 0,
+      //             "apiMappings": []
+      //         }
+      //     ],
+      //     "gameData": {
+      //         "_id": "687608aa0ddc00776fe1a72b",
+      //         "name": "Mobile Legends",
+      //         "image": "http://localhost:3000/uploads/image-1752425738886-945425243.jpg",
+      //         "publisher": "Moonton",
+      //         "validationFields": [
+      //             "userId",
+      //             "serverId"
+      //         ],
+      //         "createdAt": "2025-07-15T07:52:10.564Z",
+      //         "updatedAt": "2025-07-15T07:52:10.564Z",
+      //         "__v": 0,
+      //         "game_id": "15145"
+      //     }
+      // }
+
+
+
+
         if (data.success && Array.isArray(data.diamondPacks)) {
           console.log(data);
           setDiamondPacks(data.diamondPacks)
@@ -61,27 +133,28 @@ export default function GameDiamondPacksPage() {
     )
   }
 
-  const handleBuyNow = async () => {
-    if (!selectedPack) return;
-    // Add your order creation logic here
-    try {
-      // Example: replace with your actual API call
-      const res = await apiClient.post(`/order/create`, {
-        gameId,
-        packId: selectedPack,
-        ...validationValues,
-      })
-      if (res.success) {
-        // Order created, update wallet balance
-        dispatch(fetchWalletBalance())
-        // Optionally show success message
-      } else {
-        // Optionally show error
-      }
-    } catch (e) {
-      // Optionally show error
-    }
-  }
+  // Remove handleBuyNow and update Buy Now button to use handleCreateOrder
+  // const handleBuyNow = async () => {
+  //   if (!selectedPack) return;
+  //   // Add your order creation logic here
+  //   try {
+  //     // Example: replace with your actual API call
+  //     const res = await apiClient.post(`/order/create`, {
+  //       gameId,
+  //       packId: selectedPack,
+  //       ...validationValues,
+  //     })
+  //     if (res.success) {
+  //       // Order created, update wallet balance
+  //       dispatch(fetchWalletBalance())
+  //       // Optionally show success message
+  //     } else {
+  //       // Optionally show error
+  //     }
+  //   } catch (e) {
+  //     // Optionally show error
+  //   }
+  // }
 
   const handleValidateUser = async () => {
     if (!selectedPack) {
@@ -90,36 +163,89 @@ export default function GameDiamondPacksPage() {
     }
     // Find the selected pack object
     const pack = diamondPacks.find(p => p._id === selectedPack);
+    console.log(pack);
     if (!pack) {
       setValidationResult({ status: false, message: "Invalid pack selected." });
       return;
     }
+    // Use gameInfo.game_id for validation
+    if (!gameInfo?.game_id) {
+      setValidationResult({ status: false, message: 'No game_id found for this game. Cannot validate user.' });
+      return;
+    }
     // Prepare data for validation API
     const data = {
-      "product-id": pack.productId,
-      // Map validation fields to API keys (capitalize and add spaces if needed)
+      "product-id": String(gameInfo.game_id),
       ...Object.fromEntries(
-        Object.entries(validationValues).map(([key, value]) => [
-          key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim(),
-          value
-        ])
+        Object.entries(validationValues).map(([key, value]) => {
+          // Map 'userId' to 'User ID', 'serverId' to 'Server ID', else keep as is with capitalization
+          if (key.toLowerCase() === 'userid') return ['User ID', value];
+          if (key.toLowerCase() === 'serverid') return ['Server ID', value];
+          return [key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim(), value];
+        })
       )
     };
 
     setValidationLoading(true);
     setValidationResult(null);
+    console.log(data);
+    
     try {
-      const response = await fetch("https://moogold.com/wp-json/v1/api/product/validate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ path: "product/validate", data })
+      // Use apiClient.post to call the validation API
+      const result = await apiClient.post('/moogold/product/validate', {
+        path: 'product/validate',
+        data
       });
-      const result = await response.json();
-      setValidationResult(result);
+      let status = result.success;
+      let message = result.message;
+      let username = result.username;
+      if (result.data && typeof result.data.status !== 'undefined') {
+        status = result.data.status === 'true' || result.data.status === true;
+        message = result.data.message || message;
+        username = result.data.username || username;
+      }
+      const validationObj = { status, message, username };
+      console.log('validationResult:', validationObj);
+      setValidationResult(validationObj);
     } catch (err) {
       setValidationResult({ status: false, message: "Validation failed. Please try again." });
     } finally {
       setValidationLoading(false);
+    }
+  };
+
+  // Create Order handler (updated for /api/v1/order/diamond-pack)
+  const handleCreateOrder = async () => {
+    if (!selectedPack) return;
+    const pack = diamondPacks.find(p => p._id === selectedPack);
+    if (!pack) return;
+    // Get productId from apiMappings[0]
+    const productId = pack.apiMappings && pack.apiMappings.length > 0 ? pack.apiMappings[0].productId : undefined;
+    if (!productId) {
+      setOrderResult({ success: false, message: 'No productId found for this pack. Cannot create order.' });
+      return;
+    }
+    setOrderLoading(true);
+    setOrderResult(null);
+    try {
+      const payload = {
+        diamondPackId: pack._id,
+        productId: productId,
+        playerId: validationValues.userId || validationValues.UserId || validationValues['User ID'],
+        server: validationValues.serverId || validationValues.ServerId || validationValues['Server ID'],
+        quantity: 1,
+      };
+      const result = await apiClient.post('/order/diamond-pack', payload);
+      console.log(result);
+      setOrderResult(result);
+      if (result.success) {
+        dispatch(fetchWalletBalance());
+        // Optionally show success message
+      }
+    } catch (err) {
+      setOrderResult({ success: false, message: 'Order creation failed. Please try again.' });
+    } finally {
+      setOrderLoading(false);
     }
   };
 
@@ -153,7 +279,7 @@ export default function GameDiamondPacksPage() {
           {validationLoading ? "Validating..." : "Validate Now"}
         </button>
         {validationResult && (
-          <div className={`mt-2 text-sm ${validationResult.status ? "text-green-400" : "text-red-400"}`}>
+          <div className={`mt-2 text-sm ${validationResult.status === true ? "text-green-400" : "text-red-400"}`}>
             {validationResult.message}
             {validationResult.username && (
               <div className="font-bold">Username: {validationResult.username}</div>
@@ -230,8 +356,8 @@ export default function GameDiamondPacksPage() {
             <div className="text-text-muted text-sm">Select a service and payment method to see details</div>
           </div> */}
           {/* Buy Now Button */}
-          <button className="w-full py-3 rounded-xl bg-primary text-white font-bold text-lg tracking-wide shadow-lg hover:bg-primary-dark transition-all duration-200" onClick={handleBuyNow}>
-            + BUY NOW
+          <button className="w-full py-3 rounded-xl bg-primary text-white font-bold text-lg tracking-wide shadow-lg hover:bg-primary-dark transition-all duration-200" onClick={handleCreateOrder} disabled={orderLoading}>
+            {orderLoading ? "Processing..." : "+ BUY NOW"}
           </button>
         </div>
       </div>

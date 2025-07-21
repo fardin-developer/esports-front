@@ -8,7 +8,6 @@ const generalOptions = [
   { icon: '🛒', label: 'My Orders', href: '/orders' },
   { icon: '🏠', label: 'My Address', href: '/address' },
   { icon: '✏️', label: 'Edit Profile', href: '/edit-profile' },
-  { icon: '🔒', label: 'Change Password', href: '/change-password' },
 ]
 
 const aboutOptions = [
@@ -65,12 +64,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Tab Bar */}
-        <div className="flex items-center justify-between rounded-xl bg-surface border border-border px-2 py-2 text-sm font-medium">
-          <button className="flex-1 py-2 rounded-lg text-primary bg-surface-light">Settings</button>
-          <button className="flex-1 py-2 rounded-lg text-text hover:bg-surface-light transition">Payment</button>
-          <button className="flex-1 py-2 rounded-lg text-text hover:bg-surface-light transition">Notification</button>
-        </div>
+
 
         {/* General Section */}
         <section className="rounded-2xl bg-surface border border-border shadow p-0 overflow-hidden">
@@ -100,28 +94,26 @@ export default function SettingsPage() {
           </ul>
         </section>
 
-        {/* Notifications Section */}
+        {/* Logout Section */}
         <section className="rounded-2xl bg-surface border border-border shadow p-0 overflow-hidden">
-          <div className="px-5 pt-4 pb-2 text-xs font-bold text-text-muted tracking-widest">NOTIFICATIONS</div>
-          <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-            <span className="text-text">Shop Updates</span>
-            <label className="inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" defaultChecked />
-              <div className="w-10 h-6 bg-surface-light border border-border rounded-full peer peer-checked:bg-primary relative transition">
-                <div className="absolute left-1 top-1 w-4 h-4 bg-bg rounded-full transition peer-checked:translate-x-4"></div>
-              </div>
-            </label>
-          </div>
-          <div className="flex items-center justify-between px-5 py-4">
-            <span className="text-text">Notifications</span>
-            <label className="inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" />
-              <div className="w-10 h-6 bg-surface-light border border-border rounded-full peer peer-checked:bg-primary relative transition">
-                <div className="absolute left-1 top-1 w-4 h-4 bg-bg rounded-full transition peer-checked:translate-x-4"></div>
-              </div>
-            </label>
-          </div>
+          <button
+            className="w-full flex items-center px-5 py-4 text-red-600 text-base font-semibold cursor-pointer hover:bg-red-50 transition border-0 bg-transparent outline-none"
+            onClick={async () => {
+              try {
+                await apiClient.post('/user/logout')
+                setProfile({ name: '', email: '', avatar: '', status: '' })
+                dispatch({ type: 'auth/logout' })
+                window.location.href = '/login'
+              } catch (e) {
+                // handle error (optional)
+              }
+            }}
+          >
+            <span className="flex-1">Logout</span>
+          </button>
         </section>
+
+
       </div>
     </main>
   )

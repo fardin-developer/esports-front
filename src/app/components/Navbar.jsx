@@ -80,10 +80,7 @@ const Navbar = () => {
               href="/"
               className="text-2xl sm:text-3xl font-bold shimmer hover:scale-105 transition-transform duration-300 flex items-center space-x-2"
             >
-              <span className="text-[19px]">⚡</span>
-              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent text-[19px]">
-                GameVault
-              </span>
+              <img className='w-24' src="/zenova.png" alt="Zennova Logo" />
             </Link>
 
             {/* Desktop Navigation */}

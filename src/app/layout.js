@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "GameVault - Premium Gaming Currency",
+  title: "Zennova - Premium Gaming Currency",
   description: "Get instant diamonds, coins, and premium currency for your favorite games at unbeatable prices with our secure wallet system.",
 };
 

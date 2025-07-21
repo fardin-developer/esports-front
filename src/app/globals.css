@@ -37,7 +37,7 @@ body.light {
 }
 
 body.dark {
-  --color-bg: #101014;
+  --color-bg: #ffffff;
   --color-primary: #38bdf8;
   --color-primary-dark: #0ea5e9;
   --color-secondary: #fbbf24;

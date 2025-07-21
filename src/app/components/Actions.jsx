@@ -1,36 +1,42 @@
-import React, { useState } from 'react'
-import { apiClient } from '../apiClient'
-import { useRouter } from 'next/navigation'
+import React, { useState, useEffect } from 'react'
 
 const actions = [
   {
     label: 'Add Money',
     icon: '/add-money.png',
-    color: 'bg-primary/20 text-primary',
-    iconBg: 'bg-primary/80',
+    color: 'primary',
+    bgColor: 'bg-[#38bdf8]',
+    hoverBg: 'hover:bg-[#0ea5e9]',
+    glowColor: 'hover:shadow-[#38bdf8]/30',
     action: 'add-balance',
   },
   {
     label: 'Transactions',
     icon: '/add-money1.png',
-    color: 'bg-secondary/20 text-secondary',
-    iconBg: 'bg-secondary/80',
+    color: 'secondary',
+    bgColor: 'bg-[#fbbf24]',
+    hoverBg: 'hover:bg-[#f59e0b]',
+    glowColor: 'hover:shadow-[#fbbf24]/30',
     action: 'navigate',
     href: '/transactions',
   },
   {
     label: 'History',
     icon: '/add-money2.png',
-    color: 'bg-accent/20 text-accent',
-    iconBg: 'bg-accent/80',
+    color: 'accent',
+    bgColor: 'bg-[#f472b6]',
+    hoverBg: 'hover:bg-[#ec4899]',
+    glowColor: 'hover:shadow-[#f472b6]/30',
     action: 'navigate',
     href: '/orders',
   },
   {
     label: 'Report',
     icon: '/file.svg',
-    color: 'bg-error/20 text-error',
-    iconBg: 'bg-error/80',
+    color: 'success',
+    bgColor: 'bg-[#22c55e]',
+    hoverBg: 'hover:bg-[#16a34a]',
+    glowColor: 'hover:shadow-[#22c55e]/30',
     action: 'navigate',
     href: '/report',
   },
@@ -41,8 +47,7 @@ const AddBalanceModal = ({ open, onClose }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const handleSubmit = async () => {
     setError('')
     if (!amount || isNaN(amount) || Number(amount) <= 0) {
       setError('Enter a valid amount')
@@ -50,53 +55,69 @@ const AddBalanceModal = ({ open, onClose }) => {
     }
     setLoading(true)
     try {
-      const auth = JSON.parse(localStorage.getItem('auth'))
-      const token = auth?.token
-      console.log(token);
-      
-      const data = await apiClient.post('/wallet/add', {
-        amount: Number(amount),
-        redirectUrl: 'http://localhost:3001/payment/success',
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      })
-      if (!data.success || !data.transaction?.paymentUrl) throw new Error(data.message || 'Failed to create payment')
-      window.location.href = data.transaction.paymentUrl
+      // Simulate API call
+      setTimeout(() => {
+        alert(`Processing payment for $${amount}`)
+        setLoading(false)
+        onClose()
+        setAmount('')
+      }, 2000)
     } catch (err) {
       setError(err.message || 'Failed to create payment')
-    } finally {
       setLoading(false)
     }
   }
 
   if (!open) return null
+  
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="bg-surface-light rounded-2xl p-6 w-full max-w-xs shadow-2xl border border-border relative">
-        <button className="absolute top-3 right-3 text-text-muted hover:text-text font-bold text-xl" onClick={onClose}>&times;</button>
-        <h2 className="text-lg font-bold text-primary mb-4 text-center">Add Balance</h2>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
-            type="number"
-            min="1"
-            step="1"
-            value={amount}
-            onChange={e => setAmount(e.target.value)}
-            placeholder="Enter amount"
-            className="w-full rounded-lg px-4 py-3 border border-border bg-surface text-text placeholder:text-text-muted focus:outline-none focus:border-primary transition"
-            disabled={loading}
-          />
-          {error && <div className="text-error text-sm text-center">{error}</div>}
-          <button
-            type="submit"
-            className="w-full py-3 rounded-xl bg-primary text-white font-bold text-base tracking-wide shadow-lg hover:bg-primary-dark transition-all duration-200 disabled:opacity-60"
-            disabled={loading}
-          >
-            {loading ? 'Processing...' : 'Add Balance'}
-          </button>
-        </form>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 modal-overlay">
+      <div className="bg-[#18181b] border border-[#334155] rounded-2xl p-6 w-full max-w-sm shadow-2xl relative modal-container">
+        
+        <button 
+          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg text-[#94a3b8] hover:text-[#f1f5f9] hover:bg-[#23272f] transition-all duration-200" 
+          onClick={onClose}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        
+        <div>
+          <h2 className="text-xl font-semibold text-[#f1f5f9] mb-6 text-center">
+            Add Balance
+          </h2>
+          
+          <div className="space-y-4">
+            <div className="relative">
+              <input
+                type="number"
+                min="1"
+                step="1"
+                value={amount}
+                onChange={e => setAmount(e.target.value)}
+                placeholder="Enter amount"
+                className="w-full rounded-xl px-4 py-3 bg-[#23272f] border border-[#334155] text-[#f1f5f9] placeholder:text-[#94a3b8] focus:outline-none focus:border-[#38bdf8] focus:ring-1 focus:ring-[#38bdf8] transition-all duration-200"
+                disabled={loading}
+                onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+              />
+            </div>
+            
+            {error && (
+              <div className="text-[#ef4444] text-sm text-center bg-[#ef4444]/10 border border-[#ef4444]/20 rounded-lg py-2 px-3">
+                {error}
+              </div>
+            )}
+            
+            <button
+              onClick={handleSubmit}
+              className="w-full py-3 rounded-xl bg-[#38bdf8] hover:bg-[#0ea5e9] text-white font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-[#38bdf8]/20 active:scale-[0.98]"
+              disabled={loading}
+            >
+              {loading ? 'Processing...' : 'Add Balance'}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -104,32 +125,83 @@ const AddBalanceModal = ({ open, onClose }) => {
 
 const Actions = () => {
   const [showAddBalance, setShowAddBalance] = useState(false)
-  const router = useRouter()
+  const [hoveredIndex, setHoveredIndex] = useState(null)
+  
+  const handleClick = (action, idx) => {
+    if (action.action === 'add-balance') {
+      setShowAddBalance(true)
+    } else if (action.action === 'navigate' && action.href) {
+      console.log(`Navigating to ${action.href}`)
+    }
+  }
+  
   return (
-    <div className="w-full px-2 mb-6">
+    <section className="w-full px-4 py-8 relative">
       <AddBalanceModal open={showAddBalance} onClose={() => setShowAddBalance(false)} />
-      <div className="flex gap-2 md:gap-3 w-full px-2 mb-6 bg-surface-light/80 backdrop-blur-md rounded-2xl shadow-lg p-2 md:p-4 border border-border">
-        {actions.map((action, idx) => (
-          <button
-            key={action.label}
-            className={`flex-1 flex flex-col items-center justify-center gap-2 py-3 md:py-4 rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-xl ${action.color} font-semibold text-xs md:text-base min-w-0 max-w-[110px] overflow-hidden`}
-            style={{ minWidth: 0 }}
-            onClick={
-              action.action === 'add-balance'
-                ? () => setShowAddBalance(true)
-                : action.action === 'navigate' && action.href
-                ? () => router.push(action.href)
-                : undefined
-            }
-          >
-            <span className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full shadow-md mb-1 ${action.iconBg}`}>
-              <img className="w-5 h-5 md:w-6 md:h-6" src={action.icon} alt={action.label} />
-            </span>
-            <span className="truncate text-center w-full block">{action.label}</span>
-          </button>
-        ))}
+      
+      <div className="max-w-4xl mx-auto">
+        <div className="grid grid-cols-4 md:grid-cols-4 gap-4 md:gap-6">
+          {actions.map((action, idx) => (
+            <button
+              key={action.label}
+              className={`
+                group flex flex-col items-center justify-center aspect-square rounded-2xl p-4 
+                bg-[#18181b] border border-[#334155] 
+                hover:border-[#38bdf8]/50 hover:-translate-y-1 hover:shadow-xl
+                ${action.glowColor}
+                focus:outline-none focus:ring-2 focus:ring-[#38bdf8]/50 focus:border-[#38bdf8]
+                transition-all duration-300 ease-out transform-gpu
+                active:scale-95 active:translate-y-0
+              `}
+              onMouseEnter={() => setHoveredIndex(idx)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              onClick={() => handleClick(action, idx)}
+            >
+              {/* Icon container with colored background */}
+              <div className={`
+                flex items-center justify-center w-6 h-6 md:w-14 md:h-14 rounded-xl mb-3
+                ${action.bgColor} ${action.hoverBg}
+                transition-all duration-300 group-hover:scale-110
+              `}>
+                <img 
+                  className="w-3=2 h-3 md:w-8 md:h-8 object-contain filter brightness-0 invert" 
+                  src={action.icon} 
+                  alt={action.label} 
+                />
+              </div>
+              
+              {/* Label */}
+              <span className="text-[10px] md:text-base text-[#f1f5f9] font-medium text-center transition-colors duration-300 group-hover:text-white">
+                {action.label}
+              </span>
+              
+              {/* Subtle bottom indicator */}
+              <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-[#334155] rounded-full transition-all duration-300 group-hover:w-8 group-hover:bg-[#38bdf8]"></div>
+            </button>
+          ))}
+        </div>
       </div>
-    </div>
+      
+      <style jsx>{`
+        .modal-overlay {
+          animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-container {
+          animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+          from { transform: translateY(-30px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+      `}</style>
+    </section>
   )
 }
 
