@@ -32,7 +32,8 @@ export default function GameDiamondPacksPage() {
       try {
         setLoading(true)
         const data = await apiClient.get(`/games/${gameId}/diamond-packs`)
-
+        console.log(data);
+        
         if (data.success && Array.isArray(data.diamondPacks)) {
           setDiamondPacks(data.diamondPacks)
           setGameInfo(data.gameData)

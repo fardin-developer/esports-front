@@ -1,35 +1,34 @@
-"use client"
+"use client";
+
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { apiClient } from '../apiClient';
 
 export default function OrderStatusPage() {
   const [statusData, setStatusData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  // Get orderId from URL parameters
-  const searchParams = useSearchParams();
-  const orderId = searchParams.get('orderId');
+  const [orderId, setOrderId] = useState(null);
 
   useEffect(() => {
-    async function fetchStatus() {
-      if (!orderId) {
-        setError('No order ID provided in URL');
-        setLoading(false);
-        return;
-      }
+    const params = new URLSearchParams(window.location.search);
+    const idFromURL = params.get('orderId');
 
+    if (!idFromURL) {
+      setError('No order ID provided in URL');
+      setLoading(false);
+      return;
+    }
+
+    setOrderId(idFromURL);
+
+    async function fetchStatus() {
       setLoading(true);
       setError(null);
       try {
-        // Make request to the correct endpoint with orderId
-        const data = await apiClient.get(`/moogold/order-status?orderId=${orderId}`);
-        
+        const data = await apiClient.get(`/moogold/order-status?orderId=${idFromURL}`);
         if (!data.success) {
           throw new Error(data.message || 'Failed to fetch order status');
         }
-        
         setStatusData(data.data);
       } catch (e) {
         console.error('API Error:', e);
@@ -38,9 +37,9 @@ export default function OrderStatusPage() {
         setLoading(false);
       }
     }
-    
+
     fetchStatus();
-  }, [orderId]);
+  }, []);
 
   const getStatusColor = (status) => {
     if (!status) return 'text-gray-400 bg-gray-100';
@@ -181,7 +180,7 @@ export default function OrderStatusPage() {
                       </div>
                     ))}
                   </div>
-                  
+
                   {/* Order Total */}
                   <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 mt-4 border border-green-200">
                     <div className="flex justify-between items-center">

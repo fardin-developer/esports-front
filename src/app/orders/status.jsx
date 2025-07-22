@@ -1,21 +1,26 @@
 "use client"
 import React, { useEffect, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export default function OrderStatusPage() {
-  const searchParams = useSearchParams();
   const router = useRouter();
   const [statusData, setStatusData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const orderId = searchParams.get('orderId');
+    // Only run on client side
+    if (typeof window === 'undefined') return;
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderId = urlParams.get('orderId');
+    
     if (!orderId) {
       setError('No orderId provided.');
       setLoading(false);
       return;
     }
+
     async function fetchStatus() {
       setLoading(true);
       setError(null);
@@ -30,8 +35,9 @@ export default function OrderStatusPage() {
         setLoading(false);
       }
     }
+    
     fetchStatus();
-  }, [searchParams]);
+  }, []);
 
   const statusColor = (status) => {
     if (!status) return 'text-gray-400';
@@ -129,4 +135,4 @@ export default function OrderStatusPage() {
       `}</style>
     </div>
   );
-} 
+}
