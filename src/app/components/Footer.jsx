@@ -68,13 +68,8 @@ const Footer = () => {
             <h4 className="text-lg font-semibold text-white">Support</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/support" className="text-white/70 hover:text-[#64ffda] transition-colors duration-300 text-sm">
-                  Help Center
-                </Link>
-              </li>
-              <li>
-                <Link href="/faq" className="text-white/70 hover:text-[#64ffda] transition-colors duration-300 text-sm">
-                  FAQ
+                <Link href="/contact-us" className="text-white/70 hover:text-[#64ffda] transition-colors duration-300 text-sm">
+                 Contact Us
                 </Link>
               </li>
 
@@ -105,7 +100,7 @@ const Footer = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 <div>
-                  <p className="text-white/70 text-sm">support@zennova.com</p>
+                  <p className="text-white/70 text-sm">support@zennova.in</p>
                 </div>
               </div>
               

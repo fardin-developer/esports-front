@@ -2,7 +2,7 @@ import Head from 'next/head';
 
 const AboutUs = () => {
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen text-gray-700 py-12 px-4 sm:px-6 lg:px-8">
       <Head>
         <title>About Us - Zennova</title>
         <meta name="description" content="Learn more about Zennova Technologies Private Limited, our mission, and our commitment to innovation." />
@@ -13,8 +13,20 @@ const AboutUs = () => {
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">Who We Are</h2>
         <p className="mb-4">
-          Zennova Technologies Private Limited is a dynamic technology company incorporated under the laws of India, with our registered office at HD-445, WeWork, DLF Two Horizon Centre, 5th Floor, DLF Phase-5, Sector-43, Golf Course Road, Gurugram, Haryana 122002, India. We are dedicated to delivering innovative digital solutions that empower businesses and individuals to thrive in a connected world.
-        </p>
+  Zeonnova.in is a premier gaming top‑up platform in India, empowering players with instant, secure access to in‑game currencies such as UC, Diamonds, Coins, and digital vouchers. Our streamlined system ensures a seamless top‑up experience for gamers across all their favorite titles.
+</p>
+
+<p className="mb-4">
+  Operated by <strong>ONESTEPLINK (OPC) PRIVATE LIMITED</strong> (CIN: <strong>U82990AS2023OPC025559</strong>), we are registered at:
+</p>
+
+<p className="mb-4">
+  <strong>
+    House No. 451, Palash Basti Road, Barsala, Bogipukhuri,<br />
+    Sonitpur, Alisinga, Assam – 784112, India.
+  </strong>
+</p>
+
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">Our Mission</h2>
         <p className="mb-4">
@@ -23,7 +35,7 @@ const AboutUs = () => {
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">What We Do</h2>
         <p className="mb-4">
-          Zennova develops and provides a range of innovative products and services accessible through our Platform, including our website (https://www.zennova.com) and mobile applications. Our offerings are designed to meet the needs of both individual users and organizations, enabling them to manage relationships, streamline processes, and achieve their goals efficiently. From personalized user experiences to robust transaction processing, we are committed to delivering excellence at every step.
+          Zennova develops and provides a range of innovative products and services accessible through our Platform, including our website (https://www.zennova.in) and mobile applications. Our offerings are designed to meet the needs of both individual users and organizations, enabling them to manage relationships, streamline processes, and achieve their goals efficiently. From personalized user experiences to robust transaction processing, we are committed to delivering excellence at every step.
         </p>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">Our Values</h2>
@@ -44,11 +56,11 @@ const AboutUs = () => {
           We’d love to hear from you! If you have any questions about our company, products, or services, please reach out to us.
         </p>
         <p className="mb-4">
-          <strong>Via Email:</strong> info@zennova.com
+          <strong>Via Email:</strong> info@zennova.in
         </p>
         <p className="mb-4">
-          <strong>Address:</strong> Zennova Technologies Private Limited<br />
-          HD-445, WeWork, DLF Two Horizon Centre, 5th Floor, DLF Phase-5, Sector-43, Golf Course Road, Gurugram, Haryana 122002, India
+          <strong>Address:</strong> Zennova Technologies<br />
+          Palash Basti, House No451, Palash Basti Road,barsala, Bogipukhuri, Sonitpur, Alisinga, Assam, India, 784112
         </p>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">Grievance Redressal</h2>
@@ -56,10 +68,10 @@ const AboutUs = () => {
           For any complaints or concerns, you may contact our Nodal Grievance Redressal Officer as required under the Information Technology Act, 2000 and rules made thereunder:
         </p>
         <p className="mb-4">
-          <strong>NAME:</strong> Mr. Jagath Ravikumar<br />
-          <strong>Address:</strong> BB-7, Qutab Plaza, Phase-1, Gurgaon 122 002<br />
+          <strong>NAME:</strong> Mr. Ibne Alam Khan<br />
+          <strong>Address:</strong> Palash Basti, House No451, Palash Basti Road,barsala, Bogipukhuri, Sonitpur, Alisinga, Assam, India, 784112<br />
           <strong>TEL:</strong> +91 9611104546<br />
-          <strong>EMAIL:</strong> jagath.ravikumar@zennova.com
+          <strong>EMAIL:</strong> support@zennova.in
         </p>
       </div>
     </div>

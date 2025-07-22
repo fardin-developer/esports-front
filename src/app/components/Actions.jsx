@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { apiClient } from '../apiClient'
 
 const actions = [
   {
@@ -55,25 +56,37 @@ const AddBalanceModal = ({ open, onClose }) => {
     }
     setLoading(true)
     try {
-      // Simulate API call
-      setTimeout(() => {
-        alert(`Processing payment for $${amount}`)
-        setLoading(false)
-        onClose()
-        setAmount('')
-      }, 2000)
+      const auth = JSON.parse(localStorage.getItem('auth'))
+      const token = auth?.token
+
+      const response = await apiClient.post('/wallet/add', {
+        amount: Number(amount),
+        redirectUrl: 'http://localhost:3001/payment/success',
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+
+      if (!response.success || !response.transaction?.paymentUrl) {
+        throw new Error(response.message || 'Failed to create payment')
+      }
+
+      // Redirect to payment
+      window.location.href = response.transaction.paymentUrl
     } catch (err) {
-      setError(err.message || 'Failed to create payment')
+      setError(err.message || 'Payment failed')
+    } finally {
       setLoading(false)
     }
   }
 
   if (!open) return null
-  
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 modal-overlay">
       <div className="bg-[#18181b] border border-[#334155] rounded-2xl p-6 w-full max-w-sm shadow-2xl relative modal-container">
-        
+
         <button 
           className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg text-[#94a3b8] hover:text-[#f1f5f9] hover:bg-[#23272f] transition-all duration-200" 
           onClick={onClose}
@@ -82,12 +95,9 @@ const AddBalanceModal = ({ open, onClose }) => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        
+
         <div>
-          <h2 className="text-xl font-semibold text-[#f1f5f9] mb-6 text-center">
-            Add Balance
-          </h2>
-          
+          <h2 className="text-xl font-semibold text-[#f1f5f9] mb-6 text-center">Add Balance</h2>
           <div className="space-y-4">
             <div className="relative">
               <input
@@ -102,13 +112,13 @@ const AddBalanceModal = ({ open, onClose }) => {
                 onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
               />
             </div>
-            
+
             {error && (
               <div className="text-[#ef4444] text-sm text-center bg-[#ef4444]/10 border border-[#ef4444]/20 rounded-lg py-2 px-3">
                 {error}
               </div>
             )}
-            
+
             <button
               onClick={handleSubmit}
               className="w-full py-3 rounded-xl bg-[#38bdf8] hover:bg-[#0ea5e9] text-white font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-[#38bdf8]/20 active:scale-[0.98]"
@@ -126,19 +136,19 @@ const AddBalanceModal = ({ open, onClose }) => {
 const Actions = () => {
   const [showAddBalance, setShowAddBalance] = useState(false)
   const [hoveredIndex, setHoveredIndex] = useState(null)
-  
+
   const handleClick = (action, idx) => {
     if (action.action === 'add-balance') {
       setShowAddBalance(true)
     } else if (action.action === 'navigate' && action.href) {
-      console.log(`Navigating to ${action.href}`)
+      window.location.href = action.href
     }
   }
-  
+
   return (
     <section className="w-full px-4 py-8 relative">
       <AddBalanceModal open={showAddBalance} onClose={() => setShowAddBalance(false)} />
-      
+
       <div className="max-w-5xl mx-auto">
         <div className="grid grid-cols-4 md:grid-cols-4 gap-4 md:gap-6">
           {actions.map((action, idx) => (
@@ -157,7 +167,6 @@ const Actions = () => {
               onMouseLeave={() => setHoveredIndex(null)}
               onClick={() => handleClick(action, idx)}
             >
-              {/* Icon container with colored background */}
               <div className={`
                 flex items-center justify-center w-8 h-7 md:w-14 md:h-14 rounded-xl mb-3
                 ${action.bgColor} ${action.hoverBg}
@@ -169,33 +178,31 @@ const Actions = () => {
                   alt={action.label} 
                 />
               </div>
-              
-              {/* Label */}
+
               <span className="text-[9px] md:text-base text-[#f1f5f9] font-medium text-center transition-colors duration-300 group-hover:text-white">
                 {action.label}
               </span>
-              
-              {/* Subtle bottom indicator */}
+
               <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-[#334155] rounded-full transition-all duration-300 group-hover:w-8 group-hover:bg-[#38bdf8]"></div>
             </button>
           ))}
         </div>
       </div>
-      
+
       <style jsx>{`
         .modal-overlay {
           animation: fadeIn 0.3s ease;
         }
-        
+
         .modal-container {
           animation: slideIn 0.3s ease;
         }
-        
+
         @keyframes fadeIn {
           from { opacity: 0; }
           to { opacity: 1; }
         }
-        
+
         @keyframes slideIn {
           from { transform: translateY(-30px); opacity: 0; }
           to { transform: translateY(0); opacity: 1; }

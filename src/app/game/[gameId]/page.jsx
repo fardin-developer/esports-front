@@ -32,76 +32,8 @@ export default function GameDiamondPacksPage() {
       try {
         setLoading(true)
         const data = await apiClient.get(`/games/${gameId}/diamond-packs`)
-        //response format
-      //   {
-      //     "success": true,
-      //     "count": 2,
-      //     "diamondPacks": [
-      //         {
-      //             "_id": "6879ceee945264d1108abd9e",
-      //             "game": "687608aa0ddc00776fe1a72b",
-      //             "amount": 1,
-      //             "commission": 1,
-      //             "cashback": 5,
-      //             "logo": "https://example.com/logo.png",
-      //             "description": "100 Diamonds Pack",
-      //             "status": "active",
-      //             "apiMappings": [
-      //                 {
-      //                     "apiProvider": {
-      //                         "_id": "6871caa609fd118035159e32",
-      //                         "name": "moogold",
-      //                         "apiUrl": "https://moogold.com/wp-json/v1/api",
-      //                         "description": "Optional description"
-      //                     },
-      //                     "productId": "15145",
-      //                     "_id": "6879ceee945264d1108abd9f"
-      //                 }
-      //             ],
-      //             "createdAt": "2025-07-18T04:34:54.568Z",
-      //             "updatedAt": "2025-07-18T04:34:54.568Z",
-      //             "__v": 0
-      //         },
-      //         {
-      //             "_id": "68749f18509af83912b68ea5",
-      //             "game": "687608aa0ddc00776fe1a72b",
-      //             "amount": 13,
-      //             "commission": 3,
-      //             "cashback": 0.2,
-      //             "logo": "https://example.com/logo.png",
-      //             "description": "100 Diamonds Pack for counter strike 3",
-      //             "status": "active",
-      //             "apiProviders": [
-      //                 "6871caa609fd118035159e32"
-      //             ],
-      //             "productId": "15145",
-      //             "createdAt": "2025-07-14T06:09:28.527Z",
-      //             "updatedAt": "2025-07-14T06:09:28.527Z",
-      //             "__v": 0,
-      //             "apiMappings": []
-      //         }
-      //     ],
-      //     "gameData": {
-      //         "_id": "687608aa0ddc00776fe1a72b",
-      //         "name": "Mobile Legends",
-      //         "image": "http://localhost:3000/uploads/image-1752425738886-945425243.jpg",
-      //         "publisher": "Moonton",
-      //         "validationFields": [
-      //             "userId",
-      //             "serverId"
-      //         ],
-      //         "createdAt": "2025-07-15T07:52:10.564Z",
-      //         "updatedAt": "2025-07-15T07:52:10.564Z",
-      //         "__v": 0,
-      //         "game_id": "15145"
-      //     }
-      // }
-
-
-
 
         if (data.success && Array.isArray(data.diamondPacks)) {
-          console.log(data);
           setDiamondPacks(data.diamondPacks)
           setGameInfo(data.gameData)
           // Initialize validation values
@@ -188,7 +120,7 @@ export default function GameDiamondPacksPage() {
 
     setValidationLoading(true);
     setValidationResult(null);
-    console.log(data);
+    // console.log(data);
     
     try {
       // Use apiClient.post to call the validation API
@@ -205,7 +137,7 @@ export default function GameDiamondPacksPage() {
         username = result.data.username || username;
       }
       const validationObj = { status, message, username };
-      console.log('validationResult:', validationObj);
+      // console.log('validationResult:', validationObj);
       setValidationResult(validationObj);
     } catch (err) {
       setValidationResult({ status: false, message: "Validation failed. Please try again." });
@@ -219,14 +151,16 @@ export default function GameDiamondPacksPage() {
     if (!selectedPack) return;
     const pack = diamondPacks.find(p => p._id === selectedPack);
     if (!pack) return;
-    // Get productId from apiMappings[0]
+  
     const productId = pack.apiMappings && pack.apiMappings.length > 0 ? pack.apiMappings[0].productId : undefined;
     if (!productId) {
       setOrderResult({ success: false, message: 'No productId found for this pack. Cannot create order.' });
       return;
     }
+  
     setOrderLoading(true);
     setOrderResult(null);
+  
     try {
       const payload = {
         diamondPackId: pack._id,
@@ -235,12 +169,19 @@ export default function GameDiamondPacksPage() {
         server: validationValues.serverId || validationValues.ServerId || validationValues['Server ID'],
         quantity: 1,
       };
+  
       const result = await apiClient.post('/order/diamond-pack', payload);
-      console.log(result);
+      const orderId = result.externalApiResponse.order_id
+      console.log(orderId);
       setOrderResult(result);
-      if (result.success) {
+      console.log("2 ");
+      
+  
+      if (result.success && orderId) {
         dispatch(fetchWalletBalance());
-        // Optionally show success message
+  
+        // ✅ Navigate to the order page with order ID
+        router.push(`/status?orderId=${orderId}`);
       }
     } catch (err) {
       setOrderResult({ success: false, message: 'Order creation failed. Please try again.' });
@@ -248,6 +189,7 @@ export default function GameDiamondPacksPage() {
       setOrderLoading(false);
     }
   };
+  
 
   return (
     <div className="min-h-screen flex flex-col pb-24 relative pt-6 bg-bg w-full max-w-7xl mx-auto">

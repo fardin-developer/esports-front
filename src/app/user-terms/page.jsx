@@ -2,20 +2,20 @@ import Head from 'next/head';
 
 const UserTermsAndConditions = () => {
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <Head>
         <title>User Terms and Conditions - Zennova</title>
         <meta name="description" content="Zennova Technologies Private Limited User Terms and Conditions" />
       </Head>
-      <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+      <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg text-gray-700">
         <h1 className="text-3xl font-bold mb-6 text-center">User Terms and Conditions</h1>
         <p className="text-sm text-gray-600 mb-4">Updated at 2025-01-01</p>
 
         <p className="mb-4">
-          This web page represents our terms and conditions ("Terms") pertaining to the access and use of our website located at www.zennova.com (“Website”), mobile application, and/or any other portal (collectively “Platform”) provided by Zennova Technologies Private Limited and/or its affiliates.
+          This web page represents our terms and conditions ("Terms") pertaining to the access and use of our website located at www.zennova.in (“Website”), mobile application, and/or any other portal (collectively “Platform”) provided by Zennova Technologies Private Limited and/or its affiliates.
         </p>
         <p className="mb-4">
-          The Terms govern all products, services, and other offerings (collectively, “Products”) made available to you by Zennova Technologies Private Limited, a company incorporated under the laws of India, with its registered office at HD-445, WeWork, DLF Two Horizon Centre, 5th Floor, DLF Phase-5, Sector-43, Golf Course Road, Gurugram, Haryana 122002, India, and its affiliates (“Zennova”), through the Platform.
+          The Terms govern all products, services, and other offerings (collectively, “Products”) made available to you by Zennova Technologies Private Limited, a company incorporated under the laws of India, with its registered office at Palash Basti, House No451, Palash Basti Road,barsala, 784110, Bogipukhuri, Sonitpur, Alisinga, Assam, India, and its affiliates (“Zennova”), through the Platform.
         </p>
         <p className="mb-4">
           By accessing and/or using our Platform and/or availing of the Products, you acknowledge that you are aware of the contents of and agree to be legally bound by these Terms. If you do not agree to these Terms, please do not access or use the Platform and the Products.
@@ -72,7 +72,7 @@ const UserTermsAndConditions = () => {
           <li>Transactions made via Zennova cannot be refuted once initiated.</li>
           <li>You are solely responsible for the usage of your mobile account or payment channel, and Zennova shall have no liability to you or any third party for any unauthorized use or access of Zennova through your mobile account or payment channels or in the event your mobile account or your account has been compromised. In such circumstances, it is your responsibility to inform your mobile operator or your payment channel of such instances.</li>
           <li>Any taxes, duties, currency exchange fees, data charges, and any other applicable charges in relation to your purchases via Zennova shall be borne by you.</li>
-          <li>Zennova, or your mobile operator if a purchase is made via your mobile account or your chosen payment channel provided at www.zennova.com, has the sole discretion to accept or decline a transaction performed by you through Zennova for whatsoever reason, and that, should this occur, Zennova shall not be held liable to you.</li>
+          <li>Zennova, or your mobile operator if a purchase is made via your mobile account or your chosen payment channel provided at www.zennova.in, has the sole discretion to accept or decline a transaction performed by you through Zennova for whatsoever reason, and that, should this occur, Zennova shall not be held liable to you.</li>
           <li>You have consented to be contacted by Zennova, and to receive notices electronically, including but not limited to by text message, from us. You agree that we may make any notices that we may be required by law to make in electronic format. These communications will be deemed to be in writing and received by you when sent to you.</li>
           <li>You may be required to register with the Platform. You agree to keep your password confidential and will be responsible for all use of your account and password. We reserve the right to remove, reclaim, or change a username you select if we determine, in our sole discretion, that such username is inappropriate, obscene, or otherwise objectionable.</li>
         </ul>
@@ -117,7 +117,7 @@ const UserTermsAndConditions = () => {
           All transactions made in accordance with these Terms are final. The Products that have been delivered are strictly non-refundable.
         </p>
         <p className="mb-4">
-          If you have any complaints about our Platform and/or Product, you should direct them to us via e-mail at cs@zennova.com.
+          If you have any complaints about our Platform and/or Product, you should direct them to us via e-mail at cs@zennova.in.
         </p>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">Products</h2>
@@ -136,7 +136,7 @@ const UserTermsAndConditions = () => {
           To register in the Program, you must (i) register or sign up to acquire a Zennova account (“Account”), (ii) provide a valid mailing address in India and a valid email address, and (iii) be at least 18 years old (or equivalent minimum age in the relevant jurisdiction). If you are under the age of 18, we require you to obtain permission from your legal guardian to register for an account and that the legal guardian must agree to these Terms. If you are the legal guardian of a minor who is registering for an Account, you must accept these Terms on the minor’s behalf and you will be responsible for all use of the Account, including any transactions made by the minor, whether the minor’s account is now open or created later and whether or not the minor is supervised by you during his or her use of our Product.
         </p>
         <p className="mb-4">
-          If we accept your registration application, we will sign you up in the Program as a Zennova Reward Program member (“Member”). You must provide any change to your personal data to us, such as name, mailing address, email address, and phone number by contacting our Customer Support at cs@zennova.com or you may update your personal data through www.zennova.com (“Member Web Portal”).
+          If we accept your registration application, we will sign you up in the Program as a Zennova Reward Program member (“Member”). You must provide any change to your personal data to us, such as name, mailing address, email address, and phone number by contacting our Customer Support at cs@zennova.in or you may update your personal data through www.zennova.in (“Member Web Portal”).
         </p>
         <p className="mb-4">
           In the event your account is lost and you forget your email and access code, you will lose all of your Points.
@@ -145,7 +145,7 @@ const UserTermsAndConditions = () => {
           Zennova reserves the right to terminate your membership at any time for whatsoever reason Zennova deems fit.
         </p>
         <p className="mb-4">
-          Email is required to access the Member Account and to redeem your Points, or when contacting Customer Support at cs@zennova.com.
+          Email is required to access the Member Account and to redeem your Points, or when contacting Customer Support at cs@zennova.in.
         </p>
         <p className="mb-4">
           You are responsible for ensuring that you keep your email confidential at all times and to notify us over any illegal use of your email or when your email is compromised.
@@ -203,7 +203,7 @@ const UserTermsAndConditions = () => {
           We have no control over the quality, fitness, safety, reliability, legality, or any other aspect of any Product that is purchased using our Product. We are not required to issue refunds if a purchase turns out to not meet your expectations, or if the third-party providers do not fulfill their commitments, although we will make reasonable efforts to assist you in these matters. We have no obligation, and cannot guarantee that, we will resolve any disputes related to any transaction to your satisfaction.
         </p>
         <p className="mb-4">
-          We have the absolute discretion to alter the Terms, in any way in respect of the Program, including terms of ordering, Point usage procedures for Reward, or Reward in any form, without prior notice, and even if the changes can affect the value of the accumulated Points. You must check our present Terms and details and other information for the Program through the Member Web Portal or by calling our Customer Support at cs@zennova.com.
+          We have the absolute discretion to alter the Terms, in any way in respect of the Program, including terms of ordering, Point usage procedures for Reward, or Reward in any form, without prior notice, and even if the changes can affect the value of the accumulated Points. You must check our present Terms and details and other information for the Program through the Member Web Portal or by calling our Customer Support at cs@zennova.in.
         </p>
         <p className="mb-4">
           Our Platform Content is provided based on an “as is” and “as available” basis. We hereby firmly state that we do not make any guarantees or collaterals whether expressly or implicitly, in respect to the merchantability of a product or suitability of our product that we provide for a specific purpose.
@@ -269,11 +269,11 @@ const UserTermsAndConditions = () => {
           If you have any questions about these Terms and Conditions, please contact us at:
         </p>
         <p className="mb-4">
-          <strong>Via Email:</strong> cs@zennova.com
+          <strong>Via Email:</strong> cs@zennova.in
         </p>
         <p className="mb-4">
-          <strong>Address:</strong> Zennova Technologies Private Limited<br />
-          HD-445, WeWork, DLF Two Horizon Centre, 5th Floor, DLF Phase-5, Sector-43, Golf Course Road, Gurugram, Haryana 122002, India
+          <strong>Address:</strong> Zennova<br />
+          Palash Basti, House No451, Palash Basti Road,barsala, Bogipukhuri, Sonitpur, Alisinga, Assam, India, 784112
         </p>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">Grievance Redressal</h2>
@@ -281,10 +281,10 @@ const UserTermsAndConditions = () => {
           For any complaints or concerns, you may contact our Nodal Grievance Redressal Officer as required under the Information Technology Act, 2000 and rules made thereunder:
         </p>
         <p className="mb-4">
-          <strong>NAME:</strong> Mr. Jagath Ravikumar<br />
-          <strong>Address:</strong> BB-7, Qutab Plaza, Phase-1, Gurgaon 122 002<br />
+          <strong>NAME:</strong> Mr. Ibne Alam Khan<br />
+          <strong>Address:</strong> Palash Basti, House No451, Palash Basti Road,barsala, Bogipukhuri, Sonitpur, Alisinga, Assam, India, 784112<br />
           <strong>TEL:</strong> +91 9611104546<br />
-          <strong>EMAIL:</strong> jagath.ravikumar@zennova.com
+          <strong>EMAIL:</strong> support@zennova.in
         </p>
       </div>
     </div>

@@ -33,6 +33,7 @@ const ORDER_TYPES = [
   { value: '', label: 'All Types' },
   { value: 'buy', label: 'Buy' },
   { value: 'sell', label: 'Sell' },
+  { value: 'diamond_pack_purchase', label: 'Diamond Pack' },
   // Add more types as needed
 ]
 
@@ -79,21 +80,21 @@ export default function OrdersPage() {
 
   return (
     <div className="min-h-screen bg-bg">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Header Section */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-primary mb-2">Order History</h1>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-xl sm:text-2xl font-semibold text-primary mb-2">Order History</h1>
           <p className="text-text-muted text-sm">View and manage your order history</p>
         </div>
 
         {/* Filters Section */}
-        <div className="bg-surface-light border border-border rounded-lg p-6 mb-6">
-          <div className="flex flex-col sm:flex-row sm:items-end gap-4">
-            <div className="flex-1 min-w-0">
-              <label className="block text-sm font-medium text-text mb-2">
+        <div className="bg-surface-light border border-border rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex flex-col gap-4">
+            <div>
+              <label className="block text-sm font-medium text-text mb-3">
                 Filters
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs text-text-muted mb-1">Status</label>
                   <select
@@ -124,114 +125,183 @@ export default function OrdersPage() {
         </div>
 
         {/* Content Section */}
-        <div className="bg-surface-light border border-border rounded-lg">
-          {/* Table Header */}
-          <div className="sticky top-0 z-20 bg-surface-light/95 backdrop-blur border-b border-border px-6 py-4">
-            <div className="grid grid-cols-12 gap-4 text-xs font-medium text-text-muted uppercase tracking-wider">
-              <div className="col-span-4">Order</div>
-              <div className="col-span-2 hidden sm:block">Date</div>
-              <div className="col-span-2">Status</div>
-              <div className="col-span-2">Type</div>
-              <div className="col-span-2 text-right">Amount</div>
+        <div className="space-y-4">
+          {loading ? (
+            <div className="bg-surface-light border border-border rounded-lg p-8 text-center">
+              <div className="inline-flex items-center gap-2 text-text-muted">
+                <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                Loading orders...
+              </div>
             </div>
-          </div>
-
-          {/* Table Body - Scrollable */}
-          <div className="relative" style={{height: '60vh'}}>
-            <div className="overflow-y-auto h-full divide-y divide-border" style={{scrollbarGutter: 'stable'}}>
-              {loading ? (
-                <div className="px-6 py-12 text-center">
-                  <div className="inline-flex items-center gap-2 text-text-muted">
-                    <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                    Loading orders...
+          ) : error ? (
+            <div className="bg-surface-light border border-border rounded-lg p-8 text-center">
+              <div className="text-error text-sm">{error}</div>
+            </div>
+          ) : orders.length === 0 ? (
+            <div className="bg-surface-light border border-border rounded-lg p-8 text-center">
+              <div className="text-text-muted text-sm">No orders found for the selected filters.</div>
+            </div>
+          ) : (
+            <>
+              {/* Desktop Table View - Hidden on mobile */}
+              <div className="hidden lg:block bg-surface-light border border-border rounded-lg">
+                {/* Table Header */}
+                <div className="sticky top-0 z-20 bg-surface-light/95 backdrop-blur border-b border-border px-6 py-4">
+                  <div className="grid grid-cols-12 gap-4 text-xs font-medium text-text-muted uppercase tracking-wider">
+                    <div className="col-span-4">Order</div>
+                    <div className="col-span-2">Date</div>
+                    <div className="col-span-2">Status</div>
+                    <div className="col-span-2">Type</div>
+                    <div className="col-span-2 text-right">Amount</div>
                   </div>
                 </div>
-              ) : error ? (
-                <div className="px-6 py-12 text-center">
-                  <div className="text-error text-sm">{error}</div>
-                </div>
-              ) : orders.length === 0 ? (
-                <div className="px-6 py-12 text-center">
-                  <div className="text-text-muted text-sm">No orders found for the selected filters.</div>
-                </div>
-              ) : (
-                orders.map(order => (
-                  <div key={order._id} className="px-6 py-4 hover:bg-surface/50 transition-colors">
-                    <div className="grid grid-cols-12 gap-4 items-center">
-                      {/* Order Info */}
-                      <div className="col-span-4">
-                        <div className="font-medium text-text text-sm">{order.title || 'Order'}</div>
-                        {order.description && (
-                          <div className="text-xs text-text-muted mt-1 line-clamp-2">{order.description}</div>
-                        )}
-                        <div className="text-xs text-text-muted mt-1 sm:hidden">
-                          {new Date(order.createdAt).toLocaleDateString()}
+
+                {/* Table Body */}
+                <div className="divide-y divide-border">
+                  {orders.map(order => (
+                    <div key={order._id} className="px-6 py-4 hover:bg-surface/50 transition-colors">
+                      <div className="grid grid-cols-12 gap-4 items-center">
+                        {/* Order Info */}
+                        <div className="col-span-4">
+                          <div className="font-medium text-text text-sm">
+                            {order.items?.[0]?.itemName || order.description || 'Order'}
+                          </div>
+                          {order.description && (
+                            <div className="text-xs text-text-muted mt-1 line-clamp-2">{order.description}</div>
+                          )}
+                        </div>
+                        {/* Date */}
+                        <div className="col-span-2">
+                          <div className="text-sm text-text">
+                            {new Date(order.createdAt).toLocaleDateString()}
+                          </div>
+                          <div className="text-xs text-text-muted">
+                            {new Date(order.createdAt).toLocaleTimeString([], {
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </div>
+                        </div>
+                        {/* Status */}
+                        <div className="col-span-2">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusStyle(order.status)}`}>
+                            {order.status}
+                          </span>
+                        </div>
+                        {/* Type */}
+                        <div className="col-span-2">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border bg-border text-text-muted border-border">
+                            {order.orderType === 'diamond_pack_purchase' ? 'Diamond Pack' : order.orderType || '-'}
+                          </span>
+                        </div>
+                        {/* Amount */}
+                        <div className="col-span-2 text-right">
+                          <div className="font-semibold text-primary text-base">
+                            {order.amount ? `${order.amount} ${order.currency || ''}` : '-'}
+                          </div>
                         </div>
                       </div>
-                      {/* Date - Hidden on mobile */}
-                      <div className="col-span-2 hidden sm:block">
-                        <div className="text-sm text-text">
-                          {new Date(order.createdAt).toLocaleDateString()}
-                        </div>
-                        <div className="text-xs text-text-muted">
-                          {new Date(order.createdAt).toLocaleTimeString([], {
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="lg:hidden space-y-3">
+                {orders.map(order => (
+                  <div key={order._id} className="bg-surface-light border border-border rounded-lg p-4 hover:bg-surface/50 transition-colors">
+                    {/* Card Header */}
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-text text-sm truncate">
+                          {order.items?.[0]?.itemName || order.description || 'Order'}
+                        </h3>
+                        <p className="text-xs text-text-muted mt-1">
+                          {new Date(order.createdAt).toLocaleDateString()} • {new Date(order.createdAt).toLocaleTimeString([], {
                             hour: '2-digit',
                             minute: '2-digit'
                           })}
-                        </div>
+                        </p>
                       </div>
-                      {/* Status */}
-                      <div className="col-span-2">
+                      <div className="ml-3 flex-shrink-0">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusStyle(order.status)}`}>
                           {order.status}
                         </span>
                       </div>
-                      {/* Type */}
-                      <div className="col-span-2">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border bg-border text-text-muted border-border">
-                          {order.orderType || '-'}
-                        </span>
-                      </div>
-                      {/* Amount */}
-                      <div className="col-span-2 text-right">
-                        <div className="font-semibold text-primary text-base">
-                          {order.amount ? `${order.amount} ${order.currency || ''}` : '-'}
+                    </div>
+
+                    {/* Card Body */}
+                    <div className="space-y-2">
+                      {order.description && (
+                        <p className="text-sm text-text-muted line-clamp-2">{order.description}</p>
+                      )}
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-text-muted">Type:</span>
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-border text-text-muted">
+                            {order.orderType === 'diamond_pack_purchase' ? 'Diamond Pack' : order.orderType || '-'}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-semibold text-primary text-base">
+                            {order.amount ? `${order.amount} ${order.currency || ''}` : '-'}
+                          </div>
                         </div>
                       </div>
+
+                      {order.paymentMethod && (
+                        <div className="flex items-center gap-2 pt-1">
+                          <span className="text-xs text-text-muted">Payment:</span>
+                          <span className="text-xs text-text capitalize">{order.paymentMethod}</span>
+                        </div>
+                      )}
+
+                      {order.items && order.items.length > 0 && (
+                        <div className="pt-2 border-t border-border">
+                          <div className="text-xs text-text-muted mb-1">Items:</div>
+                          {order.items.map((item, index) => (
+                            <div key={item._id || index} className="flex justify-between items-center text-xs">
+                              <span className="text-text truncate flex-1">{item.itemName}</span>
+                              <span className="text-text-muted ml-2">Qty: {item.quantity}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="px-6 py-4 border-t border-border">
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-text-muted">
-                  Page {page} of {totalPages}
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={handlePrev}
-                    disabled={page === 1}
-                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-text bg-surface border border-border rounded-md hover:bg-surface-light disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    onClick={handleNext}
-                    disabled={page === totalPages}
-                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-text bg-surface border border-border rounded-md hover:bg-surface-light disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    Next
-                  </button>
-                </div>
+                ))}
               </div>
-            </div>
+            </>
           )}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="mt-6 bg-surface-light border border-border rounded-lg px-4 sm:px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-text-muted">
+                Page {page} of {totalPages}
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handlePrev}
+                  disabled={page === 1}
+                  className="inline-flex items-center px-3 py-2 text-sm font-medium text-text bg-surface border border-border rounded-md hover:bg-surface-light disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Previous
+                </button>
+                <button
+                  onClick={handleNext}
+                  disabled={page === totalPages}
+                  className="inline-flex items-center px-3 py-2 text-sm font-medium text-text bg-surface border border-border rounded-md hover:bg-surface-light disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

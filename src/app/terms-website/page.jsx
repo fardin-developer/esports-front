@@ -2,27 +2,27 @@ import Head from 'next/head';
 
 const TermsAndConditions = () => {
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <Head>
         <title>Terms and Conditions - Zennova</title>
         <meta name="description" content="Zennova Technologies Private Limited Terms and Conditions" />
       </Head>
-      <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+      <div className="max-w-4xl mx-auto bg- p-8 rounded-lg shadow-lg text-gray-200 text-justify">
         <h1 className="text-3xl font-bold mb-6 text-center">Website Terms and Conditions</h1>
-        <p className="text-sm text-gray-600 mb-4">Updated at 2025-01-01</p>
+        <p className="text-sm text-gray-400 mb-4">Updated at 2025-22-07</p>
 
         <p className="mb-4 font-semibold">
           IT IS IMPORTANT THAT YOU READ CAREFULLY AND UNDERSTAND THE FOLLOWING TERMS AND CONDITIONS.
         </p>
 
         <p className="mb-4">
-          These Terms and Conditions constitute a legally binding agreement made between you, whether personally or on behalf of an entity (“you”) and Zennova Technologies Private Limited (“we,” “us,” or “our”), concerning your access to and use of the www.zennova.com website as well as any other media form, media channel, mobile website, or mobile application related, linked, or otherwise connected thereto (collectively, the “Website”).
+          These Terms and Conditions constitute a legally binding agreement made between you, whether personally or on behalf of an entity (“you”) and Zennova Technologies Private Limited (“we,” “us,” or “our”), concerning your access to and use of the www.zennova.in website as well as any other media form, media channel, mobile website, or mobile application related, linked, or otherwise connected thereto (collectively, the “Website”).
         </p>
         <p className="mb-4">
           You agree that by accessing the Website, you have read, understood, and agree to be bound by all of these Terms and Conditions. If you do not agree to these Terms and Conditions posted at the time you intend to access or use this website, please do not access or use this website, Product, or any pages thereof.
         </p>
         <p className="mb-4">
-          The term “Zennova” or “we” or “our” or “us” refers to Zennova Technologies Private Limited, a company incorporated under the laws of India, with its registered office at HD-445, WeWork, DLF Two Horizon Centre, 5th Floor, DLF Phase-5, Sector-43, Golf Course Road, Gurugram, Haryana 122002, India, and/or its affiliates. The term “you” refers to the user or viewer of this website and/or Product.
+          The term “Zennova” or “we” or “our” or “us” refers to Zennova Technologies Private Limited, a company incorporated under the laws of India, with its registered office at Palash Basti, House No451, Palash Basti Road,barsala, 784110, Bogipukhuri, Sonitpur, Alisinga, Assam, India, and/or its affiliates. The term “you” refers to the user or viewer of this website and/or Product.
         </p>
         <p className="mb-4">
           Any new features, upgrades, variations, or new packages which are added to this website shall also be subject to these Terms and Conditions. Zennova reserves the right at its absolute and sole discretion to vary, modify, delete, update, or suspend these Terms and Conditions (or any part thereof) for any reason, without prior notice to you. As such, you understand and acknowledge that it is your duty to review these Terms and Conditions on a regular basis. You will be subject to, and will be deemed to have been made aware of and to have accepted, the changes in any revised Terms and Conditions by your continued use of the Website after the date such revised Terms and Conditions are posted.
@@ -55,7 +55,7 @@ const TermsAndConditions = () => {
           When you access our Website, you may be required to register an account (“Account”). By registering for an Account or by using our Website in any capacity, you represent that you are at least 18 years old (or equivalent minimum age in the relevant jurisdiction) and you understand and agree to these Terms and Conditions. If you are under the age of 18 (or equivalent minimum age in the relevant jurisdiction), you represent that your parents or your legal guardian has reviewed and agreed to these Terms and Conditions. If you access our Website through a third-party platform, you are obligated to comply with their terms and conditions in addition to our Terms and Conditions.
         </p>
         <p className="mb-4">
-          When you register for an account or update the information, you agree to provide us with accurate information and that you will keep it up-to-date at all times. You may never allow anyone else to use your account (except your parents or legal guardian). If you have reason to believe that your account is no longer secure, then you must immediately notify us at cs@zennova.com. You are responsible for all activities that occur in your Account, whether or not you know about them.
+          When you register for an account or update the information, you agree to provide us with accurate information and that you will keep it up-to-date at all times. You may never allow anyone else to use your account (except your parents or legal guardian). If you have reason to believe that your account is no longer secure, then you must immediately notify us at cs@zennova.in. You are responsible for all activities that occur in your Account, whether or not you know about them.
         </p>
 
         <h3 className="text-xl font-semibold mt-6 mb-2">Restrictions</h3>
@@ -70,7 +70,7 @@ const TermsAndConditions = () => {
           <li>Perform unauthorized monitoring of data or traffic on the Website, probing, scanning, or testing the vulnerability of any of the Website system or network, or breaching any security or authentication measures; circumventing any technological measure that protects the Website.</li>
         </ul>
         <p className="mb-4">
-          You acknowledge that we have the right to monitor your access to and the use of www.zennova.com to ensure your compliance with these Terms and Conditions, or to comply with applicable law or the order or requirement of a court or other governmental body. However, we do not undertake to do so, and you shall take responsibility for your own actions in accessing and using the Website.
+          You acknowledge that we have the right to monitor your access to and the use of www.zennova.in to ensure your compliance with these Terms and Conditions, or to comply with applicable law or the order or requirement of a court or other governmental body. However, we do not undertake to do so, and you shall take responsibility for your own actions in accessing and using the Website.
         </p>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">Intellectual Property Rights</h2>
@@ -133,11 +133,11 @@ const TermsAndConditions = () => {
           If you have any questions about these Terms and Conditions, please contact us at:
         </p>
         <p className="mb-4">
-          <strong>Via Email:</strong> cs@zennova.com
+          <strong>Via Email:</strong> cs@zennova.in
         </p>
         <p className="mb-4">
-          <strong>Address:</strong> Zennova Technologies Private Limited<br />
-          HD-445, WeWork, DLF Two Horizon Centre, 5th Floor, DLF Phase-5, Sector-43, Golf Course Road, Gurugram, Haryana 122002, India
+          <strong>Address:</strong> Zennova Technologies<br />
+          Palash Basti, House No451, Palash Basti Road,barsala, 784110, Bogipukhuri, Sonitpur, Alisinga, Assam, India
         </p>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">Grievance Redressal</h2>
@@ -145,10 +145,10 @@ const TermsAndConditions = () => {
           For any complaints or concerns, you may contact our Nodal Grievance Redressal Officer as required under the Information Technology Act, 2000 and rules made thereunder:
         </p>
         <p className="mb-4">
-          <strong>NAME:</strong> Mr. Jagath Ravikumar<br />
-          <strong>Address:</strong> BB-7, Qutab Plaza, Phase-1, Gurgaon 122 002<br />
+          <strong>NAME:</strong> Mr. Ibne Alam Khan<br />
+          <strong>Address:</strong> Palash Basti, House No451, Palash Basti Road,barsala, Bogipukhuri, Sonitpur, Alisinga, Assam, India, 784112<br />
           <strong>TEL:</strong> +91 9611104546<br />
-          <strong>EMAIL:</strong> jagath.ravikumar@zennova.com
+          <strong>EMAIL:</strong> support@zennova.in
         </p>
       </div>
     </div>
