@@ -7,7 +7,7 @@ const UserTermsAndConditions = () => {
         <title>User Terms and Conditions - Zennova</title>
         <meta name="description" content="Zennova Technologies Private Limited User Terms and Conditions" />
       </Head>
-      <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg text-gray-700">
+      <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg text-gray-700 text-justify">
         <h1 className="text-3xl font-bold mb-6 text-center">User Terms and Conditions</h1>
         <p className="text-sm text-gray-600 mb-4">Updated at 2025-01-01</p>
 

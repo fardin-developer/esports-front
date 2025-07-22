@@ -4,6 +4,7 @@ import Link from 'next/link'
 import LoginModal from './LoginModal'
 import { useSelector, useDispatch } from 'react-redux'
 import { logout, rehydrateAuth, fetchWalletBalance } from '../features/auth/authSlice'
+import { Wallet } from 'lucide-react'
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -58,11 +59,9 @@ const Navbar = () => {
   }
 
   const navItems = [
-    { name: 'Home', href: '/home' },
-    { name: 'Games', href: '/games' },
-    { name: 'Wallet', href: '/wallet' },
+    { name: 'Home', href: '/' },
     { name: 'Support', href: '/support' },
-    { name: 'About', href: '/about' },
+    { name: 'About', href: '/about-us' },
   ]
 
   return (
@@ -102,9 +101,9 @@ const Navbar = () => {
               {/* Wallet Balance - Show only when logged in on desktop */}
               {isLoggedIn && (
                 <div className="hidden sm:flex items-center space-x-2 bg-secondary/10 px-4 py-2.5 rounded-full border border-secondary/30 hover:border-secondary/50 transition-all duration-300">
-                  <div className="w-6 h-6 bg-gradient-to-r from-secondary to-accent rounded-full flex items-center justify-center text-xs shadow-sm">
-                    💰
-                  </div>
+                {/* <div className="w-6 h-6 bg-gradient-to-r from-secondary to-accent rounded-full flex items-center justify-center shadow-sm">
+                    <Wallet className="w-3 h-3 text-white" />
+                  </div> */}
                   <span className="text-sm font-semibold text-text">
                     ${balance.toFixed(2)}
                   </span>
@@ -124,11 +123,11 @@ const Navbar = () => {
                   <div className="flex items-center space-x-3">
                     {/* Mobile Wallet Balance - Show on mobile when logged in */}
                     <div className="sm:hidden flex items-center space-x-2 bg-secondary/10 px-3 py-2 rounded-full border border-secondary/30">
-                      <div className="w-5 h-5 bg-gradient-to-r from-secondary to-accent rounded-full flex items-center justify-center text-xs">
-                        💰
+                    <div className="w-5 h-5 bg-gradient-to-r from-secondary to-accent rounded-full flex items-center justify-center">
+                        <Wallet className="w-3 h-3 text-white" />
                       </div>
                       <span className="text-xs font-semibold text-text">
-                        ${balance.toFixed(2)}
+                         {balance.toFixed(2)}
                       </span>
                     </div>
                   </div>

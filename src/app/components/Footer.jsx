@@ -10,7 +10,7 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-2xl font-bold text-[#64ffda]">Zennova</h3>
             <p className="text-white/70 text-sm leading-relaxed">
-              Premium gaming currency provider offering instant diamonds, coins, and in-game credits at unbeatable prices with secure transactions.
+            We provide a secure and efficient platform for gamers to instantly acquire diamonds, coins, and in-game credits at competitive prices.
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-white/50 hover:text-[#64ffda] transition-colors duration-300">
@@ -36,7 +36,7 @@ const Footer = () => {
             <h4 className="text-lg font-semibold text-white">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/home" className="text-white/70 hover:text-[#64ffda] transition-colors duration-300 text-sm">
+                <Link href="/" className="text-white/70 hover:text-[#64ffda] transition-colors duration-300 text-sm">
                   Home
                 </Link>
               </li>

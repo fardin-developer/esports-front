@@ -14,35 +14,42 @@ const GameCard = ({ game, gameId }) => {
   }
 
   return (
-    <div
-      className={`flex flex-col rounded-2xl overflow-hidden border transition-all duration-300 cursor-pointer relative group bg-surface border-border ${
-        isHovered ? 'transform -translate-y-3 shadow-primary border-primary' : ''
-      }`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onClick={handleCardClick}
-    >
-      {/* Hover overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-      {/* Game Image */}
-      <div className={`flex-1 flex items-center justify-center bg-gradient-to-r ${game.gradient} text-6xl relative overflow-hidden`}>
-        <div className="relative z-10">
-          <img src='https://play-lh.googleusercontent.com/4y4Hob34qNkReHWoah36OV0F0oPI6N2eakOx5dsActLEHTMidJ2WMjSpC9kTqOuM3hY' alt="" />
-        </div>
-        <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform transition-transform duration-500 ${
-          isHovered ? 'translate-x-full' : '-translate-x-full'
-        }`}></div>
-      </div>
-      {/* Game Info */}
-      <div className="p-2 flex flex-col gap-2 justify-between">
-        <span className="text-sm text-text">
-          {game.title}
-        </span>
-        <p className="text-xs leading-relaxed line-clamp-2 text-text opacity-70">
-          {game.description}
-        </p>
-      </div>
+<div 
+  className={`flex flex-col w-full h-full rounded-xl md:rounded-2xl overflow-hidden border transition-all duration-300 cursor-pointer relative group bg-surface border-border ${
+    isHovered ? 'transform -translate-y-2 md:-translate-y-3 shadow-lg md:shadow-primary border-primary' : ''
+  }`}
+  onMouseEnter={() => setIsHovered(true)} 
+  onMouseLeave={() => setIsHovered(false)} 
+  onClick={handleCardClick}
+>
+  {/* Hover overlay */}
+  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+  
+  {/* Game Image - Responsive aspect ratio */}
+  <div className={`aspect-[3/4] sm:aspect-square md:aspect-[4/5] bg-gradient-to-r ${game.gradient || 'from-blue-500 to-purple-600'} relative overflow-hidden`}>
+    <div className="relative z-10 w-full h-full">
+      <img 
+        src={game.img} 
+        alt={game.title}
+        className="w-full h-full object-cover"
+        loading="lazy"
+      />
     </div>
+    <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform transition-transform duration-500 ${
+      isHovered ? 'translate-x-full' : '-translate-x-full'
+    }`}></div>
+  </div>
+  
+  {/* Game Info - Responsive padding and text */}
+  <div className="p-2 sm:p-3 md:p-4 flex flex-col gap-1 md:gap-2 justify-between flex-shrink-0 min-h-[50px] sm:min-h-[60px] md:min-h-[70px] lg:min-h-[80px]">
+    <span className="text-xs sm:text-sm md:text-base font-medium text-text line-clamp-1 sm:line-clamp-2 leading-tight">
+      {game.title}
+    </span>
+    <p className="text-xs sm:text-xs md:text-sm leading-relaxed line-clamp-1 sm:line-clamp-2 text-text opacity-70 hidden sm:block">
+      {game.description}
+    </p>
+  </div>
+</div>
   )
 }
 

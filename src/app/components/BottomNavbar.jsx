@@ -9,7 +9,7 @@ const BottomNavbar = ({ balance, userMobile }) => {
   const navItems = [
     {
       name: 'Home',
-      href: '/home',
+      href: '/',
       icon: 'public/home2.png',
       activeIcon: 'public/home2.png'
     },
