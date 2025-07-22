@@ -80,7 +80,7 @@ export default function SettingsPage() {
           </div>
           <div className="flex flex-col items-end">
             <span className="text-xs text-text-muted">Balance</span>
-            <span className="font-bold text-primary text-lg">${balance.toFixed(2)}</span>
+            <span className="font-bold text-primary text-lg">{balance.toFixed(2)}</span>
           </div>
         </div>
 
