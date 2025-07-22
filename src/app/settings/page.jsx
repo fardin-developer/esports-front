@@ -1,6 +1,9 @@
 "use client"
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { useRouter } from 'next/navigation'  // ← added
+
+
 import { fetchWalletBalance } from '../features/auth/authSlice'
 import { apiClient } from '../apiClient'
 
@@ -11,9 +14,10 @@ const generalOptions = [
 ]
 
 const aboutOptions = [
-  { icon: '🏢', label: 'About Company', href: '/about' },
+  { icon: '🏢', label: 'About Company', href: '/about-us' },
   { icon: '📄', label: 'Privacy Policy', href: '/privacy-policy' },
-  { icon: '📜', label: 'Terms & Conditions', href: '/terms' },
+  { icon: '📜', label: 'Website Terms & Conditions', href: '/terms-website' },
+  { icon: '📜', label: 'User Terms & Conditions', href: '/user-terms' },
 ]
 
 export default function SettingsPage() {
@@ -46,6 +50,7 @@ export default function SettingsPage() {
     }
     fetchProfile()
   }, [])
+  const router = useRouter()
 
   return (
     <main className="min-h-screen bg-bg py-4 px-2 md:px-0">
@@ -71,12 +76,17 @@ export default function SettingsPage() {
           <div className="px-5 pt-4 pb-2 text-xs font-bold text-text-muted tracking-widest">GENERAL</div>
           <ul>
             {generalOptions.map((opt, i) => (
-              <li key={opt.label} className={`flex items-center px-5 py-4 text-text text-base border-b border-border last:border-b-0 cursor-pointer hover:bg-surface-light transition`}> 
+              <li
+                key={opt.label}
+                onClick={() => router.push(opt.href)}
+                className="flex items-center px-5 py-4 text-text text-base border-b border-border last:border-b-0 cursor-pointer hover:bg-surface-light transition"
+              >
                 <span className="mr-4 text-lg">{opt.icon}</span>
                 <span className="flex-1">{opt.label}</span>
                 <span className="text-text-muted">›</span>
               </li>
             ))}
+
           </ul>
         </section>
 
@@ -85,12 +95,17 @@ export default function SettingsPage() {
           <div className="px-5 pt-4 pb-2 text-xs font-bold text-text-muted tracking-widest">ABOUT & TERMS</div>
           <ul>
             {aboutOptions.map((opt, i) => (
-              <li key={opt.label} className={`flex items-center px-5 py-4 text-text text-base border-b border-border last:border-b-0 cursor-pointer hover:bg-surface-light transition`}> 
+              <li
+                key={opt.label}
+                onClick={() => router.push(opt.href)}
+                className="flex items-center px-5 py-4 text-text text-base border-b border-border last:border-b-0 cursor-pointer hover:bg-surface-light transition"
+              >
                 <span className="mr-4 text-lg">{opt.icon}</span>
                 <span className="flex-1">{opt.label}</span>
                 <span className="text-text-muted">›</span>
               </li>
             ))}
+
           </ul>
         </section>
 

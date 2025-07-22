@@ -139,13 +139,13 @@ const Actions = () => {
     <section className="w-full px-4 py-8 relative">
       <AddBalanceModal open={showAddBalance} onClose={() => setShowAddBalance(false)} />
       
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="grid grid-cols-4 md:grid-cols-4 gap-4 md:gap-6">
           {actions.map((action, idx) => (
             <button
               key={action.label}
               className={`
-                group flex flex-col items-center justify-center aspect-square rounded-2xl p-4 
+                group flex flex-col items-center justify-center aspect-square rounded-2xl pt-4 pb-4
                 bg-[#18181b] border border-[#334155] 
                 hover:border-[#38bdf8]/50 hover:-translate-y-1 hover:shadow-xl
                 ${action.glowColor}
@@ -159,19 +159,19 @@ const Actions = () => {
             >
               {/* Icon container with colored background */}
               <div className={`
-                flex items-center justify-center w-6 h-6 md:w-14 md:h-14 rounded-xl mb-3
+                flex items-center justify-center w-8 h-7 md:w-14 md:h-14 rounded-xl mb-3
                 ${action.bgColor} ${action.hoverBg}
                 transition-all duration-300 group-hover:scale-110
               `}>
                 <img 
-                  className="w-3=2 h-3 md:w-8 md:h-8 object-contain filter brightness-0 invert" 
+                  className="w-3 h-3 md:w-8 md:h-8 object-contain filter brightness-0 invert" 
                   src={action.icon} 
                   alt={action.label} 
                 />
               </div>
               
               {/* Label */}
-              <span className="text-[10px] md:text-base text-[#f1f5f9] font-medium text-center transition-colors duration-300 group-hover:text-white">
+              <span className="text-[9px] md:text-base text-[#f1f5f9] font-medium text-center transition-colors duration-300 group-hover:text-white">
                 {action.label}
               </span>
               
