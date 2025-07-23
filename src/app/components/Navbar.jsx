@@ -105,7 +105,7 @@ const Navbar = () => {
                     <Wallet className="w-3 h-3 text-white" />
                   </div> */}
                   <span className="text-sm font-semibold text-text">
-                    ${balance.toFixed(2)}
+                    {balance.toFixed(2)}
                   </span>
                 </div>
               )}

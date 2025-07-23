@@ -149,7 +149,7 @@ const Actions = () => {
     <section className="w-full px-4 py-8 relative">
       <AddBalanceModal open={showAddBalance} onClose={() => setShowAddBalance(false)} />
 
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-5xl mx-auto flex justify-center">
         <div className="grid grid-cols-4 md:grid-cols-4 gap-4 md:gap-6 lg:w-4/5">
           {actions.map((action, idx) => (
             <button
@@ -161,19 +161,19 @@ const Actions = () => {
                 ${action.glowColor}
                 focus:outline-none focus:ring-2 focus:ring-[#38bdf8]/50 focus:border-[#38bdf8]
                 transition-all duration-300 ease-out transform-gpu
-                active:scale-95 active:translate-y-0
+                active:scale-95 active:translate-y-0 md:w-4/5 lg:w-4/5
               `}
               onMouseEnter={() => setHoveredIndex(idx)}
               onMouseLeave={() => setHoveredIndex(null)}
               onClick={() => handleClick(action, idx)}
             >
               <div className={`
-                flex items-center justify-center w-8 h-7 md:w-14 md:h-14 rounded-xl mb-3
+                flex items-center justify-center w-8 h-7 md:w-12 md:h-12 rounded-xl mb-3
                 ${action.bgColor} ${action.hoverBg}
                 transition-all duration-300 group-hover:scale-110
               `}>
                 <img 
-                  className="w-3 h-3 md:w-8 md:h-8 object-contain filter brightness-0 invert" 
+                  className="w-3 h-3 md:w-6 md:h-6 object-contain filter brightness-0 invert" 
                   src={action.icon} 
                   alt={action.label} 
                 />
