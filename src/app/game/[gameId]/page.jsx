@@ -300,7 +300,7 @@ export default function GameDiamondPacksPage() {
           </div> */}
           {/* Buy Now Button */}
           <button className="w-full py-3 rounded-xl bg-primary text-white font-bold text-lg tracking-wide shadow-lg hover:bg-primary-dark transition-all duration-200" onClick={handleCreateOrder} disabled={orderLoading}>
-            {orderLoading ? "Processing..." : "+ BUY NOW"}
+            {orderLoading ? "Processing..." : "BUY NOW"}
           </button>
         </div>
       </div>

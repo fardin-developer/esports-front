@@ -150,7 +150,7 @@ const Actions = () => {
       <AddBalanceModal open={showAddBalance} onClose={() => setShowAddBalance(false)} />
 
       <div className="max-w-5xl mx-auto">
-        <div className="grid grid-cols-4 md:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-4 md:grid-cols-4 gap-4 md:gap-6 lg:w-4/5">
           {actions.map((action, idx) => (
             <button
               key={action.label}
