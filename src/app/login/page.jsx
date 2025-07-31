@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { login } from '../features/auth/authSlice';
 import { apiClient } from '../apiClient';
 import { ArrowLeft, Smartphone, CheckCircle, AlertCircle } from 'lucide-react';
@@ -20,12 +20,19 @@ export default function LoginPage() {
   const otpRefs = useRef([]);
   const dispatch = useDispatch();
   const router = useRouter();
-  const searchParams = useSearchParams();
+  // Replace useSearchParams with manual parsing to avoid build-time errors
+  const [redirectUrl, setRedirectUrl] = useState('/');
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const hydrated = useSelector((state) => state.auth.hydrated);
 
-  // Redirect URL from query params
-  const redirectUrl = searchParams.get('redirect') || '/';
+  // Determine redirect URL from query string on client side
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect');
+      if (redirect) setRedirectUrl(redirect);
+    }
+  }, []);
 
   // Redirect if already logged in
   useEffect(() => {

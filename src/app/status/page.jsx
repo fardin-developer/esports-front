@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import { Clock, Package, CheckCircle, XCircle, AlertCircle, Home, List, RefreshCw, CreditCard, Calendar, Hash } from 'lucide-react';
+
 import { apiClient } from '../apiClient';
 
 export default function OrderStatusPage() {
-  const [statusData, setStatusData] = useState(null);
+  const [orderData, setOrderData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [orderId, setOrderId] = useState(null);
@@ -20,205 +22,280 @@ export default function OrderStatusPage() {
     }
 
     setOrderId(idFromURL);
-
-    async function fetchStatus() {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await apiClient.get(`/moogold/order-status?orderId=${idFromURL}`);
-        if (!data.success) {
-          throw new Error(data.message || 'Failed to fetch order status');
-        }
-        setStatusData(data.data);
-      } catch (e) {
-        console.error('API Error:', e);
-        setError(`Failed to fetch order status: ${e.message}`);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchStatus();
+    fetchOrderStatus(idFromURL);
   }, []);
 
-  const getStatusColor = (status) => {
-    if (!status) return 'text-gray-400 bg-gray-100';
-    if (status === 'completed') return 'text-green-600 bg-green-100';
-    if (status === 'pending') return 'text-yellow-600 bg-yellow-100';
-    if (status === 'processing') return 'text-blue-600 bg-blue-100';
-    if (status === 'failed' || status === 'cancelled') return 'text-red-600 bg-red-100';
-    return 'text-purple-600 bg-purple-100';
+  const fetchOrderStatus = async (id) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await apiClient.get(`/order/order-status?orderId=${id}`);
+      if (!response.success) {
+        throw new Error(response.message || 'Failed to fetch order status');
+      }
+      setOrderData(response.order);
+    } catch (e) {
+      console.error('API Error:', e);
+      setError(`Failed to fetch order status: ${e.message}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const getStatusIcon = (status) => {
-    if (status === 'completed') return '✅';
-    if (status === 'pending') return '⏳';
-    if (status === 'processing') return '🔄';
-    if (status === 'failed' || status === 'cancelled') return '❌';
-    return '📦';
+  const getStatusConfig = (status) => {
+    const configs = {
+      pending: {
+        color: 'bg-amber-50 text-amber-700 border-amber-200',
+        icon: Clock,
+        iconColor: 'text-amber-500',
+        label: 'Pending'
+      },
+      processing: {
+        color: 'bg-blue-50 text-blue-700 border-blue-200',
+        icon: RefreshCw,
+        iconColor: 'text-blue-500',
+        label: 'Processing'
+      },
+      completed: {
+        color: 'bg-green-50 text-green-700 border-green-200',
+        icon: CheckCircle,
+        iconColor: 'text-green-500',
+        label: 'Completed'
+      },
+      failed: {
+        color: 'bg-red-50 text-red-700 border-red-200',
+        icon: XCircle,
+        iconColor: 'text-red-500',
+        label: 'Failed'
+      },
+      cancelled: {
+        color: 'bg-gray-50 text-gray-700 border-gray-200',
+        icon: XCircle,
+        iconColor: 'text-gray-500',
+        label: 'Cancelled'
+      }
+    };
+    return configs[status] || {
+      color: 'bg-gray-50 text-gray-700 border-gray-200',
+      icon: AlertCircle,
+      iconColor: 'text-gray-500',
+      label: status || 'Unknown'
+    };
   };
 
-  const formatDate = (dateObj) => {
-    if (!dateObj || !dateObj.date) return 'N/A';
-    return new Date(dateObj.date).toLocaleString('en-US', {
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleString('en-US', {
       year: 'numeric',
-      month: 'long',
+      month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
+      minute: '2-digit'
     });
   };
 
-  const calculateTotal = (items) => {
-    return items.reduce((total, item) => total + (parseFloat(item.price) * item.quantity), 0).toFixed(2);
+  const formatCurrency = (amount, currency = 'INR') => {
+    const symbol = currency === 'INR' ? '₹' : '$';
+    return `${symbol}${parseFloat(amount || 0).toFixed(2)}`;
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="bg-white rounded-lg shadow-sm p-8 max-w-md w-full mx-4">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Loading Order Details</h3>
+            <p className="text-gray-500">Please wait while we fetch your order information...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="bg-white rounded-lg shadow-sm p-8 max-w-md w-full mx-4">
+          <div className="text-center">
+            <XCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Unable to Load Order</h3>
+            <p className="text-gray-500 mb-6">{error}</p>
+            <button 
+              onClick={() => fetchOrderStatus(orderId)}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!orderData) return null;
+
+  const statusConfig = getStatusConfig(orderData.status);
+  const StatusIcon = statusConfig.icon;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-8 px-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Order Status</h1>
-          <p className="text-gray-600">Track your order progress in real-time</p>
-          {orderId && <p className="text-sm text-gray-500 mt-2">Order ID: {orderId}</p>}
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Order Details</h1>
+              <p className="mt-1 text-sm text-gray-500">
+                Track your order status and details
+              </p>
+            </div>
+            <button 
+              onClick={() => fetchOrderStatus(orderId)}
+              className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh
+            </button>
+          </div>
         </div>
 
-        {/* Main Content Card */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          {loading && (
-            <div className="flex flex-col items-center justify-center py-16">
-              <div className="relative">
-                <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-              </div>
-              <div className="text-gray-600 text-lg mt-4">Fetching your order details...</div>
-            </div>
-          )}
-
-          {error && (
-            <div className="p-8">
-              <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-                <div className="text-red-600 text-6xl mb-4">⚠️</div>
-                <h3 className="text-red-800 font-semibold text-lg mb-2">Error Loading Order</h3>
-                <p className="text-red-600">{error}</p>
-                <button 
-                  className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                  onClick={() => window.location.reload()}
-                >
-                  Try Again
-                </button>
-              </div>
-            </div>
-          )}
-
-          {statusData && (
-            <div className="p-8">
-              {/* Order Header */}
-              <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl p-6 mb-6">
-                <div className="flex items-center justify-between flex-wrap gap-4">
-                  <div>
-                    <h2 className="text-2xl font-bold mb-1">Order #{statusData.order_id}</h2>
-                    <p className="text-blue-100">Created: {formatDate(statusData.date_created)}</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-3xl">{getStatusIcon(statusData.order_status)}</span>
-                    <span className={`px-4 py-2 rounded-full text-sm font-semibold ${getStatusColor(statusData.order_status)} bg-white`}>
-                      {statusData.order_status?.toUpperCase()}
-                    </span>
-                  </div>
+        <div className="space-y-6">
+          {/* Order Status Card */}
+          <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Package className="h-5 w-5 text-gray-400 mr-3" />
+                  <h2 className="text-lg font-medium text-gray-900">Order Status</h2>
+                </div>
+                <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${statusConfig.color}`}>
+                  <StatusIcon className={`h-4 w-4 mr-2 ${statusConfig.iconColor}`} />
+                  {statusConfig.label}
                 </div>
               </div>
+            </div>
+            <div className="px-6 py-4">
+              <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+                <div>
+                  <dt className="text-sm font-medium text-gray-500 flex items-center">
+                    <Hash className="h-4 w-4 mr-2" />
+                    Order ID
+                  </dt>
+                  <dd className="mt-1 text-sm text-gray-900 font-mono">{orderData._id}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm font-medium text-gray-500 flex items-center">
+                    <Calendar className="h-4 w-4 mr-2" />
+                    Order Date
+                  </dt>
+                  <dd className="mt-1 text-sm text-gray-900">{formatDate(orderData.createdAt)}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm font-medium text-gray-500 flex items-center">
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    Payment Method
+                  </dt>
+                  <dd className="mt-1 text-sm text-gray-900 capitalize">{orderData.paymentMethod}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm font-medium text-gray-500">Order Type</dt>
+                  <dd className="mt-1 text-sm text-gray-900 capitalize">{orderData.orderType.replace(/_/g, ' ')}</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
 
-              {/* Order Items */}
-              {statusData.item && statusData.item.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    🛒 Order Items ({statusData.item.length})
-                  </h3>
-                  <div className="space-y-4">
-                    {statusData.item.map((item, idx) => (
-                      <div key={idx} className="bg-gray-50 rounded-xl p-6 hover:shadow-md transition-shadow">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex-1">
-                            <h4 className="text-lg font-semibold text-gray-800 mb-2">{item.product}</h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium text-gray-600">Variation ID:</span>
-                                <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">{item.variation_id}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium text-gray-600">Quantity:</span>
-                                <span className="bg-green-100 text-green-800 px-2 py-1 rounded">×{item.quantity}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium text-gray-600">Unit Price:</span>
-                                <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded">₹{item.price}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium text-gray-600">Player ID:</span>
-                                <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded font-mono">{item.player_id}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium text-gray-600">Server ID:</span>
-                                <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded font-mono">{item.server_id}</span>
-                              </div>
-                              {item.voucher_code && (
-                                <div className="flex items-center gap-2">
-                                  <span className="font-medium text-gray-600">Voucher:</span>
-                                  <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded font-mono">{item.voucher_code}</span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                          <div className="text-right ml-4">
-                            <div className="text-lg font-bold text-gray-800">
-                              ₹{(parseFloat(item.price) * item.quantity).toFixed(2)}
-                            </div>
-                            <div className="text-sm text-gray-500">Total</div>
-                          </div>
-                        </div>
+          {/* Order Items */}
+          <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-medium text-gray-900">Order Items</h3>
+            </div>
+            <div className="px-6 py-4">
+              <div className="space-y-4">
+                {orderData.items.map((item, index) => (
+                  <div key={item._id || index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div className="flex-1">
+                      <h4 className="text-sm font-medium text-gray-900">{item.itemName}</h4>
+                      <div className="mt-2 flex items-center space-x-4 text-sm text-gray-500">
+                        <span>Item ID: {item.itemId}</span>
+                        <span>Qty: {item.quantity}</span>
+                        <span>Unit Price: {formatCurrency(item.price, orderData.currency)}</span>
                       </div>
-                    ))}
-                  </div>
-
-                  {/* Order Total */}
-                  <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 mt-4 border border-green-200">
-                    <div className="flex justify-between items-center">
-                      <span className="text-xl font-semibold text-gray-800">Order Total</span>
-                      <span className="text-2xl font-bold text-green-600">₹{calculateTotal(statusData.item)}</span>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm font-medium text-gray-900">
+                        {formatCurrency(item.price * item.quantity, orderData.currency)}
+                      </div>
+                      <div className="text-sm text-gray-500">Total</div>
                     </div>
                   </div>
-                </div>
-              )}
+                ))}
+              </div>
+            </div>
+          </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 mt-8">
-                <button 
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center gap-2"
-                  onClick={() => window.location.href = '/'}
-                >
-                  🏠 Go to Home
-                </button>
-                <button 
-                  className="flex-1 bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 px-6 rounded-xl font-semibold hover:from-gray-700 hover:to-gray-800 transition-all duration-200 flex items-center justify-center gap-2"
-                  onClick={() => window.location.href = '/orders'}
-                >
-                  📋 View All Orders
-                </button>
-                <button 
-                  className="flex-1 bg-gradient-to-r from-green-600 to-teal-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-green-700 hover:to-teal-700 transition-all duration-200 flex items-center justify-center gap-2"
-                  onClick={() => window.location.reload()}
-                >
-                  🔄 Refresh Status
-                </button>
+          {/* Order Summary */}
+          <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-medium text-gray-900">Order Summary</h3>
+            </div>
+            <div className="px-6 py-4">
+              <div className="space-y-3">
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span>Subtotal</span>
+                  <span>{formatCurrency(orderData.amount, orderData.currency)}</span>
+                </div>
+                <div className="border-t border-gray-200 pt-3">
+                  <div className="flex justify-between text-base font-medium text-gray-900">
+                    <span>Total</span>
+                    <span>{formatCurrency(orderData.amount, orderData.currency)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Description */}
+          {orderData.description && (
+            <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-200">
+                <h3 className="text-lg font-medium text-gray-900">Description</h3>
+              </div>
+              <div className="px-6 py-4">
+                <p className="text-sm text-gray-700">{orderData.description}</p>
               </div>
             </div>
           )}
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button 
+              onClick={() => window.location.href = '/'}
+              className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <Home className="h-4 w-4 mr-2" />
+              Go to Home
+            </button>
+            <button 
+              onClick={() => window.location.href = '/orders'}
+              className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <List className="h-4 w-4 mr-2" />
+              View All Orders
+            </button>
+          </div>
         </div>
 
-        {/* Footer */}
-        <div className="text-center mt-8 text-gray-500">
-          <p>Need help? Contact our support team for assistance.</p>
+        {/* Support Footer */}
+        <div className="mt-12 text-center">
+          <p className="text-sm text-gray-500">
+            Need help with your order?{' '}
+            <a href="/support" className="font-medium text-blue-600 hover:text-blue-500">
+              Contact Support
+            </a>
+          </p>
         </div>
       </div>
     </div>

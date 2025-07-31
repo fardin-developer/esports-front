@@ -153,11 +153,12 @@ export default function GameDiamondPacksPage() {
     const pack = diamondPacks.find(p => p._id === selectedPack);
     if (!pack) return;
   
-    const productId = pack.apiMappings && pack.apiMappings.length > 0 ? pack.apiMappings[0].productId : undefined;
-    if (!productId) {
-      setOrderResult({ success: false, message: 'No productId found for this pack. Cannot create order.' });
-      return;
-    }
+    // Remove productId check since it's not in the new response format
+    // const productId = pack.apiMappings && pack.apiMappings.length > 0 ? pack.apiMappings[0].productId : undefined;
+    // if (!productId) {
+    //   setOrderResult({ success: false, message: 'No productId found for this pack. Cannot create order.' });
+    //   return;
+    // }
   
     setOrderLoading(true);
     setOrderResult(null);
@@ -165,14 +166,15 @@ export default function GameDiamondPacksPage() {
     try {
       const payload = {
         diamondPackId: pack._id,
-        productId: productId,
+        // Remove productId from payload since it's not available in new format
+        // productId: productId,
         playerId: validationValues.userId || validationValues.UserId || validationValues['User ID'],
         server: validationValues.serverId || validationValues.ServerId || validationValues['Server ID'],
         quantity: 1,
       };
   
       const result = await apiClient.post('/order/diamond-pack', payload);
-      const orderId = result.externalApiResponse.order_id
+      const orderId = result.externalApiResponse.partnerOrderId
       console.log(orderId);
       setOrderResult(result);
       console.log("2 ");
