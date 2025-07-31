@@ -23,6 +23,20 @@ const authSlice = createSlice({
       state.isLoggedIn = false
       state.userMobile = ''
       state.balance = 0
+      // Clear localStorage when logging out
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('auth')
+      }
+    },
+    forceLogout: (state) => {
+      // Force logout for 401 errors - same as logout but can be tracked separately
+      state.token = null
+      state.isLoggedIn = false
+      state.userMobile = ''
+      state.balance = 0
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('auth')
+      }
     },
     rehydrateAuth: (state, action) => {
       // Only update if payload exists
@@ -40,19 +54,19 @@ const authSlice = createSlice({
   },
 })
 
-export const { login, logout, rehydrateAuth, setBalance } = authSlice.actions
+export const { login, logout, forceLogout, rehydrateAuth, setBalance } = authSlice.actions
 
 // Thunk to fetch wallet balance
-export const fetchWalletBalance = () => async (dispatch) => {
+export const fetchWalletBalance = () => async (dispatch, getState) => {
   try {
-    const res = await apiClient.get('/wallet/balance');
-    if (res.success) {
-      dispatch(setBalance(res.balance));
+    const response = await apiClient.get('/wallet/balance')
+    if (response.success) {
+      dispatch(setBalance(response.balance))
     }
-  } catch (e) {
-    // Optionally handle error
-    // dispatch(setBalance(0));
+  } catch (error) {
+    console.error('Failed to fetch wallet balance:', error)
+    // Don't dispatch anything on error to avoid infinite loops
   }
-};
+}
 
 export default authSlice.reducer 

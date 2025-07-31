@@ -68,34 +68,32 @@ export default function PaymentStatusPage() {
 
   const fetchEkqrTransactionStatus = async (clientTxnId, txnId) => {
     try {
-      const auth = JSON.parse(localStorage.getItem('auth'));
-      const token = auth?.token;
-
-      const response = await apiClient.get(`/transaction/ekqr/status?client_txn_id=${clientTxnId}&txn_id=${txnId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const response = await apiClient.get(`/transaction/status?client_txn_id=${clientTxnId}&txn_id=${txnId}`);
 
       if (!response.success) {
         throw new Error(response.message || 'Failed to fetch transaction status');
       }
 
-      // Transform ekqr response to match our display format
+      const data = response.data;
+
+      // Normalize/transform ekqr response (supports both old snake_case and new camelCase formats)
       const transformedData = {
-        ...response.data,
-        gatewayType: 'ekqr',
-        orderId: response.data.client_txn_id,
-        gatewayOrderId: response.data.id,
-        upiTxnId: response.data.upi_txn_id,
+        ...data,
+        gatewayType: data.gatewayType || 'ekqr',
+        orderId: data.orderId || data.client_txn_id,
+        gatewayOrderId: data.txnId || data.id,
+        upiTxnId: data.upiTxnId || data.upi_txn_id,
+        amount: data.amount,
+        status: data.status,
         customerInfo: {
-          name: response.data.customer_name,
-          email: response.data.customer_email,
-          mobile: response.data.customer_mobile,
-          vpa: response.data.customer_vpa
+          name: data.customerName || data.customer_name,
+          email: data.customerEmail || data.customer_email,
+          mobile: data.customerNumber || data.customer_mobile,
+          vpa: data.customerVpa || data.customer_vpa,
         },
-        merchant: response.data.Merchant,
-        ekqrResponse: response.ekqr_response
+        paymentNote: data.paymentNote || data.p_info,
+        merchant: data.merchant || data.Merchant,
+        ekqrResponse: response.ekqr_response,
       };
 
       setStatusData(transformedData);
@@ -110,14 +108,7 @@ export default function PaymentStatusPage() {
 
   const fetchWalletPaymentStatus = async (id) => {
     try {
-      const auth = JSON.parse(localStorage.getItem('auth'));
-      const token = auth?.token;
-
-      const response = await apiClient.get(`/wallet/payment-status/${id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const response = await apiClient.get(`/wallet/payment-status/${id}`);
 
       if (!response.success) {
         throw new Error(response.message || 'Failed to fetch payment status');

@@ -56,19 +56,12 @@ const AddBalanceModal = ({ open, onClose }) => {
     }
     setLoading(true)
     try {
-      const auth = JSON.parse(localStorage.getItem('auth'))
-      const token = auth?.token
-
       // Get dynamic domain
       const currentDomain = window.location.origin
       
       const response = await apiClient.post('/wallet/add', {
         amount: Number(amount),
         redirectUrl: `${currentDomain}/payment/status`,
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
       })
 
       if (!response.success || !response.transaction?.paymentUrl) {

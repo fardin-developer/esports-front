@@ -135,7 +135,7 @@ export default function SettingsPage() {
                 await apiClient.post('/user/logout')
                 setProfile({ name: '', email: '', avatar: '', status: '' })
                 dispatch({ type: 'auth/logout' })
-                window.location.href = '/login'
+                window.location.href = '/'
               } catch (e) {
                 // handle error (optional)
               }
