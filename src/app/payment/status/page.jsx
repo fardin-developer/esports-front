@@ -11,7 +11,12 @@ import {
   CreditCard, 
   ArrowLeft,
   Copy,
-  ExternalLink
+  ExternalLink,
+  User,
+  Mail,
+  Phone,
+  Calendar,
+  Hash
 } from 'lucide-react';
 
 export default function PaymentStatusPage() {
@@ -22,35 +27,88 @@ export default function PaymentStatusPage() {
   const [paymentUrl, setPaymentUrl] = useState(null);
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [transactionType, setTransactionType] = useState('wallet'); // 'wallet' or 'ekqr'
+  const [urlParams, setUrlParams] = useState({});
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const idFromURL = params.get('transactionId');
+    const clientTxnId = params.get('client_txn_id');
+    const txnId = params.get('txn_id');
+    const walletTransactionId = params.get('transactionId');
     const paymentUrlFromURL = params.get('paymentUrl');
 
-    if (!idFromURL) {
-      setError('No transaction ID provided in URL');
+    // Determine transaction type based on URL parameters
+    if (clientTxnId && txnId) {
+      // New ekqr transaction flow
+      setTransactionType('ekqr');
+      setUrlParams({ client_txn_id: clientTxnId, txn_id: txnId });
+      setTransactionId(clientTxnId);
+      fetchEkqrTransactionStatus(clientTxnId, txnId);
+    } else if (walletTransactionId) {
+      // Original wallet transaction flow
+      setTransactionType('wallet');
+      setTransactionId(walletTransactionId);
+      if (paymentUrlFromURL) {
+        setPaymentUrl(decodeURIComponent(paymentUrlFromURL));
+      }
+      fetchWalletPaymentStatus(walletTransactionId);
+      
+      // Poll for status updates every 5 seconds for wallet transactions
+      const interval = setInterval(() => {
+        fetchWalletPaymentStatus(walletTransactionId);
+      }, 5000);
+
+      return () => clearInterval(interval);
+    } else {
+      setError('No transaction parameters provided in URL');
       setLoading(false);
       return;
     }
-
-    setTransactionId(idFromURL);
-    if (paymentUrlFromURL) {
-      setPaymentUrl(decodeURIComponent(paymentUrlFromURL));
-    }
-
-    // Initial fetch
-    fetchPaymentStatus(idFromURL);
-
-    // Poll for status updates every 5 seconds
-    const interval = setInterval(() => {
-      fetchPaymentStatus(idFromURL);
-    }, 5000);
-
-    return () => clearInterval(interval);
   }, []);
 
-  const fetchPaymentStatus = async (id) => {
+  const fetchEkqrTransactionStatus = async (clientTxnId, txnId) => {
+    try {
+      const auth = JSON.parse(localStorage.getItem('auth'));
+      const token = auth?.token;
+
+      const response = await apiClient.get(`/transaction/ekqr/status?client_txn_id=${clientTxnId}&txn_id=${txnId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.success) {
+        throw new Error(response.message || 'Failed to fetch transaction status');
+      }
+
+      // Transform ekqr response to match our display format
+      const transformedData = {
+        ...response.data,
+        gatewayType: 'ekqr',
+        orderId: response.data.client_txn_id,
+        gatewayOrderId: response.data.id,
+        upiTxnId: response.data.upi_txn_id,
+        customerInfo: {
+          name: response.data.customer_name,
+          email: response.data.customer_email,
+          mobile: response.data.customer_mobile,
+          vpa: response.data.customer_vpa
+        },
+        merchant: response.data.Merchant,
+        ekqrResponse: response.ekqr_response
+      };
+
+      setStatusData(transformedData);
+      setError(null);
+    } catch (e) {
+      console.error('EKQR Transaction Status API Error:', e);
+      setError(`Failed to fetch transaction status: ${e.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchWalletPaymentStatus = async (id) => {
     try {
       const auth = JSON.parse(localStorage.getItem('auth'));
       const token = auth?.token;
@@ -73,7 +131,7 @@ export default function PaymentStatusPage() {
         // Will be cleaned up by useEffect cleanup
       }
     } catch (e) {
-      console.error('Payment Status API Error:', e);
+      console.error('Wallet Payment Status API Error:', e);
       setError(`Failed to fetch payment status: ${e.message}`);
     } finally {
       setLoading(false);
@@ -180,7 +238,9 @@ export default function PaymentStatusPage() {
               </button>
               <div>
                 <h1 className="text-xl font-semibold text-gray-900">Payment Status</h1>
-                <p className="text-sm text-gray-500">Transaction tracking</p>
+                <p className="text-sm text-gray-500">
+                  {transactionType === 'ekqr' ? 'Transaction verification' : 'Transaction tracking'}
+                </p>
               </div>
             </div>
             {statusData && (
@@ -198,7 +258,7 @@ export default function PaymentStatusPage() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <div className="flex flex-col items-center justify-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-              <p className="text-gray-600">Loading payment details...</p>
+              <p className="text-gray-600">Loading transaction details...</p>
             </div>
           </div>
         )}
@@ -207,7 +267,7 @@ export default function PaymentStatusPage() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <div className="text-center">
               <XCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Unable to load payment details</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Unable to load transaction details</h3>
               <p className="text-gray-600 mb-6">{error}</p>
               <button 
                 onClick={() => window.location.reload()}
@@ -235,16 +295,21 @@ export default function PaymentStatusPage() {
                       <p className="text-sm text-gray-600 mt-1">
                         {formatDate(statusData.createdAt)}
                       </p>
+                      {transactionType === 'ekqr' && statusData.p_info && (
+                        <p className="text-sm text-gray-600">{statusData.p_info}</p>
+                      )}
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-gray-500">Transaction ID</p>
+                    <p className="text-sm text-gray-500">
+                      {transactionType === 'ekqr' ? 'Client Transaction ID' : 'Transaction ID'}
+                    </p>
                     <div className="flex items-center space-x-2">
                       <code className="text-sm font-mono text-gray-900 bg-white px-2 py-1 rounded border">
-                        {transactionId?.slice(-8)}
+                        {transactionType === 'ekqr' ? statusData.client_txn_id?.slice(-8) : transactionId?.slice(-8)}
                       </code>
                       <button
-                        onClick={() => copyToClipboard(transactionId)}
+                        onClick={() => copyToClipboard(transactionType === 'ekqr' ? statusData.client_txn_id : transactionId)}
                         className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
                         title="Copy transaction ID"
                       >
@@ -269,35 +334,92 @@ export default function PaymentStatusPage() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Payment Method</span>
-                      <span className="font-medium text-gray-900 uppercase">{statusData.gatewayType}</span>
+                      <span className="font-medium text-gray-900 uppercase">{statusData.gatewayType || 'UPI'}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Order ID</span>
-                      <span className="font-medium text-gray-900">{statusData.orderId}</span>
-                    </div>
+                    {transactionType === 'ekqr' ? (
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Client Transaction ID</span>
+                        <span className="font-medium text-gray-900 font-mono text-xs">{statusData.client_txn_id}</span>
+                      </div>
+                    ) : (
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Order ID</span>
+                        <span className="font-medium text-gray-900">{statusData.orderId}</span>
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-3">
                     <div className="flex justify-between">
                       <span className="text-gray-500">Gateway Order ID</span>
-                      <span className="font-medium text-gray-900">{statusData.gatewayOrderId}</span>
+                      <span className="font-medium text-gray-900">{statusData.gatewayOrderId || statusData.id}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Created</span>
-                      <span className="font-medium text-gray-900">{formatDate(statusData.createdAt)}</span>
-                    </div>
-                    {statusData.updatedAt && (
+                    {statusData.upiTxnId && (
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Last Updated</span>
-                        <span className="font-medium text-gray-900">{formatDate(statusData.updatedAt)}</span>
+                        <span className="text-gray-500">UPI Transaction ID</span>
+                        <span className="font-medium text-gray-900 font-mono text-xs">{statusData.upiTxnId}</span>
                       </div>
                     )}
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Transaction Date</span>
+                      <span className="font-medium text-gray-900">{formatDate(statusData.createdAt)}</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Payment Actions for Pending Status */}
-            {statusData.status === 'pending' && (
+            {/* Customer Information for EKQR transactions */}
+            {transactionType === 'ekqr' && statusData.customerInfo && (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Customer Information</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3">
+                      <User className="w-4 h-4 text-gray-400" />
+                      <span className="text-gray-500">Name:</span>
+                      <span className="font-medium text-gray-900">{statusData.customerInfo.name}</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <Mail className="w-4 h-4 text-gray-400" />
+                      <span className="text-gray-500">Email:</span>
+                      <span className="font-medium text-gray-900">{statusData.customerInfo.email}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3">
+                      <Phone className="w-4 h-4 text-gray-400" />
+                      <span className="text-gray-500">Mobile:</span>
+                      <span className="font-medium text-gray-900">{statusData.customerInfo.mobile}</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <Hash className="w-4 h-4 text-gray-400" />
+                      <span className="text-gray-500">UPI ID:</span>
+                      <span className="font-medium text-gray-900 font-mono text-xs">{statusData.customerInfo.vpa}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Merchant Information for EKQR transactions */}
+            {transactionType === 'ekqr' && statusData.merchant && (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Merchant Information</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Merchant Name</span>
+                    <span className="font-medium text-gray-900">{statusData.merchant.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Merchant UPI ID</span>
+                    <span className="font-medium text-gray-900 font-mono text-xs">{statusData.merchant.upi_id}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Payment Actions for Pending Status (Wallet transactions only) */}
+            {transactionType === 'wallet' && statusData.status === 'pending' && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Complete Your Payment</h3>
                 <p className="text-gray-600 text-sm mb-6">Choose your preferred payment method to complete the transaction.</p>
@@ -385,20 +507,25 @@ export default function PaymentStatusPage() {
             )}
 
             {/* Success Message */}
-            {statusData.status === 'completed' && (
+            {(statusData.status === 'completed' || statusData.status === 'success') && (
               <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
                 <div className="flex items-center">
                   <CheckCircle className="w-8 h-8 text-emerald-600 mr-3" />
                   <div>
                     <h3 className="text-lg font-medium text-emerald-900">Payment Successful</h3>
-                    <p className="text-emerald-700">Your wallet has been credited with ₹{statusData.amount}</p>
+                    <p className="text-emerald-700">
+                      {transactionType === 'ekqr' ? 
+                        `Transaction completed successfully. Amount: ₹${statusData.amount}` :
+                        `Your wallet has been credited with ₹${statusData.amount}`
+                      }
+                    </p>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Auto-refresh indicator for pending payments */}
-            {statusData.status === 'pending' && (
+            {/* Auto-refresh indicator for pending wallet payments */}
+            {transactionType === 'wallet' && statusData.status === 'pending' && (
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <div className="flex items-center text-blue-700">
                   <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
@@ -422,7 +549,13 @@ export default function PaymentStatusPage() {
                 View Transactions
               </button>
               <button
-                onClick={() => fetchPaymentStatus(transactionId)}
+                onClick={() => {
+                  if (transactionType === 'ekqr') {
+                    fetchEkqrTransactionStatus(urlParams.client_txn_id, urlParams.txn_id);
+                  } else {
+                    fetchWalletPaymentStatus(transactionId);
+                  }
+                }}
                 className="sm:w-auto px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
               >
                 <RefreshCw className="w-4 h-4 inline mr-2" />
