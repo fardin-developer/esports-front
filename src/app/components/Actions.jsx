@@ -59,9 +59,12 @@ const AddBalanceModal = ({ open, onClose }) => {
       const auth = JSON.parse(localStorage.getItem('auth'))
       const token = auth?.token
 
+      // Get dynamic domain
+      const currentDomain = window.location.origin
+      
       const response = await apiClient.post('/wallet/add', {
         amount: Number(amount),
-        redirectUrl: 'http://localhost:3001/payment/success',
+        redirectUrl: `${currentDomain}/payment/status`,
       }, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -72,8 +75,12 @@ const AddBalanceModal = ({ open, onClose }) => {
         throw new Error(response.message || 'Failed to create payment')
       }
 
-      // Redirect to payment
-      window.location.href = response.transaction.paymentUrl
+      // Store transaction ID for status tracking
+      localStorage.setItem('currentTransactionId', response.transaction._id)
+      
+      // Redirect to payment status page instead of external payment URL
+      window.location.href = `/payment/status?transactionId=${response.transaction._id}&paymentUrl=${encodeURIComponent(response.transaction.paymentUrl)}`
+      
     } catch (err) {
       setError(err.message || 'Payment failed')
     } finally {
