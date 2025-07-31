@@ -2,6 +2,27 @@
 import React, { useEffect, useState } from 'react'
 import { apiClient } from '../apiClient'
 
+// Helper to get local date string yyyy-mm-dd (not UTC)
+function formatLocalDate(date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+// Helper to convert local date string to UTC for API queries
+function getUTCDateRange(localDateStr, isEndDate = false) {
+  const localDate = new Date(localDateStr)
+  if (isEndDate) {
+    // For end date, set to end of day in local timezone, then convert to UTC
+    localDate.setHours(23, 59, 59, 999)
+  } else {
+    // For start date, set to start of day in local timezone, then convert to UTC
+    localDate.setHours(0, 0, 0, 0)
+  }
+  return localDate.toISOString()
+}
+
 // Helper to get status style
 const getStatusStyle = (status) => {
   switch (status) {
@@ -29,15 +50,15 @@ const ORDER_STATUSES = [
   { value: 'failed', label: 'Failed' },
 ]
 
-const ORDER_TYPES = [
-  { value: '', label: 'All Types' },
-  { value: 'buy', label: 'Buy' },
-  { value: 'sell', label: 'Sell' },
-  { value: 'diamond_pack_purchase', label: 'Diamond Pack' },
-  // Add more types as needed
-]
 
 export default function OrdersPage() {
+  // Date range: default to last 7 days
+  const today = new Date()
+  const weekAgo = new Date()
+  weekAgo.setDate(today.getDate() - 6)
+
+  const [startDate, setStartDate] = useState(formatLocalDate(weekAgo))
+  const [endDate, setEndDate] = useState(formatLocalDate(today))
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -51,7 +72,11 @@ export default function OrdersPage() {
       setLoading(true)
       setError('')
       try {
-        const params = `?page=${page}&limit=10${status ? `&status=${status}` : ''}${orderType ? `&orderType=${orderType}` : ''}`
+        // Convert local dates to UTC range for API query
+        const startUTC = getUTCDateRange(startDate, false)
+        const endUTC = getUTCDateRange(endDate, true)
+        
+        const params = `?page=${page}&limit=10${status ? `&status=${status}` : ''}${orderType ? `&orderType=${orderType}` : ''}&startDate=${encodeURIComponent(startUTC)}&endDate=${encodeURIComponent(endUTC)}`
         const data = await apiClient.get(`/order/history${params}`)
         setOrders(data.orders || [])
         setTotalPages(data.pagination?.totalPages || 1)
@@ -62,7 +87,7 @@ export default function OrdersPage() {
       }
     }
     fetchOrders()
-  }, [page, status, orderType])
+  }, [page, status, orderType, startDate, endDate])
 
   // Pagination
   const handlePrev = () => setPage((p) => Math.max(1, p - 1))
@@ -75,6 +100,16 @@ export default function OrdersPage() {
   }
   const handleOrderType = (e) => {
     setOrderType(e.target.value)
+    setPage(1)
+  }
+
+  // Date input handlers
+  const handleStartDate = (e) => {
+    setStartDate(e.target.value)
+    setPage(1)
+  }
+  const handleEndDate = (e) => {
+    setEndDate(e.target.value)
     setPage(1)
   }
 
@@ -94,7 +129,7 @@ export default function OrdersPage() {
               <label className="block text-sm font-medium text-text mb-3">
                 Filters
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 <div>
                   <label className="block text-xs text-text-muted mb-1">Status</label>
                   <select
@@ -108,16 +143,25 @@ export default function OrdersPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs text-text-muted mb-1">Order Type</label>
-                  <select
-                    value={orderType}
-                    onChange={handleOrderType}
+                  <label className="block text-xs text-text-muted mb-1">From Date</label>
+                  <input 
+                    type="date" 
+                    value={startDate} 
+                    onChange={handleStartDate} 
+                    max={endDate}
                     className="w-full bg-surface border border-border rounded-md px-3 py-2 text-sm text-text focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/20 transition-colors"
-                  >
-                    {ORDER_TYPES.map(opt => (
-                      <option key={opt.value} value={opt.value}>{opt.label}</option>
-                    ))}
-                  </select>
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-text-muted mb-1">To Date</label>
+                  <input 
+                    type="date" 
+                    value={endDate} 
+                    onChange={handleEndDate} 
+                    min={startDate}
+                    max={formatLocalDate(today)}
+                    className="w-full bg-surface border border-border rounded-md px-3 py-2 text-sm text-text focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/20 transition-colors"
+                  />
                 </div>
               </div>
             </div>

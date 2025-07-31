@@ -2,9 +2,25 @@
 import React, { useEffect, useState } from 'react'
 import { apiClient } from '../apiClient'
 
-// Helper to get date string yyyy-mm-dd
-function formatDate(date) {
-  return date.toISOString().slice(0, 10)
+// Helper to get local date string yyyy-mm-dd (not UTC)
+function formatLocalDate(date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+// Helper to convert local date string to UTC for API queries
+function getUTCDateRange(localDateStr, isEndDate = false) {
+  const localDate = new Date(localDateStr)
+  if (isEndDate) {
+    // For end date, set to end of day in local timezone, then convert to UTC
+    localDate.setHours(23, 59, 59, 999)
+  } else {
+    // For start date, set to start of day in local timezone, then convert to UTC
+    localDate.setHours(0, 0, 0, 0)
+  }
+  return localDate.toISOString()
 }
 
 export default function TransactionsPage() {
@@ -13,8 +29,8 @@ export default function TransactionsPage() {
   const weekAgo = new Date()
   weekAgo.setDate(today.getDate() - 6)
 
-  const [startDate, setStartDate] = useState(formatDate(weekAgo))
-  const [endDate, setEndDate] = useState(formatDate(today))
+  const [startDate, setStartDate] = useState(formatLocalDate(weekAgo))
+  const [endDate, setEndDate] = useState(formatLocalDate(today))
   const [transactions, setTransactions] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -26,7 +42,11 @@ export default function TransactionsPage() {
       setLoading(true)
       setError('')
       try {
-        const params = `?startDate=${startDate}&endDate=${endDate}&page=${page}&limit=10`
+        // Convert local dates to UTC range for API query
+        const startUTC = getUTCDateRange(startDate, false)
+        const endUTC = getUTCDateRange(endDate, true)
+        
+        const params = `?startDate=${encodeURIComponent(startUTC)}&endDate=${encodeURIComponent(endUTC)}&page=${page}&limit=10`
         const data = await apiClient.get(`/transaction/history${params}`)
         setTransactions(data.transactions || [])
         setTotalPages(data.pagination?.totalPages || 1)
@@ -94,7 +114,7 @@ export default function TransactionsPage() {
                     value={endDate} 
                     onChange={handleEndDate} 
                     min={startDate}
-                    max={formatDate(today)}
+                    max={formatLocalDate(today)}
                     className="w-full bg-surface border border-border rounded-md px-3 py-2 text-sm text-text focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/20 transition-colors"
                   />
                 </div>

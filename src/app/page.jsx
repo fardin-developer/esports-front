@@ -24,8 +24,8 @@ export default function HomePage() {
   }, [])
 
   return (
-    <div className="min-h-screen flex flex-col pb-24 relative pt-6 bg-[var(--color-bg)] w-full lg:p-20 mx-auto">
-      <AnimatedBackground />
+    <div className="min-h-screen flex flex-col pb-24 relative pt-6 w-full lg:p-20 mx-auto">
+      {/* <AnimatedBackground /> */}
       <Actions />
       <div className="px-4 mb-2">
         <div className="text-[var(--color-text)] text-2xl font-medium mb-1">All Games</div>
