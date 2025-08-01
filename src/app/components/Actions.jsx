@@ -56,24 +56,24 @@ const AddBalanceModal = ({ open, onClose }) => {
     }
     setLoading(true)
     try {
-      // Get dynamic domain
-      const currentDomain = window.location.origin
-      
+      const auth = JSON.parse(localStorage.getItem('auth'))
+      const token = auth?.token
+
       const response = await apiClient.post('/wallet/add', {
         amount: Number(amount),
-        redirectUrl: `${currentDomain}/payment/status`,
+        redirectUrl: 'http://localhost:3001/payment/success',
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
       })
 
       if (!response.success || !response.transaction?.paymentUrl) {
         throw new Error(response.message || 'Failed to create payment')
       }
 
-      // Store transaction ID for status tracking
-      localStorage.setItem('currentTransactionId', response.transaction._id)
-      
-      // Redirect to payment status page instead of external payment URL
-      window.location.href = `/payment/status?transactionId=${response.transaction._id}&paymentUrl=${encodeURIComponent(response.transaction.paymentUrl)}`
-      
+      // Redirect to payment
+      window.location.href = response.transaction.paymentUrl
     } catch (err) {
       setError(err.message || 'Payment failed')
     } finally {
@@ -146,10 +146,10 @@ const Actions = () => {
   }
 
   return (
-    <section className="w-full px-4 py-8 relative">
+    <section className="w-full px-4 py-8 relative ">
       <AddBalanceModal open={showAddBalance} onClose={() => setShowAddBalance(false)} />
 
-      <div className="max-w-5xl mx-auto flex justify-center">
+      <div className="max-w-5xl mx-auto flex justify-center bg-gray-700 p-4 rounded-2xl">
         <div className="grid grid-cols-4 md:grid-cols-4 gap-4 md:gap-6 lg:w-4/5">
           {actions.map((action, idx) => (
             <button
@@ -173,7 +173,7 @@ const Actions = () => {
                 transition-all duration-300 group-hover:scale-110
               `}>
                 <img 
-                  className="w-3 h-3 md:w-6 md:h-6 object-contain filter brightness-0 invert" 
+                  className="w-4 h-4 md:w-6 md:h-6 object-contain filter brightness-0 invert" 
                   src={action.icon} 
                   alt={action.label} 
                 />
@@ -189,25 +189,7 @@ const Actions = () => {
         </div>
       </div>
 
-      <style jsx>{`
-        .modal-overlay {
-          animation: fadeIn 0.3s ease;
-        }
 
-        .modal-container {
-          animation: slideIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        @keyframes slideIn {
-          from { transform: translateY(-30px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-      `}</style>
     </section>
   )
 }

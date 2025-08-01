@@ -5,6 +5,7 @@ import BottomNavbar from './components/BottomNavbar'
 import GameCard from './components/GameCard'
 import { apiClient } from './apiClient'
 import AnimatedBackground from './components/AnimatedBackground'
+import Bannner from './components/Bannner'
 
 export default function HomePage() {
   const [games, setGames] = useState([])
@@ -26,6 +27,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col pb-24 relative pt-6 w-full lg:p-20 mx-auto">
       {/* <AnimatedBackground /> */}
+      <Bannner/>
       <Actions />
       <div className="px-4 mb-2">
         <div className="text-[var(--color-text)] text-2xl font-medium mb-1">All Games</div>
