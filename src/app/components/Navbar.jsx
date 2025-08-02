@@ -5,11 +5,15 @@ import LoginModal from './LoginModal'
 import { useSelector, useDispatch } from 'react-redux'
 import { logout, rehydrateAuth, fetchWalletBalance } from '../features/auth/authSlice'
 import { Wallet } from 'lucide-react'
+import { getSiteConfig } from '../utils/siteConfig'
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [siteConfig, setSiteConfig] = useState({ name: 'Zennova', logo: '/zenova.png' })
+  const [logoError, setLogoError] = useState(false)
+  const [isClient, setIsClient] = useState(false)
   // Redux state
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn)
   const userMobile = useSelector((state) => state.auth.userMobile)
@@ -43,6 +47,12 @@ const Navbar = () => {
       dispatch(fetchWalletBalance())
     }
   }, [dispatch, isLoggedIn])
+
+  useEffect(() => {
+    // Mark as client-side and update site config
+    setIsClient(true)
+    setSiteConfig(getSiteConfig())
+  }, [])
 
   if (!hydrated) return null // or a spinner
 
@@ -79,7 +89,18 @@ const Navbar = () => {
               href="/"
               className="text-2xl sm:text-3xl font-bold shimmer hover:scale-105 transition-transform duration-300 flex items-center space-x-2"
             >
-              <img className='w-24' src="/zenova.png" alt="Zennova Logo" />
+              {!logoError ? (
+                <img 
+                  className='w-24' 
+                  src={siteConfig.logo} 
+                  alt={`${siteConfig.name} Logo`}
+                  onError={() => setLogoError(true)}
+                />
+              ) : (
+                <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  {siteConfig.name}
+                </span>
+              )}
             </Link>
 
             {/* Desktop Navigation */}

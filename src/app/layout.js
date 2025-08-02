@@ -15,10 +15,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
-  title: "Zennova - Premium Gaming Currency",
-  description: "Get instant diamonds, coins, and premium currency for your favorite games at unbeatable prices with our secure wallet system.",
-};
+import { getSiteNameFromDomain } from './utils/siteConfig';
+
+export async function generateMetadata() {
+  // For server-side, use environment variable or fallback
+  const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Gaming Platform';
+  
+  return {
+    title: `${siteName} - Gaming uc top up`,
+    description: `Get instant diamonds, coins, and premium currency for your favorite games at unbeatable prices with our secure wallet system on ${siteName}.`,
+  };
+}
 
 export default function RootLayout({ children }) {
   return (

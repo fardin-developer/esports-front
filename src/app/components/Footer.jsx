@@ -1,14 +1,26 @@
-import React from 'react'
+'use client'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { getSiteConfig } from '../utils/siteConfig'
 
 const Footer = () => {
+  const [siteConfig, setSiteConfig] = useState({ name: 'Zennova' })
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    // Mark as client-side to prevent hydration mismatch
+    setIsClient(true)
+    // Update site config on client side
+    setSiteConfig(getSiteConfig())
+  }, [])
+
   return (
     <footer className="hidden lg:block bg-[rgba(15,15,35,0.98)] backdrop-blur-xl border-t border-[rgba(100,255,218,0.12)] mt-20">
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold text-[#64ffda]">Zennova</h3>
+            <h3 className="text-2xl font-bold text-[#64ffda]">{siteConfig.name}</h3>
             <p className="text-white/70 text-sm leading-relaxed">
             We provide a secure and efficient platform for gamers to instantly acquire diamonds, coins, and in-game credits at competitive prices.
             </p>
@@ -105,7 +117,9 @@ const Footer = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 <div>
-                  <p className="text-white/70 text-sm">support@zennova.in</p>
+                  <p className="text-white/70 text-sm">
+                    support@{isClient ? window.location.hostname.replace(/^www\./, '') : 'zennova.in'}
+                  </p>
                 </div>
               </div>
               
@@ -134,7 +148,7 @@ const Footer = () => {
         <div className="border-t border-[rgba(100,255,218,0.12)] mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-white/50 text-sm">
-              © 2024 Zennova. All rights reserved.
+              © 2024 {siteConfig.name}. All rights reserved.
             </div>
             
             <div className="flex items-center space-x-6">
