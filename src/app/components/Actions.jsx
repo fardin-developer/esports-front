@@ -61,11 +61,7 @@ const AddBalanceModal = ({ open, onClose }) => {
 
       const response = await apiClient.post('/wallet/add', {
         amount: Number(amount),
-        redirectUrl: 'http://localhost:3001/payment/success',
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+        redirectUrl: `${window.location.origin}/payment/status`,
       })
 
       if (!response.success || !response.transaction?.paymentUrl) {
