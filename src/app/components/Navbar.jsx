@@ -52,6 +52,8 @@ const Navbar = () => {
     // Mark as client-side and update site config
     setIsClient(true)
     setSiteConfig(getSiteConfig())
+    // Reset logo error when site config changes
+    setLogoError(false)
   }, [])
 
   if (!hydrated) return null // or a spinner
@@ -95,6 +97,7 @@ const Navbar = () => {
                   src={siteConfig.logo} 
                   alt={`${siteConfig.name} Logo`}
                   onError={() => setLogoError(true)}
+                  onLoad={() => setLogoError(false)}
                 />
               ) : (
                 <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">

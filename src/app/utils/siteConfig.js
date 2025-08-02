@@ -28,6 +28,7 @@ export function getSiteNameFromDomain() {
   const specialCases = {
     'zenova': 'Zenova',
     'zennova': 'Zennova',
+    'leafstore': 'LeafStore',
     'gaming': 'Gaming Platform',
     'topup': 'TopUp Platform',
     'uc': 'UC Platform'
@@ -60,6 +61,10 @@ export function getSiteLogo() {
   // Domain-specific logos
   if (hostname.includes('zenova') || hostname.includes('zennova')) {
     return '/zenova.png';
+  }
+  
+  if (hostname.includes('leafstore')) {
+    return '/leafstore-logo.png'; // This logo may not exist, will fallback to text
   }
   
   // Add more domain-specific logos here
