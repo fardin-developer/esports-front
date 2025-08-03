@@ -1,13 +1,13 @@
-// Get the current domain and construct API URL
-const getApiBaseUrl = () => {
-  if (typeof window !== 'undefined') {
-    // Client-side: use current domain
+function getApiBaseUrl() {
     const hostname = window.location.hostname;
-    return `https://api.${hostname}/api/v1`;
-  } else {
-    // Server-side: fallback to environment variable or default
-    return process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.localhost';
+    
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://localhost:3000/api/v1';
+    }
+    
+    const parts = hostname.split('.').filter(Boolean);
+    const rootDomain = parts.length >= 2 ? parts.slice(-2).join('.') : hostname;
+    return `https://api.${rootDomain}/api/v1`;
   }
-};
 
 export const API_BASE_URL = getApiBaseUrl();

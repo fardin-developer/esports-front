@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch } from 'react-redux'
 import { login } from '../features/auth/authSlice'
-import { apiClient } from '../apiClient'
 
 const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const [step, setStep] = useState('mobile') // 'mobile' or 'otp'
@@ -57,7 +56,19 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     setIsLoading(true)
     
     try {
-      await apiClient.post('/user/send-otp', { phone: mobileNumber })
+      const response = await fetch('https://game.oneapi.in/api/v1/user/send-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone: mobileNumber })
+      })
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to send OTP')
+      }
+      
       setStep('otp')
       setTimer(60) // 60 seconds timer
     } catch (err) {
@@ -73,7 +84,21 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     
     const otpValue = otp.join('')
     try {
-      const data = await apiClient.post('/user/verify-otp', { phone: mobileNumber, otp: otpValue })
+      const response = await fetch('https://game.oneapi.in/api/v1/user/verify-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone: mobileNumber, otp: otpValue })
+      })
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Invalid OTP')
+      }
+      
+      const data = await response.json()
+      
       if (data.requiresRegistration) {
         setPendingPhone(data.phone)
         setStep('register')
@@ -99,11 +124,24 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     setError('')
     setIsLoading(true)
     try {
-      const data = await apiClient.post('/user/complete-registration', {
-        name: registrationData.name,
-        email: registrationData.email,
-        phone: pendingPhone,
+      const response = await fetch('https://game.oneapi.in/api/v1/user/complete-registration', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: registrationData.name,
+          email: registrationData.email,
+          phone: pendingPhone,
+        })
       })
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Registration failed')
+      }
+      
+      const data = await response.json()
       dispatch(login({ token: data.token || 'demo-token', userMobile: pendingPhone }))
       try {
         onLoginSuccess?.(pendingPhone)
@@ -140,7 +178,19 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     setIsLoading(true)
     
     try {
-      await apiClient.post('/user/send-otp', { phone: mobileNumber })
+      const response = await fetch('https://game.oneapi.in/api/v1/user/send-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone: mobileNumber })
+      })
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to resend OTP')
+      }
+      
       setTimer(60)
       setOtp(['', '', '', '', '', ''])
       otpRefs.current[0]?.focus()
