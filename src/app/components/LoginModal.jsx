@@ -4,7 +4,7 @@ import { login } from '../features/auth/authSlice'
 
 
 
-const API_BASE_URL = 'https://game.cptopup.in/api/v1';
+const API_BASE_URL = 'https://game.cptopup.in';
 
 const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const [step, setStep] = useState('mobile') // 'mobile' or 'otp'
