@@ -4,6 +4,7 @@ import Navbar from './components/Navbar.jsx'
 import ClientProvider from './ClientProvider'
 import BottomNavbar from "./components/BottomNavbar";
 import Footer from "./components/Footer";
+import DeveloperProtection from './components/DeveloperProtection.jsx';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -68,12 +69,14 @@ export async function generateMetadata({ params, searchParams }, parent) {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="pt-20">
+      <body className={`${geistSans.variable} ${geistMono.variable} pt-20`}>
         <ClientProvider>
-          <Navbar />
-          {children}
-          <BottomNavbar/>
-          <Footer/>
+          <DeveloperProtection>
+            <Navbar />
+            {children}
+            <BottomNavbar/>
+            <Footer/>
+          </DeveloperProtection>
         </ClientProvider>
       </body>
     </html>
