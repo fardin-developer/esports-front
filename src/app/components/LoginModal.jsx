@@ -2,6 +2,10 @@ import { useState, useEffect, useRef } from 'react'
 import { useDispatch } from 'react-redux'
 import { login } from '../features/auth/authSlice'
 
+
+
+const API_BASE_URL = 'https://game.cptopup.in/api/v1';
+
 const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const [step, setStep] = useState('mobile') // 'mobile' or 'otp'
   const [mobileNumber, setMobileNumber] = useState('')
@@ -14,6 +18,33 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
   
   const otpRefs = useRef([])
   const dispatch = useDispatch()
+
+  // Enhanced fetch function with better error handling
+  const fetchWithTimeout = async (url, options = {}, timeout = 10000) => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          ...options.headers,
+        },
+      });
+      
+      clearTimeout(timeoutId);
+      return response;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error.name === 'AbortError') {
+        throw new Error('Request timeout. Please check your connection.');
+      }
+      throw error;
+    }
+  };
 
   // Timer effect for OTP resend
   useEffect(() => {
@@ -56,23 +87,52 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     setIsLoading(true)
     
     try {
-      const response = await fetch('https://game.oneapi.in/api/v1/user/send-otp', {
+      console.log('Sending OTP request to:', `${API_BASE_URL}/api/v1/user/send-otp`);
+      
+      const response = await fetchWithTimeout(`${API_BASE_URL}/api/v1/user/send-otp`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        credentials: 'include', // Important for CORS with credentials
         body: JSON.stringify({ phone: mobileNumber })
-      })
+      });
+      
+      console.log('Response status:', response.status);
       
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || 'Failed to send OTP')
+        let errorMessage = 'Failed to send OTP';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (parseError) {
+          console.error('Failed to parse error response:', parseError);
+          if (response.status === 0) {
+            errorMessage = 'Network error. Please check your connection.';
+          } else if (response.status >= 500) {
+            errorMessage = 'Server error. Please try again later.';
+          } else if (response.status === 404) {
+            errorMessage = 'Service not found. Please contact support.';
+          }
+        }
+        throw new Error(errorMessage);
       }
+      
+      const data = await response.json();
+      console.log('OTP sent successfully:', data);
       
       setStep('otp')
       setTimer(60) // 60 seconds timer
     } catch (err) {
-      setError(err.message || 'Failed to send OTP. Please try again.')
+      console.error('Send OTP error:', err);
+      let errorMessage = 'Failed to send OTP. Please try again.';
+      
+      if (err.message.includes('fetch')) {
+        errorMessage = 'Network error. Please check your connection and try again.';
+      } else if (err.message.includes('timeout')) {
+        errorMessage = 'Request timeout. Please check your connection.';
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsLoading(false)
     }
@@ -84,20 +144,27 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     
     const otpValue = otp.join('')
     try {
-      const response = await fetch('https://game.oneapi.in/api/v1/user/verify-otp', {
+      console.log('Verifying OTP:', `${API_BASE_URL}/api/v1/user/verify-otp`);
+      
+      const response = await fetchWithTimeout(`${API_BASE_URL}/api/v1/user/verify-otp`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        credentials: 'include',
         body: JSON.stringify({ phone: mobileNumber, otp: otpValue })
-      })
+      });
       
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || 'Invalid OTP')
+        let errorMessage = 'Invalid OTP';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (parseError) {
+          console.error('Failed to parse error response:', parseError);
+        }
+        throw new Error(errorMessage);
       }
       
       const data = await response.json()
+      console.log('OTP verified successfully:', data);
       
       if (data.requiresRegistration) {
         setPendingPhone(data.phone)
@@ -108,11 +175,12 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
         try {
           onLoginSuccess?.(mobileNumber)
         } catch (err) {
-          // ignore
+          console.error('onLoginSuccess callback error:', err);
         }
         onClose()
       }
     } catch (err) {
+      console.error('Verify OTP error:', err);
       setError(err.message || 'Invalid OTP. Please try again.')
     } finally {
       setIsLoading(false)
@@ -124,30 +192,37 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     setError('')
     setIsLoading(true)
     try {
-      const response = await fetch('https://game.oneapi.in/api/v1/user/complete-registration', {
+      const response = await fetchWithTimeout(`${API_BASE_URL}/api/v1/user/complete-registration`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        credentials: 'include',
         body: JSON.stringify({
           name: registrationData.name,
           email: registrationData.email,
           phone: pendingPhone,
         })
-      })
+      });
       
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || 'Registration failed')
+        let errorMessage = 'Registration failed';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (parseError) {
+          console.error('Failed to parse error response:', parseError);
+        }
+        throw new Error(errorMessage);
       }
       
       const data = await response.json()
       dispatch(login({ token: data.token || 'demo-token', userMobile: pendingPhone }))
       try {
         onLoginSuccess?.(pendingPhone)
-      } catch (err) {}
+      } catch (err) {
+        console.error('onLoginSuccess callback error:', err);
+      }
       onClose()
     } catch (err) {
+      console.error('Registration error:', err);
       setError(err.message || 'Registration failed. Please try again.')
     } finally {
       setIsLoading(false)
@@ -178,23 +253,28 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     setIsLoading(true)
     
     try {
-      const response = await fetch('https://game.oneapi.in/api/v1/user/send-otp', {
+      const response = await fetchWithTimeout(`${API_BASE_URL}/api/v1/user/send-otp`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        credentials: 'include',
         body: JSON.stringify({ phone: mobileNumber })
-      })
+      });
       
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || 'Failed to resend OTP')
+        let errorMessage = 'Failed to resend OTP';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (parseError) {
+          console.error('Failed to parse error response:', parseError);
+        }
+        throw new Error(errorMessage);
       }
       
       setTimer(60)
       setOtp(['', '', '', '', '', ''])
       otpRefs.current[0]?.focus()
     } catch (err) {
+      console.error('Resend OTP error:', err);
       setError(err.message || 'Failed to resend OTP. Please try again.')
     } finally {
       setIsLoading(false)
@@ -229,12 +309,15 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
             <span className="text-2xl">📱</span>
           </div>
           <h2 className="text-2xl font-bold text-white mb-2">
-            {step === 'mobile' ? 'Enter Mobile Number' : 'Enter OTP'}
+            {step === 'mobile' ? 'Enter Mobile Number' : 
+             step === 'otp' ? 'Enter OTP' : 'Complete Registration'}
           </h2>
           <p className="text-white/70">
             {step === 'mobile' 
               ? 'We\'ll send you a verification code' 
-              : `Code sent to ${mobileNumber}`}
+              : step === 'otp' 
+              ? `Code sent to ${mobileNumber}`
+              : 'Please complete your profile'}
           </p>
         </div>
 
