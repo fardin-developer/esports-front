@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch } from 'react-redux'
 import { login } from '../features/auth/authSlice'
+import { API_BASE_URL } from '../config';
 
 
 
-const API_BASE_URL = 'https://game.cptopup.in';
 
 const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const [step, setStep] = useState('mobile') // 'mobile' or 'otp'
@@ -87,9 +87,9 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     setIsLoading(true)
     
     try {
-      console.log('Sending OTP request to:', `${API_BASE_URL}/api/v1/user/send-otp`);
+      console.log('Sending OTP request to:', `${API_BASE_URL}/user/send-otp`);
       
-      const response = await fetchWithTimeout(`${API_BASE_URL}/api/v1/user/send-otp`, {
+      const response = await fetchWithTimeout(`${API_BASE_URL}/user/send-otp`, {
         method: 'POST',
         credentials: 'include', // Important for CORS with credentials
         body: JSON.stringify({ phone: mobileNumber })
@@ -144,9 +144,9 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     
     const otpValue = otp.join('')
     try {
-      console.log('Verifying OTP:', `${API_BASE_URL}/api/v1/user/verify-otp`);
+      console.log('Verifying OTP:', `${API_BASE_URL}/user/verify-otp`);
       
-      const response = await fetchWithTimeout(`${API_BASE_URL}/api/v1/user/verify-otp`, {
+      const response = await fetchWithTimeout(`${API_BASE_URL}/user/verify-otp`, {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify({ phone: mobileNumber, otp: otpValue })
@@ -192,7 +192,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     setError('')
     setIsLoading(true)
     try {
-      const response = await fetchWithTimeout(`${API_BASE_URL}/api/v1/user/complete-registration`, {
+      const response = await fetchWithTimeout(`${API_BASE_URL}/user/complete-registration`, {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify({
@@ -253,7 +253,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     setIsLoading(true)
     
     try {
-      const response = await fetchWithTimeout(`${API_BASE_URL}/api/v1/user/send-otp`, {
+      const response = await fetchWithTimeout(`${API_BASE_URL}/user/send-otp`, {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify({ phone: mobileNumber })

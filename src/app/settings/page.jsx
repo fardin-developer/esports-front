@@ -132,7 +132,7 @@ export default function SettingsPage() {
             className="w-full flex items-center px-5 py-4 text-red-600 text-base font-semibold cursor-pointer hover:bg-red-50 transition border-0 bg-transparent outline-none"
             onClick={async () => {
               try {
-                await apiClient.post('/user/logout')
+                await apiClient.post('user/logout')
                 setProfile({ name: '', email: '', avatar: '', status: '' })
                 dispatch({ type: 'auth/logout' })
                 window.location.href = '/'
