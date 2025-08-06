@@ -4,7 +4,6 @@ import Navbar from './components/Navbar.jsx'
 import ClientProvider from './ClientProvider'
 import BottomNavbar from "./components/BottomNavbar";
 import Footer from "./components/Footer";
-import DeveloperProtection from './components/DeveloperProtection.jsx';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,7 +23,7 @@ export async function generateMetadata({ params, searchParams }, parent) {
   let siteName = 'Zennova'; // Default fallback
   
   try {
-    const headersList = headers.headers();
+    const headersList = await headers.headers();
     const host = headersList.get('host');
     
     if (host) {
@@ -71,12 +70,10 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} pt-20`}>
         <ClientProvider>
-          <DeveloperProtection>
             <Navbar />
             {children}
             <BottomNavbar/>
             <Footer/>
-          </DeveloperProtection>
         </ClientProvider>
       </body>
     </html>
