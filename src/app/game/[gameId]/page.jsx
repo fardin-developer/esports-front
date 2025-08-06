@@ -32,10 +32,12 @@ export default function GameDiamondPacksPage() {
       try {
         setLoading(true)
         const data = await apiClient.get(`/games/${gameId}/diamond-packs`)
-        console.log(data);
+        // console.log(data);
         
         if (data.success && Array.isArray(data.diamondPacks)) {
           setDiamondPacks(data.diamondPacks)
+          console.log(data.gameData);
+          
           setGameInfo(data.gameData)
           // Initialize validation values
           if (data.gameData?.validationFields) {
@@ -101,14 +103,14 @@ export default function GameDiamondPacksPage() {
       setValidationResult({ status: false, message: "Invalid pack selected." });
       return;
     }
-    // Use gameInfo.game_id for validation
-    if (!gameInfo?.game_id) {
+    // Use gameInfo._id for validation
+    if (!gameInfo?._id) {
       setValidationResult({ status: false, message: 'No game_id found for this game. Cannot validate user.' });
       return;
     }
     // Prepare data for validation API
     const data = {
-      "product-id": String(gameInfo.game_id),
+      "product-id": String(gameInfo._id),
       ...Object.fromEntries(
         Object.entries(validationValues).map(([key, value]) => {
           // Map 'userId' to 'User ID', 'serverId' to 'Server ID', else keep as is with capitalization

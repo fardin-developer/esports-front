@@ -101,7 +101,7 @@ const Navbar = () => {
                 />
               ) : (
                 <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  {siteConfig.name}
+                  CP-TopUp
                 </span>
               )}
             </Link>
