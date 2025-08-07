@@ -68,28 +68,6 @@ export default function GameDiamondPacksPage() {
     )
   }
 
-  // Remove handleBuyNow and update Buy Now button to use handleCreateOrder
-  // const handleBuyNow = async () => {
-  //   if (!selectedPack) return;
-  //   // Add your order creation logic here
-  //   try {
-  //     // Example: replace with your actual API call
-  //     const res = await apiClient.post(`/order/create`, {
-  //       gameId,
-  //       packId: selectedPack,
-  //       ...validationValues,
-  //     })
-  //     if (res.success) {
-  //       // Order created, update wallet balance
-  //       dispatch(fetchWalletBalance())
-  //       // Optionally show success message
-  //     } else {
-  //       // Optionally show error
-  //     }
-  //   } catch (e) {
-  //     // Optionally show error
-  //   }
-  // }
 
   const handleValidateUser = async () => {
     if (!selectedPack) {
@@ -123,7 +101,6 @@ export default function GameDiamondPacksPage() {
 
     setValidationLoading(true);
     setValidationResult(null);
-    // console.log(data);
     
     try {
       // Use apiClient.post to call the validation API
@@ -140,7 +117,6 @@ export default function GameDiamondPacksPage() {
         username = result.data.username || username;
       }
       const validationObj = { status, message, username };
-      // console.log('validationResult:', validationObj);
       setValidationResult(validationObj);
     } catch (err) {
       setValidationResult({ status: false, message: "Validation failed. Please try again." });
@@ -154,13 +130,7 @@ export default function GameDiamondPacksPage() {
     if (!selectedPack) return;
     const pack = diamondPacks.find(p => p._id === selectedPack);
     if (!pack) return;
-  
-    // Remove productId check since it's not in the new response format
-    // const productId = pack.apiMappings && pack.apiMappings.length > 0 ? pack.apiMappings[0].productId : undefined;
-    // if (!productId) {
-    //   setOrderResult({ success: false, message: 'No productId found for this pack. Cannot create order.' });
-    //   return;
-    // }
+
   
     setOrderLoading(true);
     setOrderResult(null);
@@ -168,8 +138,7 @@ export default function GameDiamondPacksPage() {
     try {
       const payload = {
         diamondPackId: pack._id,
-        // Remove productId from payload since it's not available in new format
-        // productId: productId,
+
         playerId: validationValues.userId || validationValues.UserId || validationValues['User ID'],
         server: validationValues.serverId || validationValues.ServerId || validationValues['Server ID'],
         quantity: 1,

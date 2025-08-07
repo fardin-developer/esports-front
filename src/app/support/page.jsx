@@ -4,21 +4,21 @@ const supportChannels = [
   {
     label: 'WhatsApp',
     icon: '/whatsapp.svg',
-    action: 'https://wa.me/919864972356',
+    action: 'https://wa.me/919923575712',
     type: 'link',
     color: 'bg-success/10 text-success',
   },
   {
     label: 'Telegram',
     icon: '/telegram.svg',
-    action: 'https://t.me/fardinmustaque1',
+    action: 'https://t.me/Cp151995',
     type: 'link',
     color: 'bg-primary/10 text-primary',
   },
   {
     label: 'Email',
     icon: '/email.svg',
-    action: 'mailto:fardindeveloper1@gmail.com',
+    action: 'mailto:cpstore255@gmail.com',
     type: 'link',
     color: 'bg-accent/10 text-accent',
   },
@@ -26,7 +26,7 @@ const supportChannels = [
   {
     label: 'Phone',
     icon: '/call.png',
-    action: 'tel:+919864972356',
+    action: 'tel:+919923575712',
     type: 'link',
     color: 'bg-error/10 text-error',
   },
