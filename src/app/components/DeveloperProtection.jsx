@@ -40,7 +40,7 @@ function MaintenancePage() {
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-6 shadow-lg">
             <Shield className="w-10 h-10 text-white animate-pulse" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             System Migration in Progress
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed mb-8">

@@ -263,7 +263,8 @@ export default function GameDiamondPacksPage() {
               {/* Pack Info */}
               <div className="flex flex-col items-center justify-center">
                 <div className="text-text font-semibold text-base md:text-lg mb-1">
-                  {pack.amount} {pack.bonusAmount ? `+ ${pack.bonusAmount} ` : ''}Diamond{pack.amount > 1 ? 's' : ''}
+                {pack.description} 
+                {/* this is actual number of diamons */}
                 </div>
                 <div className="text-primary font-bold text-lg md:text-xl mb-1">₹ {pack.amount}</div>
               </div>
