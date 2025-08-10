@@ -68,7 +68,7 @@ export function getSiteLogo() {
   }
   
   if (hostname.includes('cp-topup')) {
-    return '/cp-topup.png'; // This logo may not exist, will fallback to text
+    return '/cplogo.jpeg'; // This logo may not exist, will fallback to text
   }
   
   // Add more domain-specific logos here
