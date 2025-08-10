@@ -4,7 +4,7 @@ import Navbar from './components/Navbar.jsx'
 import ClientProvider from './ClientProvider'
 import BottomNavbar from "./components/BottomNavbar";
 import Footer from "./components/Footer";
-import DeveloperProtection from './components/DeveloperProtection.jsx';
+// import DeveloperProtection from './components/DeveloperProtection.jsx';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -71,12 +71,12 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} pt-20`}>
         <ClientProvider>
-          <DeveloperProtection>
+          {/* <DeveloperProtection> */}
             <Navbar />
             {children}
             <BottomNavbar/>
             <Footer/>
-          </DeveloperProtection>
+          {/* </DeveloperProtection> */}
         </ClientProvider>
       </body>
     </html>

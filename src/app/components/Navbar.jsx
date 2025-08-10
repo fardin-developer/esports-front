@@ -11,7 +11,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [siteConfig, setSiteConfig] = useState({ name: 'CP TOP UP', logo: '/zenova.png' })
+  const [siteConfig, setSiteConfig] = useState({ name: 'CP TOP UP', logo: 'cp-topup.png' })
   const [logoError, setLogoError] = useState(false)
   const [isClient, setIsClient] = useState(false)
   // Redux state
@@ -91,7 +91,7 @@ const Navbar = () => {
               href="/"
               className="text-2xl sm:text-3xl font-bold shimmer hover:scale-105 transition-transform duration-300 flex items-center space-x-2"
             >
-              {false ? (
+              {!logoError && siteConfig.logo ? (
                 <img 
                   className='w-24' 
                   src={siteConfig.logo} 
@@ -101,7 +101,7 @@ const Navbar = () => {
                 />
               ) : (
                 <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  CP-TopUp
+                  {siteConfig.name}
                 </span>
               )}
             </Link>
