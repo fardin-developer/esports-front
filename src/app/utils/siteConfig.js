@@ -67,6 +67,10 @@ export function getSiteLogo() {
     return '/leafstore-logo.png'; // This logo may not exist, will fallback to text
   }
   
+  if (hostname.includes('cp-topup')) {
+    return '/cp-topup.png'; // This logo may not exist, will fallback to text
+  }
+  
   // Add more domain-specific logos here
   // if (hostname.includes('yourdomain')) {
   //   return '/yourdomain-logo.png';
