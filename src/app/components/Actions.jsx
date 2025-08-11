@@ -145,14 +145,14 @@ const Actions = () => {
     <section className="w-full px-4 py-8 relative ">
       <AddBalanceModal open={showAddBalance} onClose={() => setShowAddBalance(false)} />
 
-      <div className="max-w-5xl mx-auto flex justify-center bg-gray-700 p-4 rounded-2xl">
+      <div className="max-w-5xl mx-auto flex justify-center bg-gray-500 p-4 rounded-2xl">
         <div className="grid grid-cols-4 md:grid-cols-4 gap-4 md:gap-6 lg:w-4/5">
           {actions.map((action, idx) => (
             <button
               key={action.label}
               className={`
                 group flex flex-col items-center justify-center aspect-square rounded-2xl pt-4 pb-4
-                bg-[#18181b] border border-[#334155] 
+                bg-gray-700 border border-[#334155] 
                 hover:border-[#38bdf8]/50 hover:-translate-y-1 hover:shadow-xl
                 ${action.glowColor}
                 focus:outline-none focus:ring-2 focus:ring-[#38bdf8]/50 focus:border-[#38bdf8]
@@ -169,7 +169,7 @@ const Actions = () => {
                 transition-all duration-300 group-hover:scale-110
               `}>
                 <img 
-                  className="w-4 h-4 md:w-6 md:h-6 object-contain filter brightness-0 invert" 
+                  className="w-5 h-4 md:w-6 md:h-6 object-contain filter brightness-0 invert" 
                   src={action.icon} 
                   alt={action.label} 
                 />

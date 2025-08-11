@@ -11,7 +11,7 @@ const Bannner = () => {
       id: 1,
       title: "Top-Up & Dominate",
       subtitle: "Instant UC, Diamonds & More",
-      image: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/54d784be3db8503ec574ff45e912ea098cc10352-854x484.png",
+      image: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/43540f45-280c-4c78-af85-38632715b2c7/dgenqdv-85278212-30ca-4817-a577-db710634b0d1.png/v1/fill/w_1131,h_707/mobile_legends_nolan_mlbb_nolan_cosmi_hd_wallpaper_by_keyadfdf_dgenqdv-pre.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTU5MCIsInBhdGgiOiJcL2ZcLzQzNTQwZjQ1LTI4MGMtNGM3OC1hZjg1LTM4NjMyNzE1YjJjN1wvZGdlbnFkdi04NTI3ODIxMi0zMGNhLTQ4MTctYTU3Ny1kYjcxMDYzNGIwZDEucG5nIiwid2lkdGgiOiI8PTI1NDQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.mFdnLFxDGf2tRRllAKDAuYdZa556695VdBToZfgFP50",
       accent: "bg-blue-600",
       icon: <Wallet className="w-8 h-8" />
     },

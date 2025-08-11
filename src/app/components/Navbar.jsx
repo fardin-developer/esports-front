@@ -93,7 +93,7 @@ const Navbar = () => {
             >
               {!logoError && siteConfig.logo ? (
                 <img 
-                  className='w-24' 
+                  className='w-28' 
                   src='/cp-logo.png' 
                   alt={`${siteConfig.name} Logo`}
                   onError={() => setLogoError(true)}
