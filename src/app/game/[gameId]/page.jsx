@@ -22,6 +22,7 @@ export default function GameDiamondPacksPage() {
   const [selectedPack, setSelectedPack] = useState(null)
   const [orderLoading, setOrderLoading] = useState(false);
   const [orderResult, setOrderResult] = useState(null);
+  const [upiLoading, setUpiLoading] = useState(false);
   const [showHowToPurchase, setShowHowToPurchase] = useState(false);
   const params = useParams()
   const gameId = params.gameId
@@ -172,6 +173,43 @@ export default function GameDiamondPacksPage() {
       setOrderResult({ success: false, message: 'Order creation failed. Please try again.' });
     } finally {
       setOrderLoading(false);
+    }
+  };
+
+  // Create UPI Order handler
+  const handleCreateUpiOrder = async () => {
+    if (!selectedPack) return;
+    const pack = diamondPacks.find(p => p._id === selectedPack);
+    if (!pack) return;
+
+    setUpiLoading(true);
+    setOrderResult(null);
+
+    try {
+      const payload = {
+        diamondPackId: pack._id,
+        playerId: validationValues.userId || validationValues.UserId || validationValues['User ID'],
+        server: validationValues.serverId || validationValues.ServerId || validationValues['Server ID'],
+        quantity: 1,
+        redirectUrl: `${window.location.origin}/payment/status`
+      };
+
+      const result = await apiClient.post('/order/diamond-pack-upi', payload);
+      console.log('UPI Order Result:', result);
+      setOrderResult(result);
+
+      if (result.success && result.paymentUrl) {
+        // Redirect to UPI payment page
+        window.location.href = result.paymentUrl;
+      } else if (result.success && result.orderId) {
+        // Navigate to order status page
+        router.push(`/status?orderId=${result.orderId}`);
+      }
+    } catch (err) {
+      console.error('UPI Order Error:', err);
+      setOrderResult({ success: false, message: 'UPI order creation failed. Please try again.' });
+    } finally {
+      setUpiLoading(false);
     }
   };
   
@@ -339,7 +377,7 @@ export default function GameDiamondPacksPage() {
         <div className="rounded-2xl bg-gradient-to-r from-gray-800/80 to-gray-700/80 backdrop-blur-sm border border-gray-600/30 shadow-2xl p-6 md:p-8">
           {/* Buy Now Button */}
           <button 
-            className="w-full py-4 rounded-xl bg-gradient-to-r from-primary via-blue-500 to-purple-600 text-white font-black text-xl tracking-wider shadow-2xl hover:shadow-primary/25 hover:scale-[1.02] transition-all duration-300 transform disabled:opacity-50 disabled:cursor-not-allowed" 
+            className="w-full py-4 rounded-xl bg-gradient-to-r from-primary via-blue-500 to-purple-600 text-white font-black text-xl tracking-wider shadow-2xl hover:shadow-primary/25 hover:scale-[1.02] transition-all duration-300 transform disabled:opacity-50 disabled:cursor-not-allowed mb-4" 
             onClick={handleCreateOrder} 
             disabled={orderLoading}
           >
@@ -350,6 +388,29 @@ export default function GameDiamondPacksPage() {
               </div>
             ) : (
               "BUY NOW"
+            )}
+          </button>
+
+
+          <div className="flex items-center justify-center mb-4">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-500 to-transparent"></div>
+              <span className="px-4 text-gray-400 text-sm font-medium">OR</span>
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-500 to-transparent"></div>
+            </div>
+
+          {/* UPI Payment Button */}
+          <button 
+            className="w-full py-4 rounded-xl bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 text-white font-black text-xl tracking-wider shadow-2xl hover:shadow-green-500/25 hover:scale-[1.02] transition-all duration-300 transform disabled:opacity-50 disabled:cursor-not-allowed" 
+            onClick={handleCreateUpiOrder} 
+            disabled={upiLoading}
+          >
+            {upiLoading ? (
+              <div className="flex items-center justify-center gap-3">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                Processing UPI Payment...
+              </div>
+            ) : (
+              "PAY WITH UPI"
             )}
           </button>
         </div>

@@ -62,7 +62,7 @@ export default function HomePage() {
         {loading && (
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-3 md:gap-4 lg:gap-5">
             {Array.from({ length: 12 }).map((_, idx) => (
-              <div key={idx} className="w-full aspect-[3/4] bg-white/10 rounded-xl animate-pulse">
+                <div key={idx} className="w-full aspect-[3/4] bg-white/10 rounded-xl animate-pulse">
                 <div className="w-full h-full bg-white/20 rounded-xl"></div>
               </div>
             ))}
