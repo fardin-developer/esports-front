@@ -24,6 +24,9 @@ export default function GameDiamondPacksPage() {
   const [orderResult, setOrderResult] = useState(null);
   const [upiLoading, setUpiLoading] = useState(false);
   const [showHowToPurchase, setShowHowToPurchase] = useState(false);
+  const [upiModalOpen, setUpiModalOpen] = useState(false);
+  const [upiTransaction, setUpiTransaction] = useState(null);
+  const [upiOrder, setUpiOrder] = useState(null);
   const params = useParams()
   const gameId = params.gameId
   const dispatch = useDispatch()
@@ -191,22 +194,23 @@ export default function GameDiamondPacksPage() {
         playerId: validationValues.userId || validationValues.UserId || validationValues['User ID'],
         server: validationValues.serverId || validationValues.ServerId || validationValues['Server ID'],
         quantity: 1,
-        redirectUrl: `${window.location.origin}/payment/status`
+        redirectUrl: `https://app.cptopup.in/status`
       };
 
       const result = await apiClient.post('/order/diamond-pack-upi', payload);
-      console.log('UPI Order Result:', result);
       setOrderResult(result);
 
-      if (result.success && result.paymentUrl) {
-        // Redirect to UPI payment page
-        window.location.href = result.paymentUrl;
+      if (result.success && result.transaction && result.order) {
+        setUpiTransaction(result.transaction);
+        setUpiOrder(result.order);
+        setUpiModalOpen(true);
+      } else if (result.success && result.paymentUrl) {
+        // fallback: redirect if only paymentUrl
+        window.location.href = result.transactionpaymentUrl;
       } else if (result.success && result.orderId) {
-        // Navigate to order status page
         router.push(`/status?orderId=${result.orderId}`);
       }
     } catch (err) {
-      console.error('UPI Order Error:', err);
       setOrderResult({ success: false, message: 'UPI order creation failed. Please try again.' });
     } finally {
       setUpiLoading(false);
@@ -492,6 +496,56 @@ export default function GameDiamondPacksPage() {
             >
               Got it
             </button>
+          </div>
+        </div>
+      )}
+
+      {upiModalOpen && upiTransaction && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 max-w-md w-full border border-gray-600/30 shadow-2xl relative">
+            <button
+              className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl"
+              onClick={() => setUpiModalOpen(false)}
+              aria-label="Close"
+            >
+              &times;
+            </button>
+            <h2 className="text-2xl font-bold text-center mb-4 text-white">Scan & Pay with UPI</h2>
+            <div className="flex flex-col items-center mb-6">
+              <img
+                src={upiTransaction.paymentUrl}
+                alt="UPI QR Code"
+                className="w-48 h-48 rounded-xl border-4 border-primary bg-white object-contain mb-2"
+              />
+              <span className="text-gray-300 text-sm">Scan this QR with any UPI app</span>
+            </div>
+            <div className="mb-6">
+              <div className="text-center text-gray-400 mb-2">Or pay directly with your favorite app:</div>
+              <div className="flex flex-wrap gap-3 justify-center">
+                {upiTransaction.upiIntent?.gpay_link && (
+                  <a href={upiTransaction.upiIntent.gpay_link} target="_blank" rel="noopener noreferrer" className="px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-semibold text-sm">GPay</a>
+                )}
+                {upiTransaction.upiIntent?.phonepe_link && (
+                  <a href={upiTransaction.upiIntent.phonepe_link} target="_blank" rel="noopener noreferrer" className="px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-semibold text-sm">PhonePe</a>
+                )}
+                {upiTransaction.upiIntent?.paytm_link && (
+                  <a href={upiTransaction.upiIntent.paytm_link} target="_blank" rel="noopener noreferrer" className="px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-semibold text-sm">Paytm</a>
+                )}
+                {upiTransaction.upiIntent?.bhim_link && (
+                  <a href={upiTransaction.upiIntent.bhim_link} target="_blank" rel="noopener noreferrer" className="px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-semibold text-sm">BHIM</a>
+                )}
+              </div>
+            </div>
+            <button
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-green-500 to-teal-600 text-white font-bold text-lg shadow-lg hover:scale-105 transition-all duration-300 mb-2"
+              onClick={() => {
+                setUpiModalOpen(false);
+                if (upiOrder?.id) router.push(`/status?orderId=${upiOrder.id}`);
+              }}
+            >
+              Payment Completed
+            </button>
+            <div className="text-xs text-gray-400 text-center mt-2">After payment, click above to complete your order.</div>
           </div>
         </div>
       )}
