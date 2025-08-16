@@ -29,11 +29,16 @@ export default function OrderStatusPage() {
   const fetchOrderStatus = async (id, upiOrder) => {
     setLoading(true);
     setError(null);
+    console.log("id", id);
+    console.log("upiOrder", upiOrder);
+    
     try {
       let orderId = id;
       if (!id && upiOrder) {
         orderId = upiOrder;
       }
+      console.log("orderId", orderId);
+      
       const response = await apiClient.get(`/order/order-status?orderId=${orderId}`);
       if (!response.success) {
         throw new Error(response.message || 'Failed to fetch order status');
