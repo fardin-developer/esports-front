@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { Clock, Package, CheckCircle, XCircle, AlertCircle, Home, List, RefreshCw, CreditCard, Calendar, Hash } from 'lucide-react';
+import { Clock, Package, CheckCircle, XCircle, AlertCircle, Home, List, RefreshCw, CreditCard, Calendar, Hash, User, Server } from 'lucide-react';
 
 import { apiClient } from '../apiClient';
 
@@ -109,6 +109,19 @@ export default function OrderStatusPage() {
     return `${symbol}${parseFloat(amount || 0).toFixed(2)}`;
   };
 
+  // Helper function to parse description JSON
+  const parseDescription = (description) => {
+    try {
+      if (typeof description === 'string') {
+        return JSON.parse(description);
+      }
+      return description;
+    } catch (e) {
+      console.error('Error parsing description:', e);
+      return { text: description };
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -148,6 +161,7 @@ export default function OrderStatusPage() {
 
   const statusConfig = getStatusConfig(orderData.status);
   const StatusIcon = statusConfig.icon;
+  const descriptionData = parseDescription(orderData.description);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -246,6 +260,35 @@ export default function OrderStatusPage() {
             </div>
           </div>
 
+          {/* Game User Details */}
+          <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-medium text-gray-900">Account Details</h3>
+            </div>
+            <div className="px-6 py-4">
+              <dl className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
+                {descriptionData.playerId && (
+                  <div>
+                    <dt className="text-sm font-medium text-gray-500 flex items-center">
+                      <User className="h-4 w-4 mr-2" />
+                      Player ID
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 font-mono">{descriptionData.playerId}</dd>
+                  </div>
+                )}
+                {descriptionData.server && (
+                  <div>
+                    <dt className="text-sm font-medium text-gray-500 flex items-center">
+                      <Server className="h-4 w-4 mr-2" />
+                      Server
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900">{descriptionData.server}</dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+          </div>
+
           {/* Order Summary */}
           <div className="bg-white shadow-sm rounded-lg overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200">
@@ -268,13 +311,13 @@ export default function OrderStatusPage() {
           </div>
 
           {/* Description */}
-          {orderData.description && (
+          {descriptionData.text && (
             <div className="bg-white shadow-sm rounded-lg overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200">
                 <h3 className="text-lg font-medium text-gray-900">Description</h3>
               </div>
               <div className="px-6 py-4">
-                <p className="text-sm text-gray-700">{orderData.description}</p>
+                <p className="text-sm text-gray-700">{descriptionData.text}</p>
               </div>
             </div>
           )}
