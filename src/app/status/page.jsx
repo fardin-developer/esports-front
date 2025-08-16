@@ -16,13 +16,13 @@ export default function OrderStatusPage() {
     const idFromURL = params.get('orderId');
     const upiOrder = params.get('client_txn_id');
 
-    if (!idFromURL) {
+    if (!idFromURL && !upiOrder) {
       setError('No order ID provided in URL');
       setLoading(false);
       return;
     }
 
-    setOrderId(idFromURL);
+    setOrderId(idFromURL || upiOrder);
     fetchOrderStatus(idFromURL, upiOrder);
   }, []);
 
