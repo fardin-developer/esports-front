@@ -14,6 +14,7 @@ export default function OrderStatusPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const idFromURL = params.get('orderId');
+    const upiOrder = params.get('client_txn_id');
 
     if (!idFromURL) {
       setError('No order ID provided in URL');
@@ -22,14 +23,18 @@ export default function OrderStatusPage() {
     }
 
     setOrderId(idFromURL);
-    fetchOrderStatus(idFromURL);
+    fetchOrderStatus(idFromURL, upiOrder);
   }, []);
 
-  const fetchOrderStatus = async (id) => {
+  const fetchOrderStatus = async (id, upiOrder) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await apiClient.get(`/order/order-status?orderId=${id}`);
+      let orderId = id;
+      if (!id && upiOrder) {
+        orderId = upiOrder;
+      }
+      const response = await apiClient.get(`/order/order-status?orderId=${orderId}`);
       if (!response.success) {
         throw new Error(response.message || 'Failed to fetch order status');
       }

@@ -194,7 +194,7 @@ export default function GameDiamondPacksPage() {
         playerId: validationValues.userId || validationValues.UserId || validationValues['User ID'],
         server: validationValues.serverId || validationValues.ServerId || validationValues['Server ID'],
         quantity: 1,
-        redirectUrl: `https://app.cptopup.in/status`
+        redirectUrl: `${window.location.origin}/status`
       };
 
       const result = await apiClient.post('/order/diamond-pack-upi', payload);
