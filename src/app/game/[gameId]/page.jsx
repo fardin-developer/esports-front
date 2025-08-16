@@ -200,15 +200,13 @@ export default function GameDiamondPacksPage() {
       const result = await apiClient.post('/order/diamond-pack-upi', payload);
       setOrderResult(result);
 
-      if (result.success && result.transaction && result.order) {
-        setUpiTransaction(result.transaction);
-        setUpiOrder(result.order);
-        setUpiModalOpen(true);
-      } else if (result.success && result.paymentUrl) {
-        // fallback: redirect if only paymentUrl
-        window.location.href = result.transactionpaymentUrl;
-      } else if (result.success && result.orderId) {
-        router.push(`/status?orderId=${result.orderId}`);
+      console.log(result);
+      
+
+     if (result.success && result.transaction) {
+        window.location.href = result.transaction.paymentUrl;
+      } else {
+        alert("UPI order creation failed. Please try again later.");
       }
     } catch (err) {
       setOrderResult({ success: false, message: 'UPI order creation failed. Please try again.' });
