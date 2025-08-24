@@ -145,7 +145,7 @@ const Actions = () => {
     <section className="w-full px-4 py-8 relative ">
       <AddBalanceModal open={showAddBalance} onClose={() => setShowAddBalance(false)} />
 
-      <div className="max-w-5xl mx-auto flex justify-center bg-gray-500 p-4 rounded-2xl">
+      <div className="max-w-5xl mx-auto flex justify-center bg-black p-4 rounded-2xl">
         <div className="grid grid-cols-4 md:grid-cols-4 gap-4 md:gap-6 lg:w-4/5">
           {actions.map((action, idx) => (
             <button

@@ -6,6 +6,7 @@ import GameCard from './components/GameCard'
 import { apiClient } from './apiClient'
 import AnimatedBackground from './components/AnimatedBackground'
 import Bannner from './components/Bannner'
+import BannerBottom from './components/BannerBottom'
 
 export default function HomePage() {
   const [games, setGames] = useState([])
@@ -130,7 +131,9 @@ export default function HomePage() {
           </div>
         )}
       </section>
-      
+      <div className="mt-12">
+        <BannerBottom/>
+      </div>
       <BottomNavbar />
     </div>
   )
