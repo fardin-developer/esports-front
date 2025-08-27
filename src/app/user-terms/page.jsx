@@ -2,7 +2,7 @@ import Head from 'next/head';
 
 const UserTermsAndConditions = () => {
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-yellow-300">
       <Head>
         <title>User Terms and Conditions - Zennova</title>
         <meta name="description" content="Zennova Technologies Private Limited User Terms and Conditions" />

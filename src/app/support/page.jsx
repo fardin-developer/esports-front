@@ -34,7 +34,7 @@ const supportChannels = [
 
 const SupportPage = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start pt-10 bg-bg px-4">
+    <div className="min-h-screen flex flex-col items-center justify-start pt-10 bg-bg px-4 bg-yellow-300">
       <div className="w-full max-w-lg mx-auto">
         <h1 className="text-2xl md:text-3xl font-bold text-primary mb-6 text-center">Support Channels</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

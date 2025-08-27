@@ -110,11 +110,11 @@ export default function FeedPage() {
 
 
   return (
-    <main className="min-h-screen bg-bg py-10 px-4 md:px-6 lg:px-8">
+    <main className="min-h-screen bg-bg py-10 px-4 md:px-6 lg:px-8 bg-yellow-300">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-bold text-primary shimmer mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-black shimmer mb-4">
             News & Updates
           </h1>
           <p className="text-text-muted text-lg max-w-2xl mx-auto">

@@ -109,7 +109,7 @@ export default function NewsDetailPage() {
   }
 
   return (
-    <main className="min-h-screen bg-bg py-10 px-4 md:px-6 lg:px-8">
+    <main className="min-h-screen bg-bg py-10 px-4 md:px-6 lg:px-8 bg-yellow-300">
       <div className="max-w-4xl mx-auto">
         {/* Back button */}
         <button

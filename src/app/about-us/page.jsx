@@ -2,7 +2,7 @@ import Head from 'next/head';
 
 const AboutUs = () => {
   return (
-    <div className="min-h-screen text-gray-700 py-12 px-4 sm:px-6 lg:px-8 text-justify">
+    <div className="min-h-screen text-gray-700 py-12 px-4 sm:px-6 lg:px-8 text-justify bg-yellow-300">
       <Head>
         <title>About Us - Zennova</title>
         <meta name="description" content="Learn more about Zennova Technologies Private Limited, our mission, and our commitment to innovation." />

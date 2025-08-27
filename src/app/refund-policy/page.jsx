@@ -2,7 +2,7 @@ import Head from 'next/head';
 
 const RefundPolicy = () => {
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 text-gray-700 ">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 text-gray-700  bg-yellow-300">
       <Head>
         <title>Zennova Refund & Return Policy</title>
         <meta name="description" content="Zennova Refund and Return Policy" />
