@@ -118,6 +118,15 @@ export default function GameDiamondPacksPage() {
       const result = await response.json();
       console.log(result);
       
+      // Check if response is false (rate limiting or other error)
+      if (result.response === false) {
+        setValidationResult({ 
+          status: false, 
+          message: "Invalid User ID or Server ID" 
+        });
+        return;
+      }
+      
       let status = result.data?.status === 200 ? true : false;
       let message = result.data?.message || 'Validation completed';
       let username = result.data?.nickname;
