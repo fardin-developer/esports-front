@@ -145,14 +145,14 @@ const Actions = () => {
     <section className="w-full px-4 py-8 relative ">
       <AddBalanceModal open={showAddBalance} onClose={() => setShowAddBalance(false)} />
 
-      <div className="max-w-5xl mx-auto flex justify-center bg-black p-4 rounded-2xl">
+      <div className="max-w-5xl mx-auto flex justify-center bg-[#FCF3A4] p-4 rounded-2xl">
         <div className="grid grid-cols-4 md:grid-cols-4 gap-4 md:gap-6 lg:w-4/5">
           {actions.map((action, idx) => (
             <button
               key={action.label}
               className={`
                 group flex flex-col items-center justify-center aspect-square rounded-2xl pt-4 pb-4
-                bg-gray-700 border border-[#334155] 
+                bg-[#FECA00] border border-yellow-500
                 hover:border-[#38bdf8]/50 hover:-translate-y-1 hover:shadow-xl
                 ${action.glowColor}
                 focus:outline-none focus:ring-2 focus:ring-[#38bdf8]/50 focus:border-[#38bdf8]
@@ -175,7 +175,7 @@ const Actions = () => {
                 />
               </div>
 
-              <span className="text-[9px] md:text-base text-[#f1f5f9] font-medium text-center transition-colors duration-300 group-hover:text-white">
+              <span className="text-[10px] md:text-base text-gray-900 font-strong text-center transition-colors duration-300 group-hover:text-white">
                 {action.label}
               </span>
 

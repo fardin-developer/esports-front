@@ -27,6 +27,7 @@ export default function GameDiamondPacksPage() {
   const [upiModalOpen, setUpiModalOpen] = useState(false);
   const [upiTransaction, setUpiTransaction] = useState(null);
   const [upiOrder, setUpiOrder] = useState(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const params = useParams()
   const gameId = params.gameId
   const dispatch = useDispatch()
@@ -149,18 +150,30 @@ export default function GameDiamondPacksPage() {
 
   // Create Order handler (updated for /api/v1/order/diamond-pack)
   const handleCreateOrder = async () => {
+    if (!selectedPack || !selectedPaymentMethod) return;
+    const pack = diamondPacks.find(p => p._id === selectedPack);
+    if (!pack) return;
+
+    // Route to appropriate payment method
+    if (selectedPaymentMethod === 'upi') {
+      handleCreateUpiOrder();
+    } else if (selectedPaymentMethod === 'cp-coins') {
+      handleCreateCpCoinsOrder();
+    }
+  };
+
+  // Create CP Coins Order handler
+  const handleCreateCpCoinsOrder = async () => {
     if (!selectedPack) return;
     const pack = diamondPacks.find(p => p._id === selectedPack);
     if (!pack) return;
 
-  
     setOrderLoading(true);
     setOrderResult(null);
   
     try {
       const payload = {
         diamondPackId: pack._id,
-
         playerId: validationValues.userId || validationValues.UserId || validationValues['User ID'],
         server: validationValues.serverId || validationValues.ServerId || validationValues['Server ID'],
         quantity: 1,
@@ -177,7 +190,6 @@ export default function GameDiamondPacksPage() {
         dispatch(fetchWalletBalance());
         console.log("test 2 ");
 
-  
         // ✅ Navigate to the order page with order ID
         router.push(`/status?orderId=${orderId}`);
       }
@@ -226,26 +238,26 @@ export default function GameDiamondPacksPage() {
   
 
   return (
-    <div className="min-h-screen w-screen bg-yellow-300">
+    <div className="min-h-screen w-screen bg-[#FECA00]">
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Gaming Header with Glow Effect */}
         <div className="px-4 mb-8">
           <div className="text-center mb-6">
-            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary via-blue-400 to-purple-500 bg-clip-text text-transparent mb-2">
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-blue-100 to-purple-200 shadow-xl bg-clip-text text- mb-2">
               DIAMOND STORE
             </h1>
-            <div className="w-24 h-1 bg-gradient-to-r from-primary to-purple-500 mx-auto rounded-full"></div>
+            <div className="w-28 h-1 bg-gradient-to-r from-[#FCF3A4] to-gray-300 mx-auto rounded-full"></div>
           </div>
           
-          <div className="bg-gradient-to-r from-gray-800/50 to-gray-700/50 backdrop-blur-sm border border-gray-600/30 rounded-2xl p-6 shadow-2xl">
-            <div className="text-text text-lg md:text-xl font-bold mb-4 flex items-center gap-2">
-              <FaGem className="text-primary text-xl" />
+          <div className="bg-gradient-to-r from-[#FCF3A4] to-[#FCF3A4] backdrop-blur-sm border border-[#FCF3A4] rounded-2xl p-6 shadow-2xl">
+            <div className="text-gray-800 text-lg md:text-xl font-bold mb-4 flex items-center gap-2">
+              <FaGem className="text-gray-800 text-xl" />
               VERIFY YOUR ACCOUNT
             </div>
             <div className="mb-4">
               {gameInfo?.validationFields?.map(field => (
                 <div key={field} className="mb-4">
-                  <label className="block text-gray-300 font-semibold mb-2" htmlFor={field}>
+                  <label className="block text-gray-800 font-semibold mb-2" htmlFor={field}>
                     {field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
                   </label>
                   <input
@@ -260,7 +272,7 @@ export default function GameDiamondPacksPage() {
               ))}
             </div>
             <button
-              className="w-full bg-green-500 text-black font-bold py-4 rounded-xl shadow-lg hover:shadow-green-400/25 hover:scale-[1.02] transition-all duration-300 transform"
+              className="w-full bg-white text-black font-bold py-4 rounded-xl shadow-lg hover:shadow-green-400/25 hover:scale-[1.02] transition-all duration-300 transform"
               onClick={handleValidateUser}
               disabled={validationLoading}
             >
@@ -288,22 +300,22 @@ export default function GameDiamondPacksPage() {
         </div>
 
         {/* Select Amount Section Title with How to Purchase Button */}
-        <div className="px-4 mb-6">
+        <div className="px-2 mb-6">
           <div className="flex justify-between items-center mb-4">
-            <div className="text-text text-xl md:text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+            <div className="text-sm md:text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-gray-800">
               SELECT YOUR DIAMOND PACK
             </div>
             <button
               onClick={() => setShowHowToPurchase(true)}
-              className="bg-green-500 text-black px-6 py-3 rounded-xl text-sm font-bold hover:shadow-lg hover:shadow-primary/25 hover:scale-105 transition-all duration-300 transform"
+              className="bg-[#FCF3A4] text-black px-4 py-3 rounded-xl text-xs font-bold hover:shadow-lg hover:shadow-primary/25 hover:scale-105 transition-all duration-300 transform"
             >
-              How to Purchase
+              How to <br /> <span className='br'> Purchase</span>
             </button>
           </div>
         </div>
 
         {/* Diamond Packs Selectable Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 px-4 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 p-4 mb-8 bg-[#FCF3A4] rounded-2xl">
           {diamondPacks.map((pack) => {
             const isSelected = selectedPack === pack._id
             return (
@@ -314,7 +326,7 @@ export default function GameDiamondPacksPage() {
               >
                 {/* Card Background with Gradient */}
                 <div className={`relative overflow-hidden rounded-2xl p-4 min-h-[140px] ${isSelected 
-                  ? 'bg-gradient-to-br from-primary/20 via-blue-500/20 to-purple-600/20 border-2 border-primary shadow-2xl shadow-primary/25' 
+                  ? 'bg-gradient-to-br from-primary/20 via-blue-500/20 to-purple-600/20 border-2 border-primary shadow-2xl rounded-2xl shadow-primary/25 bg-green-500' 
                   : 'bg-gradient-to-br from-gray-800/80 to-gray-700/80 border-2 border-gray-600/50 hover:border-primary/50 backdrop-blur-sm'
                 }`}>
                   
@@ -367,7 +379,7 @@ export default function GameDiamondPacksPage() {
                     <div className="text-text font-bold text-sm md:text-base mb-2 leading-tight">
                       {pack.description}
                     </div>
-                    <div className="text-2xl md:text-3xl font-black bg-gradient-to-r from-primary via-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                    <div className="text-2xl md:text-3xl font-black bg-gradient-to-r from-white via-yellow-600 to-gray-500 bg-clip-text">
                       ₹{pack.amount}
                     </div>
                   </div>
@@ -385,48 +397,80 @@ export default function GameDiamondPacksPage() {
         </div>
 
         {/* Payment Section */}
-        <div className="w-full max-w-xl mx-auto mt-6 mb-8">
-          <div className="rounded-2xl bg-gradient-to-r from-gray-800/80 to-gray-700/80 backdrop-blur-sm border border-gray-600/30 shadow-2xl p-6 md:p-8">
-            {/* Buy Now Button */}
-            <button 
-              className="w-full py-4 rounded-xl bg-green-500 text-black font-black text-xl tracking-wider shadow-2xl hover:shadow-green-400/25 hover:scale-[1.02] transition-all duration-300 transform disabled:opacity-50 disabled:cursor-not-allowed mb-4" 
-              onClick={handleCreateOrder} 
-              disabled={orderLoading}
-            >
-              {orderLoading ? (
-                <div className="flex items-center justify-center gap-3">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                  Processing Purchase...
-                </div>
-              ) : (
-                "BUY NOW"
-              )}
-            </button>
+        {selectedPack && (
+          <div className="w-full max-w-xl mx-auto mt-6 mb-8 space-y-4">
+            {/* Payment Selection Card */}
+            <div className="rounded-2xl bg-[#FCF3A4] shadow-lg p-6">
+              <h3 className="text-black text-lg font-bold mb-4">SELECT PAYMENT</h3>
+              <div className="flex gap-4">
+                {/* UPI Payment Option */}
+                <button
+                  onClick={() => setSelectedPaymentMethod('upi')}
+                  className={`flex-1 flex items-center justify-center gap-3 py-4 px-4 rounded-xl border-2 transition-all duration-300 ${
+                    selectedPaymentMethod === 'upi'
+                      ? 'bg-[#FECA00] border-black'
+                      : 'bg-white border-black'
+                  }`}
+                >
+                  <div className="w-6 h-6 flex text-gray-900 font-bold items-center justify-center">
+                    <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
+                      <rect x="2" y="4" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M2 10h20" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                  </div>
+                  <span className="text-black font-semibold">UPI</span>
+                </button>
 
-
-            <div className="flex items-center justify-center mb-4">
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-500 to-transparent"></div>
-                <span className="px-4 text-gray-400 text-sm font-medium">OR</span>
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-500 to-transparent"></div>
+                {/* CP Coins Payment Option */}
+                <button
+                  onClick={() => setSelectedPaymentMethod('cp-coins')}
+                  className={`flex-1 flex items-center justify-center gap-3 py-4 px-4 rounded-xl border-2 transition-all duration-300 ${
+                    selectedPaymentMethod === 'cp-coins'
+                      ? 'bg-[#FECA00] border-black'
+                      : 'bg-white border-black'
+                  }`}
+                >
+                  <div className="w-6 h-6 bg-[#FECA00] rounded-full flex items-center justify-center">
+                    <span className="text-black font-bold text-xs">CP</span>
+                  </div>
+                  <span className="text-black font-semibold">CP Coins</span>
+                </button>
               </div>
+            </div>
 
-            {/* UPI Payment Button */}
-            <button 
-              className="w-full py-4 rounded-xl bg-white text-black font-black text-xl tracking-wider shadow-2xl hover:shadow-green-500/25 hover:scale-[1.02] transition-all duration-300 transform disabled:opacity-50 disabled:cursor-not-allowed" 
-              onClick={handleCreateUpiOrder} 
-              disabled={upiLoading}
-            >
-              {upiLoading ? (
-                <div className="flex items-center justify-center gap-3">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                  Processing UPI Payment...
+            {/* Buy Now Card - Only show after payment method selection */}
+            {true && (
+              <div className="rounded-2xl bg-[#FCF3A4] shadow-lg p-6 mb-28">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-black text-lg font-bold">BUY NOW</h3>
+                  <div className="text-right">
+                    <div className="text-black text-lg font-bold">
+                      ₹{diamondPacks.find(p => p._id === selectedPack)?.amount}
+                    </div>
+                    {/* <div className="text-black text-sm">
+                      {diamondPacks.find(p => p._id === selectedPack)?.description} | {selectedPaymentMethod === 'upi' ? 'UPI' : 'CP COINS'}
+                    </div> */}
+                  </div>
                 </div>
-              ) : (
-                "PAY WITH UPI"
-              )}
-            </button>
+                
+                <button 
+                  className="w-full py-4 rounded-xl bg-[#FECA00] text-black font-black text-xl tracking-wider shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 transform disabled:opacity-50 disabled:cursor-not-allowed" 
+                  onClick={handleCreateOrder} 
+                  disabled={orderLoading || upiLoading}
+                >
+                  {(orderLoading || upiLoading) ? (
+                    <div className="flex items-center justify-center gap-3">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-black"></div>
+                      Processing Purchase...
+                    </div>
+                  ) : (
+                    "BUY NOW"
+                  )}
+                </button>
+              </div>
+            )}
           </div>
-        </div>
+        )}
 
         {diamondPacks.length === 0 && !loading && (
           <div className="flex items-center justify-center flex-1 px-4">
@@ -442,7 +486,7 @@ export default function GameDiamondPacksPage() {
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 max-w-lg w-full max-h-[85vh] overflow-y-auto border border-gray-600/30 shadow-2xl">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-text text-2xl font-bold bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
                   How to Purchase
                 </h2>
                 <button

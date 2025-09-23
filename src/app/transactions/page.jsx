@@ -81,41 +81,41 @@ export default function TransactionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="min-h-screen bg-[#FECA00]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
         <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-primary mb-2">Transaction History</h1>
-          <p className="text-text-muted text-sm">View and manage your transaction history</p>
+          <h1 className="text-2xl font-semibold text-black mb-2">Transaction History</h1>
+          <p className="text-gray-800 text-sm">View and manage your transaction history</p>
         </div>
 
         {/* Filters Section */}
-        <div className="bg-surface-light border border-border rounded-lg p-6 mb-6">
+        <div className="bg-[#FCF3A4] border border-gray-300 rounded-lg p-6 mb-6">
           <div className="flex flex-col sm:flex-row sm:items-end gap-4">
             <div className="flex-1 min-w-0">
-              <label className="block text-sm font-medium text-text mb-2">
+              <label className="block text-sm font-medium text-black mb-2">
                 Date Range
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-text-muted mb-1">From</label>
+                  <label className="block text-xs text-gray-700 mb-1">From</label>
                   <input 
                     type="date" 
                     value={startDate} 
                     onChange={handleStartDate} 
                     max={endDate}
-                    className="w-full bg-surface border border-border rounded-md px-3 py-2 text-sm text-text focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/20 transition-colors"
+                    className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm text-black focus:border-black focus:outline-none focus:ring-1 focus:ring-black/20 transition-colors"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-text-muted mb-1">To</label>
+                  <label className="block text-xs text-gray-700 mb-1">To</label>
                   <input 
                     type="date" 
                     value={endDate} 
                     onChange={handleEndDate} 
                     min={startDate}
                     max={formatLocalDate(today)}
-                    className="w-full bg-surface border border-border rounded-md px-3 py-2 text-sm text-text focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/20 transition-colors"
+                    className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm text-black focus:border-black focus:outline-none focus:ring-1 focus:ring-black/20 transition-colors"
                   />
                 </div>
               </div>
@@ -124,10 +124,10 @@ export default function TransactionsPage() {
         </div>
 
         {/* Content Section */}
-        <div className="bg-surface-light border border-border rounded-lg">
+        <div className="bg-[#FCF3A4] border border-gray-300 rounded-lg">
           {/* Table Header */}
-          <div className="sticky top-0 z-20 bg-surface-light/95 backdrop-blur border-b border-border px-6 py-4">
-            <div className="grid grid-cols-12 gap-4 text-xs font-medium text-text-muted uppercase tracking-wider">
+          <div className="sticky top-0 z-20 bg-[#FCF3A4]/95 backdrop-blur border-b border-gray-300 px-6 py-4">
+            <div className="grid grid-cols-12 gap-4 text-xs font-medium text-gray-700 uppercase tracking-wider">
               <div className="col-span-6 sm:col-span-4">Transaction</div>
               <div className="col-span-3 sm:col-span-2 hidden sm:block">Date</div>
               <div className="col-span-2 sm:col-span-2">Status</div>
@@ -137,43 +137,43 @@ export default function TransactionsPage() {
 
           {/* Table Body - Scrollable */}
           <div className="relative" style={{height: '60vh'}}>
-            <div className="overflow-y-auto h-full divide-y divide-border" style={{scrollbarGutter: 'stable'}}>
+            <div className="overflow-y-auto h-full divide-y divide-gray-300" style={{scrollbarGutter: 'stable'}}>
               {loading ? (
                 <div className="px-6 py-12 text-center">
-                  <div className="inline-flex items-center gap-2 text-text-muted">
-                    <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                  <div className="inline-flex items-center gap-2 text-gray-700">
+                    <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
                     Loading transactions...
                   </div>
                 </div>
               ) : error ? (
                 <div className="px-6 py-12 text-center">
-                  <div className="text-error text-sm">{error}</div>
+                  <div className="text-red-600 text-sm">{error}</div>
                 </div>
               ) : transactions.length === 0 ? (
                 <div className="px-6 py-12 text-center">
-                  <div className="text-text-muted text-sm">No transactions found for the selected period.</div>
+                  <div className="text-gray-700 text-sm">No transactions found for the selected period.</div>
                 </div>
               ) : (
                 transactions.map(tx => (
-                  <div key={tx._id} className="px-6 py-4 hover:bg-surface/50 transition-colors">
+                  <div key={tx._id} className="px-6 py-4 hover:bg-white/50 transition-colors">
                     <div className="grid grid-cols-12 gap-4 items-center">
                       {/* Transaction Info */}
                       <div className="col-span-6 sm:col-span-4">
-                        <div className="font-medium text-text text-sm">Wallet Top-up</div>
+                        <div className="font-medium text-black text-sm">Wallet Top-up</div>
                         {tx.description && (
-                          <div className="text-xs text-text-muted mt-1 line-clamp-2">{tx.description}</div>
+                          <div className="text-xs text-gray-700 mt-1 line-clamp-2">{tx.description}</div>
                         )}
-                        <div className="text-xs text-text-muted mt-1 sm:hidden">
+                        <div className="text-xs text-gray-700 mt-1 sm:hidden">
                           {new Date(tx.createdAt).toLocaleDateString()}
                         </div>
                       </div>
                       
                       {/* Date - Hidden on mobile */}
                       <div className="col-span-2 hidden sm:block">
-                        <div className="text-sm text-text">
+                        <div className="text-sm text-black">
                           {new Date(tx.createdAt).toLocaleDateString()}
                         </div>
-                        <div className="text-xs text-text-muted">
+                        <div className="text-xs text-gray-700">
                           {new Date(tx.createdAt).toLocaleTimeString([], {
                             hour: '2-digit',
                             minute: '2-digit'
@@ -190,7 +190,7 @@ export default function TransactionsPage() {
                       
                       {/* Amount */}
                       <div className="col-span-3 sm:col-span-4 text-right">
-                        <div className="font-semibold text-primary text-base">
+                        <div className="font-semibold text-black text-base">
                           +{tx.amount} {tx.currency || ''}
                         </div>
                       </div>
@@ -203,23 +203,23 @@ export default function TransactionsPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="px-6 py-4 border-t border-border">
+            <div className="px-6 py-4 border-t border-gray-300">
               <div className="flex items-center justify-between">
-                <div className="text-sm text-text-muted">
+                <div className="text-sm text-gray-700">
                   Page {page} of {totalPages}
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handlePrev}
                     disabled={page === 1}
-                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-text bg-surface border border-border rounded-md hover:bg-surface-light disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-black bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     Previous
                   </button>
                   <button
                     onClick={handleNext}
                     disabled={page === totalPages}
-                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-text bg-surface border border-border rounded-md hover:bg-surface-light disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-black bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     Next
                   </button>

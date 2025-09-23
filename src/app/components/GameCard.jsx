@@ -15,7 +15,7 @@ const GameCard = ({ game, gameId }) => {
 
   return (
     <div
-      className={`flex flex-col w-full h-full rounded-xl md:rounded-2xl overflow-hidden border transition-all duration-300 cursor-pointer relative group bg-surface border-border ${isHovered ? 'transform -translate-y-2 md:-translate-y-3 shadow-lg md:shadow-primary border-primary' : ''
+      className={`flex flex-col w-full h-full bg-red-400 rounded-xl md:rounded-2xl overflow-hidden border transition-all duration-300 cursor-pointer relative group bg-surface border-border ${isHovered ? 'transform -translate-y-2 md:-translate-y-3 shadow-lg md:shadow-primary border-primary' : ''
         }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

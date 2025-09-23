@@ -35,7 +35,7 @@ export default function HomePage() {
   }, [])
 
   return (
-    <div className="min-h-screen flex flex-col pb-24 relative pt-6 w-full lg:p-20 mx-auto bg-[#F2CB05]">
+    <div className="min-h-screen flex flex-col pb-24 relative pt-6 w-full lg:p-20 mx-auto bg-[#FECA00]">
       {/* <AnimatedBackground /> */}
       <Bannner/>
       <Actions />
@@ -46,11 +46,11 @@ export default function HomePage() {
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h2 className="text-2xl lg:text-3xl font-bold text-black">
+            <h2 className="text-2xl lg:text-3xl font-bold text-white">
               All Games
             </h2>
           </div>
@@ -91,7 +91,7 @@ export default function HomePage() {
 
         {/* Games Grid */}
         {!loading && !error && games.length > 0 && (
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-3 md:gap-4 lg:gap-5">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-3 md:gap-4 lg:gap-5 bg-[#FCF3A4] p-2 border-dashed border-gray-300 rounded-xl">
             {games.map((game, idx) => (
               <div key={game._id || idx} className="w-full aspect-[3/4]">
                 {game.name ? (

@@ -39,7 +39,7 @@ function getTransactionTypeStyle(type) {
     case 'credit':
       return 'bg-green-900/50 text-green-400 border-green-700'
     case 'debit':
-      return 'bg-red-900/50 text-red-400 border-red-700'
+      return 'bg-red-300/50 text-red-400 border-red-800'
     default:
       return 'bg-gray-700 text-gray-300 border-gray-600'
   }
@@ -157,54 +157,54 @@ export default function ReportPage() {
   const handleNext = () => setPage((p) => Math.min(totalPages, p + 1))
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+    <div className="min-h-screen bg-[#FECA00]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 pb-28">
         {/* Header Section */}
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Wallet Ledger Report</h1>
-          <p className="text-gray-300 text-sm sm:text-lg">Comprehensive transaction history and financial summary</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-black mb-2">Wallet Ledger Report</h1>
+          <p className="text-gray-800 text-sm sm:text-lg">Comprehensive transaction history and financial summary</p>
         </div>
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
-          <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 sm:p-6 shadow-lg">
+          <div className="bg-[#FCF3A4] border border-gray-300 rounded-lg p-4 sm:p-6 shadow-lg">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs sm:text-sm font-medium text-gray-400 mb-1">Total Credits</p>
-                <p className="text-lg sm:text-2xl font-bold text-white">{formatCurrency(summary.totalCredits)}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-700 mb-1">Total Credits</p>
+                <p className="text-lg sm:text-2xl font-bold text-black">{formatCurrency(summary.totalCredits)}</p>
               </div>
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-900/50 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-200 rounded-lg flex items-center justify-center">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 sm:p-6 shadow-lg">
+          <div className="bg-[#FCF3A4] border border-gray-300 rounded-lg p-4 sm:p-6 shadow-lg">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs sm:text-sm font-medium text-gray-400 mb-1">Total Debits</p>
-                <p className="text-lg sm:text-2xl font-bold text-white">{formatCurrency(summary.totalDebits)}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-700 mb-1">Total Debits</p>
+                <p className="text-lg sm:text-2xl font-bold text-black">{formatCurrency(summary.totalDebits)}</p>
               </div>
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-900/50 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-200 rounded-lg flex items-center justify-center">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                 </svg>
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 sm:p-6 shadow-lg sm:col-span-2 lg:col-span-1">
+          <div className="bg-[#FCF3A4] border border-gray-300 rounded-lg p-4 sm:p-6 shadow-lg sm:col-span-2 lg:col-span-1">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs sm:text-sm font-medium text-gray-400 mb-1">Net Balance</p>
-                <p className={`text-lg sm:text-2xl font-bold ${summary.netAmount >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                <p className="text-xs sm:text-sm font-medium text-gray-700 mb-1">Net Balance</p>
+                <p className={`text-lg sm:text-2xl font-bold ${summary.netAmount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {formatCurrency(Math.abs(summary.netAmount))}
                 </p>
               </div>
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-700 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
               </div>
@@ -213,19 +213,19 @@ export default function ReportPage() {
         </div>
 
         {/* Filters Section */}
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 shadow-lg">
+        <div className="bg-[#FCF3A4] border border-gray-300 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 shadow-lg">
           <div className="flex flex-col gap-4 sm:gap-6">
             <div className="flex-1">
-              <label className="block text-sm font-semibold text-white mb-3">
+              <label className="block text-sm font-semibold text-black mb-3">
                 Filter Options
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <div>
-                  <label className="block text-xs text-gray-400 mb-2 font-medium">Transaction Type</label>
+                  <label className="block text-xs text-gray-700 mb-2 font-medium">Transaction Type</label>
                   <select
                     value={transactionType}
                     onChange={handleTransactionType}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 sm:px-4 py-2 sm:py-3 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                    className="w-full bg-white border border-gray-300 rounded-md px-3 sm:px-4 py-2 sm:py-3 text-sm text-black focus:border-black focus:outline-none focus:ring-1 focus:ring-black/20 transition-colors"
                   >
                     {TRANSACTION_TYPES.map(opt => (
                       <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -234,30 +234,30 @@ export default function ReportPage() {
                 </div>
                 
                 <div>
-                  <label className="block text-xs text-gray-400 mb-2 font-medium">From Date</label>
+                  <label className="block text-xs text-gray-700 mb-2 font-medium">From Date</label>
                   <input 
                     type="date" 
                     value={startDate} 
                     onChange={handleStartDate} 
                     max={endDate}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 sm:px-4 py-2 sm:py-3 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                    className="w-full bg-white border border-gray-300 rounded-md px-3 sm:px-4 py-2 sm:py-3 text-sm text-black focus:border-black focus:outline-none focus:ring-1 focus:ring-black/20 transition-colors"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-xs text-gray-400 mb-2 font-medium">To Date</label>
+                  <label className="block text-xs text-gray-700 mb-2 font-medium">To Date</label>
                   <input 
                     type="date" 
                     value={endDate} 
                     onChange={handleEndDate} 
                     min={startDate}
                     max={formatLocalDate(today)}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 sm:px-4 py-2 sm:py-3 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                    className="w-full bg-white border border-gray-300 rounded-md px-3 sm:px-4 py-2 sm:py-3 text-sm text-black focus:border-black focus:outline-none focus:ring-1 focus:ring-black/20 transition-colors"
                   />
                 </div>
                 
                 <div className="flex items-end">
-                  <div className="text-xs sm:text-sm text-gray-400">
+                  <div className="text-xs sm:text-sm text-gray-700">
                     {totalTransactions} transactions found
                   </div>
                 </div>
@@ -267,12 +267,12 @@ export default function ReportPage() {
         </div>
 
         {/* Transactions Table */}
-        <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden shadow-lg">
+        <div className="border border-gray-300 rounded-lg overflow-hidden shadow-lg">
           {/* Desktop Table View */}
           <div className="hidden lg:block">
             {/* Table Header */}
-            <div className="sticky top-0 z-20 bg-gray-700 border-b border-gray-600 px-6 py-4">
-              <div className="grid grid-cols-12 gap-4 text-xs font-semibold text-gray-300 uppercase tracking-wider">
+            <div className="sticky top-0 z-20 bg-[#FCF3A4]/95 border-b border-gray-300 px-6 py-4">
+              <div className="grid grid-cols-12 gap-4 text-xs font-semibold text-gray-700 uppercase tracking-wider">
                 <div className="col-span-4">Transaction Details</div>
                 <div className="col-span-2">Type</div>
                 <div className="col-span-2">Balance</div>
@@ -283,39 +283,39 @@ export default function ReportPage() {
 
             {/* Table Body */}
             <div className="relative" style={{height: '60vh'}}>
-              <div className="overflow-y-auto h-full divide-y divide-gray-700" style={{scrollbarGutter: 'stable'}}>
+              <div className="overflow-y-auto h-full divide-y divide-gray-300" style={{scrollbarGutter: 'stable'}}>
                 {loading ? (
                   <div className="px-6 py-12 text-center">
-                    <div className="inline-flex items-center gap-3 text-gray-400">
-                      <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="inline-flex items-center gap-3 text-gray-700">
+                      <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
                       Loading ledger data...
                     </div>
                   </div>
                 ) : error ? (
                   <div className="px-6 py-12 text-center">
-                    <div className="text-red-400 text-sm">{error}</div>
+                    <div className="text-red-600 text-sm">{error}</div>
                   </div>
                 ) : transactions.length === 0 ? (
                   <div className="px-6 py-12 text-center">
-                    <div className="text-gray-400 text-sm">No transactions found for the selected criteria.</div>
+                    <div className="text-gray-700 text-sm">No transactions found for the selected criteria.</div>
                   </div>
                 ) : (
                   transactions.map(tx => (
-                    <div key={tx._id} className="px-6 py-4 hover:bg-gray-700/50 transition-colors">
+                    <div key={tx._id} className="px-6 py-4 hover:bg-white/50 transition-colors">
                       <div className="grid grid-cols-12 gap-4 items-center">
                         {/* Transaction Details */}
                         <div className="col-span-4">
-                          <div className="font-medium text-white text-sm mb-1">
+                          <div className="font-medium text-black text-sm mb-1">
                             {tx.description || 'Wallet Transaction'}
                           </div>
-                          <div className="text-xs text-gray-400 mb-1">
+                          <div className="text-xs text-gray-700 mb-1">
                             {new Date(tx.createdAt).toLocaleDateString()} at {new Date(tx.createdAt).toLocaleTimeString([], {
                               hour: '2-digit',
                               minute: '2-digit'
                             })}
                           </div>
                           {tx.metadata?.utr && (
-                            <div className="text-xs text-gray-400">
+                            <div className="text-xs text-gray-700">
                               UTR: {tx.metadata.utr}
                             </div>
                           )}
@@ -330,10 +330,10 @@ export default function ReportPage() {
                         
                         {/* Balance */}
                         <div className="col-span-2">
-                          <div className="text-sm text-white">
+                          <div className="text-sm text-black">
                             {formatCurrency(tx.balanceAfter)}
                           </div>
-                          <div className="text-xs text-gray-400">
+                          <div className="text-xs text-gray-700">
                             was {formatCurrency(tx.balanceBefore)}
                           </div>
                         </div>
@@ -347,7 +347,7 @@ export default function ReportPage() {
                         
                         {/* Amount */}
                         <div className="col-span-2 text-right">
-                          <div className={`font-semibold text-base ${tx.transactionType === 'credit' ? 'text-green-400' : 'text-red-400'}`}>
+                          <div className={`font-semibold text-base ${tx.transactionType === 'credit' ? 'text-green-600' : 'text-red-600'}`}>
                             {tx.transactionType === 'credit' ? '+' : '-'}{formatCurrency(tx.amount)}
                           </div>
                         </div>
@@ -363,30 +363,30 @@ export default function ReportPage() {
           <div className="lg:hidden">
             {loading ? (
               <div className="px-4 py-8 text-center">
-                <div className="inline-flex items-center gap-3 text-gray-400">
-                  <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="inline-flex items-center gap-3 text-gray-700">
+                  <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
                   Loading ledger data...
                 </div>
               </div>
             ) : error ? (
               <div className="px-4 py-8 text-center">
-                <div className="text-red-400 text-sm">{error}</div>
+                <div className="text-red-600 text-sm">{error}</div>
               </div>
             ) : transactions.length === 0 ? (
               <div className="px-4 py-8 text-center">
-                <div className="text-gray-400 text-sm">No transactions found for the selected criteria.</div>
+                <div className="text-gray-700 text-sm">No transactions found for the selected criteria.</div>
               </div>
             ) : (
-              <div className="divide-y divide-gray-700">
+              <div className="divide-y divide-gray-300 ">
                 {transactions.map(tx => (
-                  <div key={tx._id} className="p-4 hover:bg-gray-700/50 transition-colors">
+                  <div key={tx._id} className="p-4 hover:bg-white/50 transition-colors bg-[#FCF3A4] mb-4">
                     {/* Card Header */}
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-white text-sm truncate">
+                        <h3 className="font-medium text-black text-sm truncate">
                           {tx.description || 'Wallet Transaction'}
                         </h3>
-                        <p className="text-xs text-gray-400 mt-1">
+                        <p className="text-xs text-gray-700 mt-1">
                           {new Date(tx.createdAt).toLocaleDateString()} at {new Date(tx.createdAt).toLocaleTimeString([], {
                             hour: '2-digit',
                             minute: '2-digit'
@@ -403,19 +403,19 @@ export default function ReportPage() {
                     {/* Card Content */}
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
-                        <span className="text-xs text-gray-400">Amount:</span>
-                        <span className={`font-semibold text-sm ${tx.transactionType === 'credit' ? 'text-green-400' : 'text-red-400'}`}>
+                        <span className="text-xs text-gray-700">Amount:</span>
+                        <span className={`font-semibold text-sm ${tx.transactionType === 'credit' ? 'text-green-600' : 'text-red-600'}`}>
                           {tx.transactionType === 'credit' ? '+' : '-'}{formatCurrency(tx.amount)}
                         </span>
                       </div>
                       
                       <div className="flex justify-between items-center">
-                        <span className="text-xs text-gray-400">Balance:</span>
-                        <span className="text-sm text-white">{formatCurrency(tx.balanceAfter)}</span>
+                        <span className="text-xs text-gray-700">Balance:</span>
+                        <span className="text-sm text-black">{formatCurrency(tx.balanceAfter)}</span>
                       </div>
                       
                       <div className="flex justify-between items-center">
-                        <span className="text-xs text-gray-400">Status:</span>
+                        <span className="text-xs text-gray-700">Status:</span>
                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${getStatusStyle(tx.status)}`}>
                           {tx.status}
                         </span>
@@ -423,8 +423,8 @@ export default function ReportPage() {
                       
                       {tx.metadata?.utr && (
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-gray-400">UTR:</span>
-                          <span className="text-xs text-gray-400 font-mono">{tx.metadata.utr}</span>
+                          <span className="text-xs text-gray-700">UTR:</span>
+                          <span className="text-xs text-gray-700 font-mono">{tx.metadata.utr}</span>
                         </div>
                       )}
                     </div>
@@ -436,23 +436,23 @@ export default function ReportPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="px-4 sm:px-6 py-4 border-t border-gray-700 bg-gray-700">
+            <div className="px-4 sm:px-6 py-4 border-t border-gray-300 bg-[#FCF3A4]">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div className="text-xs sm:text-sm text-gray-400 text-center sm:text-left">
+                <div className="text-xs sm:text-sm text-gray-700 text-center sm:text-left">
                   Page {page} of {totalPages} • {totalTransactions} total transactions
                 </div>
                 <div className="flex items-center justify-center gap-2">
                   <button
                     onClick={handlePrev}
                     disabled={page === 1}
-                    className="inline-flex items-center px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-300 bg-gray-600 border border-gray-500 rounded-md hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="inline-flex items-center px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-black bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     Previous
                   </button>
                   <button
                     onClick={handleNext}
                     disabled={page === totalPages}
-                    className="inline-flex items-center px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-300 bg-gray-600 border border-gray-500 rounded-md hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="inline-flex items-center px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-black bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     Next
                   </button>
