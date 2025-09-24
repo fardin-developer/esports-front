@@ -315,7 +315,7 @@ export default function GameDiamondPacksPage() {
         </div>
 
         {/* Diamond Packs Selectable Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 p-4 mb-8 bg-[#FCF3A4] rounded-2xl">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 p-4 mb-8 bg-[#FCF3A4] rounded-2xl mb-30">
           {diamondPacks.map((pack) => {
             const isSelected = selectedPack === pack._id
             return (

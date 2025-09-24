@@ -11,7 +11,18 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [siteConfig, setSiteConfig] = useState({ name: 'CP TOP UP', logo: '/cplogo.jpeg' })
+  const [siteConfig, setSiteConfig] = useState({ 
+    name: 'CP TOP UP', 
+    logo: '/cplogo.jpeg', 
+    style: 'default',
+    theme: {
+      primary: 'from-primary to-accent',
+      secondary: 'from-secondary to-accent',
+      text: 'text-primary',
+      background: 'bg-primary/10',
+      border: 'border-primary/30'
+    }
+  })
   const [logoError, setLogoError] = useState(false)
   const [isClient, setIsClient] = useState(false)
   // Redux state
@@ -94,13 +105,13 @@ const Navbar = () => {
               {!logoError && siteConfig.logo ? (
                 <img 
                   className='w-28' 
-                  src='/cp-logo.png' 
+                  src='/nexuslogo.png' 
                   alt={`${siteConfig.name} Logo`}
                   onError={() => setLogoError(true)}
                   onLoad={() => setLogoError(false)}
                 />
               ) : (
-                <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                <span className={`text-sm sm:text-3xl font-bold bg-gradient-to-r ${siteConfig.theme.primary} bg-clip-text text-transparent`}>
                   {siteConfig.name}
                 </span>
               )}
@@ -112,10 +123,10 @@ const Navbar = () => {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-text/90 hover:text-primary transition-all duration-300 relative group px-4 py-2 rounded-lg hover:bg-primary/5 text-sm font-medium"
+                  className={`text-text/90 hover:${siteConfig.theme.text} transition-all duration-300 relative group px-4 py-2 rounded-lg hover:${siteConfig.theme.background} text-sm font-medium`}
                 >
                   {item.name}
-                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-primary to-accent transition-all duration-300 group-hover:w-8 rounded-full"></span>
+                  <span className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r ${siteConfig.theme.primary} transition-all duration-300 group-hover:w-8 rounded-full`}></span>
                 </Link>
               ))}
             </nav>
@@ -139,7 +150,7 @@ const Navbar = () => {
                 {!isLoggedIn ? (
                   <button
                     onClick={() => setIsLoginOpen(true)}
-                    className="px-5 py-2.5 text-sm font-medium text-primary border-2 border-primary rounded-full hover:bg-primary/10 hover:shadow-md hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5"
+                    className={`px-5 py-2.5 text-sm font-medium ${siteConfig.theme.text} border-2 ${siteConfig.theme.border} rounded-full hover:${siteConfig.theme.background} hover:shadow-md hover:shadow-yellow-500/20 transition-all duration-300 hover:-translate-y-0.5`}
                   >
                     Login
                   </button>
@@ -161,7 +172,7 @@ const Navbar = () => {
               {/* Mobile Menu Button */}
               {!isLoggedIn ? <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="lg:hidden p-2 rounded-lg hover:bg-primary/10 transition-colors duration-300"
+                className={`lg:hidden p-2 rounded-lg hover:${siteConfig.theme.background} transition-colors duration-300`}
               >
                 <div className="w-6 h-6 flex flex-col justify-center space-y-1">
                   <span className={`block w-full h-0.5 bg-text transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>

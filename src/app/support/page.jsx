@@ -1,35 +1,35 @@
 import React from 'react'
 
 const supportChannels = [
-  {
-    label: 'WhatsApp',
-    icon: '/whatsapp.svg',
-    action: 'https://wa.me/919923575712',
-    type: 'link',
-    color: 'bg-success/10 text-success',
-  },
+  // {
+  //   label: 'WhatsApp',
+  //   icon: '/whatsapp.svg',
+  //   action: 'https://wa.me/918811956575',
+  //   type: 'link',
+  //   color: 'bg-success/10 text-success',
+  // },
   {
     label: 'Telegram',
     icon: '/telegram.svg',
-    action: 'https://t.me/Cp151995',
+    action: 'https://t.me/+918811956575',
     type: 'link',
     color: 'bg-primary/10 text-primary',
   },
   {
     label: 'Email',
     icon: '/email.svg',
-    action: 'mailto:cpstore255@gmail.com',
+    action: 'mailto:support@nexusstore.com',
     type: 'link',
     color: 'bg-accent/10 text-accent',
   },
 
-  {
-    label: 'Phone',
-    icon: '/call.png',
-    action: 'tel:+919923575712',
-    type: 'link',
-    color: 'bg-error/10 text-error',
-  },
+  // {
+  //   label: 'Phone',
+  //   icon: '/call.png',
+  //   action: 'tel:+919923575712',
+  //   type: 'link',
+  //   color: 'bg-error/10 text-error',
+  // },
 ]
 
 const SupportPage = () => {
