@@ -11,7 +11,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [siteConfig, setSiteConfig] = useState({ name: 'CP TOP UP', logo: '/cplogo.jpeg' })
+  const [siteConfig, setSiteConfig] = useState({ name: 'LeafStore', logo: '/leafstore-logo.png' })
   const [logoError, setLogoError] = useState(false)
   const [isClient, setIsClient] = useState(false)
   // Redux state
@@ -94,7 +94,7 @@ const Navbar = () => {
               {!logoError && siteConfig.logo ? (
                 <img 
                   className='w-28' 
-                  src='/cp-logo.png' 
+                  src='/leafstore-logo.png' 
                   alt={`${siteConfig.name} Logo`}
                   onError={() => setLogoError(true)}
                   onLoad={() => setLogoError(false)}
