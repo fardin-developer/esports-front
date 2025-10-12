@@ -140,7 +140,7 @@ export default function OrdersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FECA00]">
+    <div className="min-h-screen bg-[#a6f2da]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 ">
         {/* Header Section */}
         <div className="mb-6 sm:mb-8">

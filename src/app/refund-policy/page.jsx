@@ -2,17 +2,17 @@ import Head from 'next/head';
 
 const RefundPolicy = () => {
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 text-gray-700  bg-yellow-300">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 text-gray-700  bg-[#a6f2da]">
       <Head>
-        <title>Zennova Refund & Return Policy</title>
-        <meta name="description" content="Zennova Refund and Return Policy" />
+        <title>Leafstore Refund & Return Policy</title>
+        <meta name="description" content="Leafstore Refund and Return Policy" />
       </Head>
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <h1 className="text-3xl font-bold mb-6 text-center">Return & Refund Policy</h1>
         <p className="text-sm text-gray-600 mb-4">Updated at 2025-07-22</p>
 
         <p className="mb-4">
-          At <strong>Zennova.in</strong>, operated by <strong>ONESTEPLINK (OPC) PRIVATE LIMITED</strong>, we are committed to delivering a seamless and reliable top-up experience for all our users. Our return and refund policy outlines the conditions under which refunds may be provided for failed transactions.
+          At <strong>Leafstore.in</strong>, operated by <strong>ONESTEPLINK (OPC) PRIVATE LIMITED</strong>, we are committed to delivering a seamless and reliable top-up experience for all our users. Our return and refund policy outlines the conditions under which refunds may be provided for failed transactions.
         </p>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">Refund Eligibility</h2>

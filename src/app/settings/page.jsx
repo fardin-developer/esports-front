@@ -74,8 +74,8 @@ export default function SettingsPage() {
             className="w-16 h-16 rounded-full border-2 border-primary object-cover"
           />
           <div className="flex-1">
-            <div className="font-semibold text-lg text-text mb-0.5">{profile.name}</div>
-            <div className="text-sm text-text-muted mb-1">{profile.email}</div>
+            <div className="font-semibold text-lg text-gray-700 mb-0.5">{profile.name}</div>
+            <div className="text-sm text-gray-300 mb-1">{profile.email}</div>
             <span className="inline-block text-xs px-2 py-0.5 rounded bg-primary/10 text-primary font-medium">{profile.status}</span>
           </div>
           <div className="flex flex-col items-end">

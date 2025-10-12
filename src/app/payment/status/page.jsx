@@ -324,40 +324,86 @@ export default function PaymentStatusPage() {
                       <span className="font-medium text-gray-900">₹{statusData.amount}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Payment Method</span>
-                      <span className="font-medium text-gray-900 uppercase">{statusData.gatewayType || 'UPI'}</span>
+                      <span className="text-gray-500">Status</span>
+                      <span className={`font-medium ${statusConfig.color}`}>{statusConfig.label}</span>
                     </div>
-                    {transactionType === 'ekqr' ? (
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Client Transaction ID</span>
-                        <span className="font-medium text-gray-900 font-mono text-xs">{statusData.client_txn_id}</span>
-                      </div>
-                    ) : (
+                    {statusData.orderId && (
                       <div className="flex justify-between">
                         <span className="text-gray-500">Order ID</span>
-                        <span className="font-medium text-gray-900">{statusData.orderId}</span>
+                        <span className="font-medium text-gray-900 font-mono text-xs">{statusData.orderId}</span>
                       </div>
                     )}
+                    {statusData.txnId && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Transaction Reference</span>
+                        <span className="font-medium text-gray-900 font-mono text-xs">{statusData.txnId}</span>
+                      </div>
+                    )}
+
                   </div>
                   <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Gateway Order ID</span>
-                      <span className="font-medium text-gray-900">{statusData.gatewayOrderId || statusData.id}</span>
-                    </div>
-                    {statusData.upiTxnId && (
+                    {statusData.utr && (
                       <div className="flex justify-between">
-                        <span className="text-gray-500">UPI Transaction ID</span>
-                        <span className="font-medium text-gray-900 font-mono text-xs">{statusData.upiTxnId}</span>
+                        <span className="text-gray-500">UTR Number</span>
+                        <span className="font-medium text-gray-900 font-mono text-xs">{statusData.utr}</span>
                       </div>
                     )}
+
                     <div className="flex justify-between">
                       <span className="text-gray-500">Transaction Date</span>
                       <span className="font-medium text-gray-900">{formatDate(statusData.createdAt)}</span>
                     </div>
+                    {statusData.updatedAt && statusData.updatedAt !== statusData.createdAt && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Last Updated</span>
+                        <span className="font-medium text-gray-900">{formatDate(statusData.updatedAt)}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* Customer Information */}
+            {(statusData.customerName || statusData.customerEmail || statusData.customerNumber) && (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Customer Information</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                  <div className="space-y-3">
+                    {statusData.customerName && (
+                      <div className="flex items-center space-x-3">
+                        <User className="w-4 h-4 text-gray-400" />
+                        <span className="text-gray-500">Name:</span>
+                        <span className="font-medium text-gray-900">{statusData.customerName}</span>
+                      </div>
+                    )}
+                    {statusData.customerEmail && (
+                      <div className="flex items-center space-x-3">
+                        <Mail className="w-4 h-4 text-gray-400" />
+                        <span className="text-gray-500">Email:</span>
+                        <span className="font-medium text-gray-900">{statusData.customerEmail}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="space-y-3">
+                    {statusData.customerNumber && (
+                      <div className="flex items-center space-x-3">
+                        <Phone className="w-4 h-4 text-gray-400" />
+                        <span className="text-gray-500">Mobile:</span>
+                        <span className="font-medium text-gray-900">{statusData.customerNumber}</span>
+                      </div>
+                    )}
+                    {statusData.paymentNote && (
+                      <div className="flex items-center space-x-3">
+                        <Hash className="w-4 h-4 text-gray-400" />
+                        <span className="text-gray-500">Note:</span>
+                        <span className="font-medium text-gray-900">{statusData.paymentNote}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Customer Information for EKQR transactions */}
             {transactionType === 'ekqr' && statusData.customerInfo && (

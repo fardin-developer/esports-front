@@ -157,7 +157,7 @@ export default function ReportPage() {
   const handleNext = () => setPage((p) => Math.min(totalPages, p + 1))
 
   return (
-    <div className="min-h-screen bg-[#FECA00]">
+    <div className="min-h-screen bg-[#a6f2da]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 pb-28">
         {/* Header Section */}
         <div className="mb-6 sm:mb-8">

@@ -14,7 +14,7 @@ export default function OrderStatusPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const idFromURL = params.get('orderId');
-    const upiOrder = params.get('client_txn_id');
+    const upiOrder = params.get('client_txn_id') || params.get('clientTrxId');;
 
     if (!idFromURL && !upiOrder) {
       setError('No order ID provided in URL');

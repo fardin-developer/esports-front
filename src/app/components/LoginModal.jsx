@@ -13,7 +13,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [timer, setTimer] = useState(0)
-  const [registrationData, setRegistrationData] = useState({ name: '', email: '' })
+  const [registrationData, setRegistrationData] = useState({ name: '', email: '', password: '' })
   const [pendingPhone, setPendingPhone] = useState('')
   
   const otpRefs = useRef([])
@@ -198,6 +198,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
         body: JSON.stringify({
           name: registrationData.name,
           email: registrationData.email,
+          password: registrationData.password,
           phone: pendingPhone,
         })
       });
@@ -454,6 +455,17 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                 value={registrationData.email}
                 onChange={e => setRegistrationData({ ...registrationData, email: e.target.value })}
                 placeholder="Enter your email"
+                className="w-full px-4 py-3 bg-[rgba(100,255,218,0.05)] border border-[rgba(100,255,218,0.2)] rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-[#64ffda] focus:ring-2 focus:ring-[rgba(100,255,218,0.2)] transition-all duration-300"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-white/90 mb-2">Password</label>
+              <input
+                type="password"
+                value={registrationData.password}
+                onChange={e => setRegistrationData({ ...registrationData, password: e.target.value })}
+                placeholder="Enter your password"
                 className="w-full px-4 py-3 bg-[rgba(100,255,218,0.05)] border border-[rgba(100,255,218,0.2)] rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-[#64ffda] focus:ring-2 focus:ring-[rgba(100,255,218,0.2)] transition-all duration-300"
                 required
               />

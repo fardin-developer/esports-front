@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { getSiteConfig } from '../utils/siteConfig'
 
 const Footer = () => {
-  const [siteConfig, setSiteConfig] = useState({ name: 'Zennova' })
+  const [siteConfig, setSiteConfig] = useState({ name: 'Leafstore' })
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
@@ -118,7 +118,7 @@ const Footer = () => {
                 </svg>
                 <div>
                   <p className="text-white/70 text-sm">
-                    support@{isClient ? window.location.hostname.replace(/^www\./, '') : 'zennova.in'}
+                    support@{isClient ? window.location.hostname.replace(/^www\./, '') : 'Leafstore.in'}
                   </p>
                 </div>
               </div>

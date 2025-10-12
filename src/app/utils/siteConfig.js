@@ -7,7 +7,7 @@ export function getSiteNameFromDomain() {
 
   // Server-side: always return default to prevent hydration mismatch
   if (typeof window === 'undefined') {
-    return 'Zennova';
+    return 'Leafstore';
   }
 
   // Client-side: use actual hostname
@@ -15,7 +15,7 @@ export function getSiteNameFromDomain() {
   
   // Handle localhost and development
   if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.includes('vercel.app')) {
-    return 'Zennova';
+    return 'Leafstore';
   }
   
   // Remove www. and common TLDs
@@ -27,7 +27,7 @@ export function getSiteNameFromDomain() {
   // Handle special cases and capitalize
   const specialCases = {
     'zenova': 'Zenova',
-    'zennova': 'Zennova',
+    'Leafstore': 'Leafstore',
     'leafstore': 'LeafStore',
     'gaming': 'Gaming Platform',
     'topup': 'TopUp Platform',
@@ -59,7 +59,7 @@ export function getSiteLogo() {
   const hostname = window.location.hostname;
   
   // Domain-specific logos
-  if (hostname.includes('zenova') || hostname.includes('zennova')) {
+  if (hostname.includes('zenova') || hostname.includes('Leafstore')) {
     return '/zenova.png';
   }
   

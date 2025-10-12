@@ -11,7 +11,7 @@ module.exports = {
         primary: 'var(--color-primary)',
         secondary: 'var(--color-secondary)',
         accent: 'var(--color-accent)',
-        card: 'var(--color-card)',
+        card: 'var(--color-surface)',
         border: 'var(--color-border)',
         text: 'var(--color-text)',
         bg: 'var(--color-bg)',
@@ -20,7 +20,7 @@ module.exports = {
         primary: 'var(--color-primary)',
         secondary: 'var(--color-secondary)',
         accent: 'var(--color-accent)',
-        card: 'var(--color-card)',
+        card: 'var(--color-surface)',
         bg: 'var(--color-bg)',
       },
       borderColor: {

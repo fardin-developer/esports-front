@@ -79,47 +79,42 @@ export default function GameDiamondPacksPage() {
 
 
   const handleValidateUser = async () => {
-
-    // Use gameInfo._id for validation
-    if (!gameInfo?._id) {
-      setValidationResult({ status: false, message: 'No game_id found for this game. Cannot validate user.' });
-      return;
-    }
-    // Prepare data for validation API
-    const data = {
-      // "product-id": String(gameInfo._id),// changgin it temporarily
-      "product-id":"MOBILE_LEGENDS_PRO",
-      ...Object.fromEntries(
-        Object.entries(validationValues).map(([key, value]) => {
-          // Map 'userId' to 'User ID', 'serverId' to 'Server ID', else keep as is with capitalization
-          if (key.toLowerCase() === 'userid') return ['User ID', value];
-          if (key.toLowerCase() === 'serverid') return ['Server ID', value];
-          return [key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim(), value];
-        })
-      )
-    };
-
     setValidationLoading(true);
     setValidationResult(null);
     
     try {
-      // Use our backend API route to avoid CORS issues
-      const response = await fetch('/api/validate-user', {
+      // Get playerId and server from validation values
+      const playerId = validationValues.playerId;
+      const server = validationValues.server;
+      
+      // Check if we have the required data
+      if (!playerId) {
+        setValidationResult({ 
+          status: false, 
+          message: "Please enter your User ID" 
+        });
+        return;
+      }
+      
+      // Prepare validation data for backend
+      const validationData = {
+        game: gameInfo?.ogcode || "MOBILE_LEGENDS_PRO",
+        playerId: playerId,
+        server: server
+      };
+
+      // Call your backend API directly
+      const response = await fetch('https://api.leafstore.in/api/v1/games/validate-user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          game: 'MOBILE_LEGENDS_PRO',
-          userId: validationValues.userId,
-          serverId: validationValues.serverId
-        })
+        body: JSON.stringify(validationData)
       });
       
       const result = await response.json();
-      console.log(result);
       
-      // Check if response is false (rate limiting or other error)
+      // Handle the API response format
       if (result.response === false) {
         setValidationResult({ 
           status: false, 
@@ -128,20 +123,22 @@ export default function GameDiamondPacksPage() {
         return;
       }
       
-      let status = result.data?.status === 200 ? true : false;
-      let message = result.data?.message || 'Validation completed';
-      let username = result.data?.nickname;
-      
-      if (result.data && typeof result.data.status !== 'undefined') {
-        status = result.data.status === 'true' || result.data.status === true || result.data.status === 200;
-        message = result.data.message || message;
-        username = result.data.username || result.data.nickname || username;
+      if (result.response === true && result.data?.status === 200) {
+        // Successful validation
+        setValidationResult({ 
+          status: true, 
+          message: 'User validated successfully',
+          username: result.data.nickname 
+        });
+      } else {
+        // Failed validation
+        setValidationResult({ 
+          status: false, 
+          message: "Invalid User ID or Server ID" 
+        });
       }
-      const validationObj = { status, message, username };
-      setValidationResult(validationObj);
     } catch (err) {
-      console.log(err);
-      
+      console.error('Validation error:', err);
       setValidationResult({ status: false, message: "Validation failed. Please try again." });
     } finally {
       setValidationLoading(false);
@@ -172,25 +169,23 @@ export default function GameDiamondPacksPage() {
     setOrderResult(null);
   
     try {
+      // Get validation data
+      const playerId = validationValues.playerId;
+      const server = validationValues.server;
+      
       const payload = {
         diamondPackId: pack._id,
-        playerId: validationValues.userId || validationValues.UserId || validationValues['User ID'],
-        server: validationValues.serverId || validationValues.ServerId || validationValues['Server ID'],
+        playerId: playerId,
+        server: server,
         quantity: 1,
       };
   
       const result = await apiClient.post('/order/diamond-pack', payload);
-      const orderId = result.orderId
-      console.log(orderId);
+      const orderId = result.orderId;
       setOrderResult(result);
-      console.log("test 1 ");
-      
   
       if (result.success && orderId) {
         dispatch(fetchWalletBalance());
-        console.log("test 2 ");
-
-        // ✅ Navigate to the order page with order ID
         router.push(`/status?orderId=${orderId}`);
       }
     } catch (err) {
@@ -210,10 +205,14 @@ export default function GameDiamondPacksPage() {
     setOrderResult(null);
 
     try {
+      // Get validation data
+      const playerId = validationValues.playerId;
+      const server = validationValues.server;
+      
       const payload = {
         diamondPackId: pack._id,
-        playerId: validationValues.userId || validationValues.UserId || validationValues['User ID'],
-        server: validationValues.serverId || validationValues.ServerId || validationValues['Server ID'],
+        playerId: playerId,
+        server: server,
         quantity: 1,
         redirectUrl: `${window.location.origin}/status`
       };
@@ -221,10 +220,7 @@ export default function GameDiamondPacksPage() {
       const result = await apiClient.post('/order/diamond-pack-upi', payload);
       setOrderResult(result);
 
-      console.log(result);
-      
-
-     if (result.success && result.transaction) {
+      if (result.success && result.transaction) {
         window.location.href = result.transaction.paymentUrl;
       } else {
         alert("UPI order creation failed. Please try again later.");
@@ -238,26 +234,26 @@ export default function GameDiamondPacksPage() {
   
 
   return (
-    <div className="min-h-screen w-screen bg-[#FECA00]">
+    <div className="min-h-screen w-screen bg-[#a6f2da]">
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Gaming Header with Glow Effect */}
         <div className="px-4 mb-8">
           <div className="text-center mb-6">
-            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-blue-100 to-purple-200 shadow-xl bg-clip-text text- mb-2">
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-blue-100 to-purple-200 shadow-xl bg-clip-text text-gray-700 mb-2">
               DIAMOND STORE
             </h1>
             <div className="w-28 h-1 bg-gradient-to-r from-[#FCF3A4] to-gray-300 mx-auto rounded-full"></div>
           </div>
           
-          <div className="bg-gradient-to-r from-[#FCF3A4] to-[#FCF3A4] backdrop-blur-sm border border-[#FCF3A4] rounded-2xl p-6 shadow-2xl">
-            <div className="text-gray-800 text-lg md:text-xl font-bold mb-4 flex items-center gap-2">
-              <FaGem className="text-gray-800 text-xl" />
+          <div className="bg-surface backdrop-blur-sm border border-border rounded-2xl p-6 shadow-2xl">
+            <div className="text-gray-200 text-lg md:text-xl font-bold mb-4 flex items-center gap-2">
+              <FaGem className="text-gray-300 text-xl" />
               VERIFY YOUR ACCOUNT
             </div>
             <div className="mb-4">
               {gameInfo?.validationFields?.map(field => (
                 <div key={field} className="mb-4">
-                  <label className="block text-gray-800 font-semibold mb-2" htmlFor={field}>
+                  <label className="block text-gray-300 font-semibold mb-2" htmlFor={field}>
                     {field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
                   </label>
                   <input
@@ -307,7 +303,7 @@ export default function GameDiamondPacksPage() {
             </div>
             <button
               onClick={() => setShowHowToPurchase(true)}
-              className="bg-[#FCF3A4] text-black px-4 py-3 rounded-xl text-xs font-bold hover:shadow-lg hover:shadow-primary/25 hover:scale-105 transition-all duration-300 transform"
+              className="bg-surface text-black px-4 py-3 text-text rounded-xl text-xs font-bold hover:shadow-lg hover:shadow-primary/25 hover:scale-105 transition-all duration-300 transform"
             >
               How to <br /> <span className='br'> Purchase</span>
             </button>
@@ -315,7 +311,7 @@ export default function GameDiamondPacksPage() {
         </div>
 
         {/* Diamond Packs Selectable Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 p-4 mb-8 bg-[#FCF3A4] rounded-2xl">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 p-4 mb-8 bg-surface rounded-2xl">
           {diamondPacks.map((pack) => {
             const isSelected = selectedPack === pack._id
             return (
@@ -326,7 +322,7 @@ export default function GameDiamondPacksPage() {
               >
                 {/* Card Background with Gradient */}
                 <div className={`relative overflow-hidden rounded-2xl p-4 min-h-[140px] ${isSelected 
-                  ? 'bg-gradient-to-br from-primary/20 via-blue-500/20 to-purple-600/20 border-2 border-primary shadow-2xl rounded-2xl shadow-primary/25 bg-green-500' 
+                  ? 'bg-gradient-to-br from-primary/20 via-blue-500/20 to-purple-600/20 border-2 border-primary shadow-2xl rounded-2xl shadow-primary/25 bg-primary' 
                   : 'bg-gradient-to-br from-gray-800/80 to-gray-700/80 border-2 border-gray-600/50 hover:border-primary/50 backdrop-blur-sm'
                 }`}>
                   
@@ -400,15 +396,15 @@ export default function GameDiamondPacksPage() {
         {selectedPack && (
           <div className="w-full max-w-xl mx-auto mt-6 mb-8 space-y-4">
             {/* Payment Selection Card */}
-            <div className="rounded-2xl bg-[#FCF3A4] shadow-lg p-6">
-              <h3 className="text-black text-lg font-bold mb-4">SELECT PAYMENT</h3>
+            <div className="rounded-2xl bg-surface shadow-lg p-6">
+              <h3 className="text-text text-lg font-bold mb-4">SELECT PAYMENT</h3>
               <div className="flex gap-4">
                 {/* UPI Payment Option */}
                 <button
                   onClick={() => setSelectedPaymentMethod('upi')}
                   className={`flex-1 flex items-center justify-center gap-3 py-4 px-4 rounded-xl border-2 transition-all duration-300 ${
                     selectedPaymentMethod === 'upi'
-                      ? 'bg-[#FECA00] border-black'
+                      ? 'bg-[#a6f2da] border-black'
                       : 'bg-white border-black'
                   }`}
                 >
@@ -426,11 +422,11 @@ export default function GameDiamondPacksPage() {
                   onClick={() => setSelectedPaymentMethod('cp-coins')}
                   className={`flex-1 flex items-center justify-center gap-3 py-4 px-4 rounded-xl border-2 transition-all duration-300 ${
                     selectedPaymentMethod === 'cp-coins'
-                      ? 'bg-[#FECA00] border-black'
+                      ? 'bg-[#a6f2da] border-black'
                       : 'bg-white border-black'
                   }`}
                 >
-                  <div className="w-6 h-6 bg-[#FECA00] rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 bg-[#a6f2da] rounded-full flex items-center justify-center">
                     <span className="text-black font-bold text-xs">CP</span>
                   </div>
                   <span className="text-black font-semibold">CP Coins</span>
@@ -440,11 +436,11 @@ export default function GameDiamondPacksPage() {
 
             {/* Buy Now Card - Only show after payment method selection */}
             {true && (
-              <div className="rounded-2xl bg-[#FCF3A4] shadow-lg p-6 mb-28">
+              <div className="rounded-2xl bg-surface shadow-lg p-6 mb-28">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-black text-lg font-bold">BUY NOW</h3>
+                  <h3 className="text-text text-lg font-bold">BUY NOW</h3>
                   <div className="text-right">
-                    <div className="text-black text-lg font-bold">
+                    <div className="text-text text-lg font-bold">
                       ₹{diamondPacks.find(p => p._id === selectedPack)?.amount}
                     </div>
                     {/* <div className="text-black text-sm">
@@ -454,7 +450,7 @@ export default function GameDiamondPacksPage() {
                 </div>
                 
                 <button 
-                  className="w-full py-4 rounded-xl bg-[#FECA00] text-black font-black text-xl tracking-wider shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 transform disabled:opacity-50 disabled:cursor-not-allowed" 
+                  className="w-full py-4 rounded-xl bg-[#a6f2da] text-black font-black text-xl tracking-wider shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 transform disabled:opacity-50 disabled:cursor-not-allowed" 
                   onClick={handleCreateOrder} 
                   disabled={orderLoading || upiLoading}
                 >

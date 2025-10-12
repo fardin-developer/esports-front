@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen py-12 px-6 md:px-20 bg-yellow-300">
+    <div className="min-h-screen py-12 px-6 md:px-20 bg-[#a6f2da]">
       <div className="max-w-4xl mx-auto bg-gray-200 shadow-xl rounded-2xl p-10">
         <h1 className="text-3xl font-bold text-center text-black mb-4">
           Contact Us

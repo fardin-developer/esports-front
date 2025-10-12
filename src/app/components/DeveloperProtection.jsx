@@ -94,7 +94,7 @@ function MaintenancePage() {
             </div>
             
             <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
-              <p className="text-yellow-300 font-medium">
+              <p className="text-[#a6f2da] font-medium">
                 🔄 Expected completion: Within the next few hours
               </p>
               <p className="text-gray-400 text-sm mt-1">

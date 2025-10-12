@@ -145,14 +145,14 @@ const Actions = () => {
     <section className="w-full px-4 py-8 relative ">
       <AddBalanceModal open={showAddBalance} onClose={() => setShowAddBalance(false)} />
 
-      <div className="max-w-5xl mx-auto flex justify-center bg-[#FCF3A4] p-4 rounded-2xl">
+      <div className="max-w-5xl mx-auto flex justify-center bg-surface p-4 rounded-2xl">
         <div className="grid grid-cols-4 md:grid-cols-4 gap-4 md:gap-6 lg:w-4/5">
           {actions.map((action, idx) => (
             <button
               key={action.label}
               className={`
                 group flex flex-col items-center justify-center aspect-square rounded-2xl pt-4 pb-4
-                bg-[#FECA00] border border-yellow-500
+                bg-[#a6f2da] border border-primary
                 hover:border-[#38bdf8]/50 hover:-translate-y-1 hover:shadow-xl
                 ${action.glowColor}
                 focus:outline-none focus:ring-2 focus:ring-[#38bdf8]/50 focus:border-[#38bdf8]
