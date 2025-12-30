@@ -21,7 +21,7 @@ import { getSiteNameFromDomain } from './utils/siteConfig';
 export async function generateMetadata({ params, searchParams }, parent) {
   // For server-side, we need to use headers to get the domain
   const headers = await import('next/headers');
-  let siteName = 'Zennova'; // Default fallback
+  let siteName = 'CP TopUp'; // Default fallback
   
   try {
     const headersList = await headers.headers();
@@ -33,7 +33,7 @@ export async function generateMetadata({ params, searchParams }, parent) {
       
       // Handle localhost and development
       if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.includes('vercel.app')) {
-        siteName = 'Zennova';
+        siteName = 'CP TopUp';
       } else {
         // Remove www. and common TLDs
         const extractedName = hostname
@@ -44,7 +44,7 @@ export async function generateMetadata({ params, searchParams }, parent) {
         // Handle special cases
         const specialCases = {
           'zenova': 'Zenova',
-          'zennova': 'Zennova',
+          'CP TopUp': 'CP TopUp',
           'leafstore': 'LeafStore',
           'gaming': 'Gaming Platform',
           'topup': 'TopUp Platform',
@@ -57,7 +57,7 @@ export async function generateMetadata({ params, searchParams }, parent) {
     }
   } catch (error) {
     // Fallback if headers are not available
-    siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Zennova';
+    siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'CP TopUp';
   }
   
   return {

@@ -354,13 +354,13 @@ export default function GameDiamondPacksPage() {
               )}
             </button>
             {validationResult && (
-              <div className={`mt-4 p-3 rounded-xl border ${validationResult.status === true ? "bg-green-900/20 border-green-500/30 text-green-400" : "bg-red-900/20 border-red-500/30 text-red-400"}`}>
-                <div className="flex items-center gap-2">
-                  <FaCheckCircle className={validationResult.status === true ? "text-green-400" : "text-red-400"} />
+              <div className={`mt-4 p-3 rounded-xl border-2 ${validationResult.status === true ? "bg-green-50 border-green-400 text-green-700" : "bg-red-50 border-red-300 text-red-600"}`}>
+                <div className="flex items-center gap-2 font-bold">
+                  <FaCheckCircle className={validationResult.status === true ? "text-green-500" : "text-red-400"} />
                   {validationResult.message}
                 </div>
                 {validationResult.username && (
-                  <div className="font-bold mt-1">Username: {validationResult.username}</div>
+                  <div className="font-black mt-1 text-gray-800">Username: {validationResult.username}</div>
                 )}
               </div>
             )}

@@ -28,14 +28,19 @@ export default function ContactPage() {
               <div>
                 <p className="font-medium">Registered Address:</p>
                 <p>
-                  House No. 451, Palash Basti Road,<br />
-                  Barsala, Bogipukhuri, Sonitpur,<br />
-                  Alisinga, Assam – 784112, India
+                  C/O: Uda Ram Mali,<br />
+                  Tekrawas, Khara kua ke paas,<br />
+                  Bhinmal, Jalore,<br />
+                  Rajasthan – 343029, India
                 </p>
               </div>
               <div>
                 <p className="font-medium">Email:</p>
-                <p>support@zeonnova.in</p>
+                <p>cpstore255@gmail.com</p>
+              </div>
+              <div>
+                <p className="font-medium">Phone:</p>
+                <p>+91 9923575712</p>
               </div>
             </div>
           </div>

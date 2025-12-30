@@ -31,7 +31,7 @@ const getStatusStyle = (status) => {
     case 'pending':
       return 'bg-warning/10 text-warning border-warning/20'
     case 'processing':
-      return 'bg-info/10 text-info border-info/20'
+      return 'bg-info/20 text-blue-700 border-info/20'
     case 'cancelled':
       return 'bg-error/10 text-error border-error/20'
     case 'failed':
