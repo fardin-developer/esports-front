@@ -69,7 +69,7 @@ export async function generateMetadata({ params, searchParams }, parent) {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} pt-20`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} pt-20 pb-24 lg:pb-0`}>
         <ClientProvider>
           {/* <DeveloperProtection> */}
             <Navbar />

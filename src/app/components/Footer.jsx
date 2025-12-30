@@ -1,9 +1,11 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { getSiteConfig } from '../utils/siteConfig'
 
 const Footer = () => {
+  const pathname = usePathname()
   const [siteConfig, setSiteConfig] = useState({ name: 'Zennova' })
   const [isClient, setIsClient] = useState(false)
 
@@ -13,6 +15,9 @@ const Footer = () => {
     // Update site config on client side
     setSiteConfig(getSiteConfig())
   }, [])
+
+  // Hide on login page
+  if (pathname === '/login') return null
 
   return (
     <footer className="hidden lg:block bg-[rgba(15,15,35,0.98)] backdrop-blur-xl border-t border-[rgba(100,255,218,0.12)] mt-20">

@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import LoginModal from './LoginModal'
 import { useSelector, useDispatch } from 'react-redux'
 import { logout, rehydrateAuth, fetchWalletBalance } from '../features/auth/authSlice'
@@ -8,6 +9,7 @@ import { logout, rehydrateAuth, fetchWalletBalance } from '../features/auth/auth
 import { getSiteConfig } from '../utils/siteConfig'
 
 const Navbar = () => {
+  const pathname = usePathname()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -57,6 +59,9 @@ const Navbar = () => {
   }, [])
 
   if (!hydrated) return null // or a spinner
+
+  // Hide on login page
+  if (pathname === '/login') return null
 
   // Handle successful login
   const handleLoginSuccess = (mobileNumber) => {

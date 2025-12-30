@@ -52,6 +52,11 @@ const BottomNavbar = ({ balance, userMobile }) => {
     },
   ]
 
+  // Hide on login page
+  if (pathname === '/login') {
+    return null
+  }
+
   // Don't render until mounted to prevent hydration mismatch
   if (!mounted) {
     return (
