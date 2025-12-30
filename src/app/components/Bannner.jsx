@@ -64,7 +64,7 @@ const Bannner = () => {
   }
 
   return (
-    <div className="relative  h-[300px] sm:h-[400px] md:h-[500px] lg:h-[550px] overflow-hidden bg-black mx-4 sm:mx-0 my-4 sm:my-0 rounded-lg sm:rounded-none">
+    <div className="relative w-full aspect-video md:aspect-21/9 overflow-hidden bg-black mx-0 my-0 sm:rounded-none">
       {/* Slides */}
       <div className="relative w-full h-full">
         {slides.map((slide, index) => {
@@ -92,7 +92,7 @@ const Bannner = () => {
 
               {/* Content - show only when title exists */}
               {hasTitle && (
-                <div className="absolute bottom-0 left-0 right-0 z-10 p-4 sm:p-6 md:p-8 bg-gradient-to-t from-black/80 to-transparent">
+                <div className="absolute bottom-0 left-0 right-0 z-10 p-4 sm:p-6 md:p-8 bg-linear-to-t from-black/80 to-transparent">
                   <div className="max-w-4xl mx-auto">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
                       {/* Text Content */}

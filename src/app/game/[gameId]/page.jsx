@@ -29,6 +29,7 @@ export default function GameDiamondPacksPage() {
   const [upiTransaction, setUpiTransaction] = useState(null);
   const [upiOrder, setUpiOrder] = useState(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null); // null = all categories
   const params = useParams()
   const gameId = params.gameId
   const dispatch = useDispatch()
@@ -67,13 +68,46 @@ export default function GameDiamondPacksPage() {
     }
   }, [gameId])
 
+  // Extract unique categories from diamond packs
+  const categories = React.useMemo(() => {
+    const uniqueCategories = new Set();
+    diamondPacks.forEach(pack => {
+      if (pack.category && pack.status === 'active') {
+        uniqueCategories.add(pack.category);
+      }
+    });
+    return Array.from(uniqueCategories).sort();
+  }, [diamondPacks]);
+
+  // Filter packs based on selected category
+  const filteredPacks = React.useMemo(() => {
+    if (!selectedCategory) {
+      // Show all active packs by default
+      return diamondPacks.filter(pack => pack.status === 'active');
+    }
+    return diamondPacks.filter(pack => pack.category === selectedCategory && pack.status === 'active');
+  }, [diamondPacks, selectedCategory]);
+
+  // Clear selected pack if it's not in filtered packs
+  React.useEffect(() => {
+    if (selectedPack && !filteredPacks.find(pack => pack._id === selectedPack)) {
+      setSelectedPack(null);
+      setSelectedPaymentMethod(null);
+    }
+  }, [filteredPacks, selectedPack]);
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
-          <div className="text-text text-lg font-semibold">Loading Game Packs...</div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-primary p-6">
+        <div className="relative">
+          <div className="w-20 h-20 border-[6px] border-black rounded-full animate-spin border-t-transparent"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-8 h-8 bg-black rounded-full animate-pulse"></div>
+          </div>
         </div>
+        <h2 className="mt-8 text-2xl font-black text-black uppercase tracking-widest animate-pulse">
+          Loading Packs...
+        </h2>
       </div>
     )
   }
@@ -239,7 +273,7 @@ export default function GameDiamondPacksPage() {
   
 
   return (
-    <div className="min-h-screen w-screen bg-[#FECA00]">
+    <div className="min-h-screen w-screen bg-primary">
       <div className="max-w-7xl mx-auto px-4 py-6">
 
       {/* <div className="text-center mb-6">
@@ -252,61 +286,49 @@ export default function GameDiamondPacksPage() {
 
         {/* Game Data Section */}
         {gameInfo && (
-          <div className="px-4 mb-8">
-            <div className="bg-gradient-to-r from-[#FCF3A4] to-gray-200 backdrop-blur-sm border border-[#FCF3A4] rounded-2xl p-6 shadow-2xl">
-              <div className="flex flex-col md:flex-row items-center gap-6">
-                {/* Game Image */}
-                <div className="flex-shrink-0">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-primary/20 rounded-xl blur-md"></div>
-                    <img 
-                      src={gameInfo.image} 
-                      alt={gameInfo.name}
-                      className="relative w-20 h-20 md:w-24 md:h-24 object-cover rounded-xl border-2 border-gray-600/30 shadow-lg"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                      }}
-                    />
-                  </div>
+          <div className="px-2 mb-10">
+            <div className="bg-linear-to-r from-[#FCF3A4] to-primary border-[3px] border-black rounded-[2rem] p-5 md:p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex flex-col md:flex-row items-center gap-6 relative overflow-hidden">
+              {/* Decorative accent */}
+              <div className="absolute top-0 left-0 w-full h-1.5 bg-primary"></div>
+              
+              {/* Game Image */}
+              <div className="relative shrink-0">
+                <div className="w-20 h-20 md:w-28 md:h-28 rounded-2xl border-[3px] border-black overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-primary/10">
+                  <img 
+                    src={gameInfo.image} 
+                    alt={gameInfo.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
                 </div>
+              </div>
 
-                {/* Game Info */}
-                <div className="flex-1 text-center md:text-left">
-                  <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-2">
+              {/* Game Info */}
+              <div className="flex-1 text-center md:text-left">
+                <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mb-3">
+                  <h2 className="text-2xl md:text-3xl font-black text-black uppercase tracking-tight">
                     {gameInfo.name}
                   </h2>
-                  <div className="flex flex-col md:flex-row gap-4 text-sm md:text-base text-gray-700">
-                    <div className="flex items-center justify-center md:justify-start gap-2">
-                      <span className="font-semibold">Publisher:</span>
-                      <span className="bg-gray-800/70 text-white px-3 py-1 rounded-lg">
-                        {gameInfo.publisher}
-                      </span>
-                    </div>
-                  </div>
-                  
-                  {/* Feature Tags */}
-                  <div className="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
-                    <span className="bg-primary text-gray-800 px-3 py-1 rounded-full text-xs font-medium border border-primary/30 flex items-center gap-1">
-                      <Zap className="w-3 h-3 text-gray-800" />
-                      Instant Delivery
-                    </span>
-                    <span className="bg-primary text-gray-800 px-3 py-1 rounded-full text-xs font-medium border border-primary/30 flex items-center gap-1">
-                      <Shield className="w-3 h-3 text-gray-800" />
-                      Secure Payment
-                    </span>
-                    <span className="bg-primary text-gray-800 px-3 py-1 rounded-full text-xs font-medium border border-primary/30 flex items-center gap-1">
-                      <Headphones className="w-3 h-3 text-gray-800" />
-                      24/7 Support
-                    </span>
-                    <span className="bg-primary text-gray-800 px-3 py-1 rounded-full text-xs font-medium border border-primary/30 flex items-center gap-1">
-                      <DollarSign className="w-3 h-3 text-gray-800" />
-                      Best Prices
-                    </span>
+                  <div className="bg-black text-primary px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-[0.2em] self-center md:self-auto">
+                    {gameInfo.publisher}
                   </div>
                 </div>
-
-                {/* Game Status Badge */}
-                <div className="flex-shrink-0">
+                
+                {/* Feature Tags */}
+                <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                  {[
+                    { icon: Zap, text: 'Instant' },
+                    { icon: Shield, text: 'Secure' },
+                    { icon: Headphones, text: '24/7 Support' },
+                    { icon: DollarSign, text: 'Best Price' }
+                  ].map((feature, i) => (
+                    <span key={i} className="bg-primary/10 border-2 border-black/5 px-2.5 py-1 rounded-xl text-[9px] font-black text-black uppercase tracking-wider flex items-center gap-1.5 hover:bg-primary/20 transition-colors">
+                      <feature.icon className="w-3 h-3" />
+                      {feature.text}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
@@ -315,17 +337,19 @@ export default function GameDiamondPacksPage() {
 
 
         {/* Gaming Header with Glow Effect */}
-        <div className="px-4 mb-8">
-          
-          <div className="bg-[#fcf2d7] backdrop-blur-sm border border-[#FCF3A4] rounded-2xl p-6 shadow-2xl">
-            <div className="text-gray-800 text-lg md:text-xl font-bold mb-4 flex items-center gap-2">
-              <FaGem className="text-gray-800 text-xl" />
-              VERIFY YOUR ACCOUNT
+        <div className="px-2 mb-8">
+          <div className="bg-[#FCF3A4] border-[3px] border-black rounded-[2rem] p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden">
+            {/* Decorative background element */}
+            <div className="absolute top-0 right-0 w-24 h-24 bg-black/5 rounded-full -mr-12 -mt-12"></div>
+            
+            <div className="text-black text-lg md:text-xl font-black mb-5 flex items-center gap-3 relative z-10 uppercase tracking-tight">
+              <div className="w-1.5 h-6 bg-black rounded-full"></div>
+              Verify Account
             </div>
-            <div className="mb-4">
+            <div className="mb-5 relative z-10 space-y-3.5">
               {gameInfo?.validationFields?.map(field => (
-                <div key={field} className="mb-4">
-                  <label className="block text-gray-800 font-semibold mb-2" htmlFor={field}>
+                <div key={field}>
+                  <label className="block text-black font-black text-[10px] uppercase tracking-widest mb-1.5 px-1" htmlFor={field}>
                     {field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
                   </label>
                   <input
@@ -333,34 +357,34 @@ export default function GameDiamondPacksPage() {
                     type="text"
                     value={validationValues[field] || ''}
                     onChange={e => setValidationValues(vals => ({ ...vals, [field]: e.target.value }))}
-                    placeholder={`Enter ${field.replace(/([A-Z])/g, ' $1')}`}
-                    className="w-full bg-gray-100 text-gray-700 placeholder:text-gray-500 rounded-xl px-4 py-3 mb-2 border border-gray-600/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-300 backdrop-blur-sm"
+                    placeholder={`ENTER ${field.replace(/([A-Z])/g, ' $1').toUpperCase()}`}
+                    className="w-full bg-white text-black font-bold placeholder:text-black/20 rounded-xl px-4 py-3 border-[2.5px] border-black focus:outline-none focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-200"
                   />
                 </div>
               ))}
             </div>
             <button
-              className="w-full bg-primary text-black font-bold py-4 rounded-xl shadow-lg hover:shadow-green-400/25 hover:scale-[1.02] transition-all duration-300 transform"
+              className="w-full bg-black text-primary font-black py-4 rounded-xl shadow-[0_6px_0_0_rgba(0,0,0,0.2)] hover:shadow-none hover:translate-y-1 active:translate-y-2 transition-all duration-150 uppercase tracking-[0.2em] relative z-10 text-sm"
               onClick={handleValidateUser}
               disabled={validationLoading}
             >
               {validationLoading ? (
-                <div className="flex items-center justify-center gap-2">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary"></div>
-                  Validating...
+                <div className="flex items-center justify-center gap-3">
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-primary border-t-transparent"></div>
+                  <span>VALIDATING...</span>
                 </div>
               ) : (
                 "VALIDATE NOW"
               )}
             </button>
             {validationResult && (
-              <div className={`mt-4 p-3 rounded-xl border-2 ${validationResult.status === true ? "bg-green-50 border-green-400 text-green-700" : "bg-red-50 border-red-300 text-red-600"}`}>
-                <div className="flex items-center gap-2 font-bold">
-                  <FaCheckCircle className={validationResult.status === true ? "text-green-500" : "text-red-400"} />
+              <div className={`mt-5 p-3.5 rounded-xl border-[2.5px] relative z-10 flex flex-col gap-1 ${validationResult.status === true ? "bg-green-50 border-green-500 text-green-700 shadow-[3px_3px_0px_0px_rgba(34,197,94,0.2)]" : "bg-red-50 border-red-500 text-red-700 shadow-[3px_3px_0px_0px_rgba(239,68,68,0.2)]"}`}>
+                <div className="flex items-center gap-2 font-black uppercase text-xs">
+                  <FaCheckCircle className={validationResult.status === true ? "text-green-500" : "text-red-500"} />
                   {validationResult.message}
                 </div>
                 {validationResult.username && (
-                  <div className="font-black mt-1 text-gray-800">Username: {validationResult.username}</div>
+                  <div className="font-black mt-0.5 text-black uppercase text-base tracking-tight">Username: {validationResult.username}</div>
                 )}
               </div>
             )}
@@ -369,62 +393,85 @@ export default function GameDiamondPacksPage() {
 
         {/* Select Amount Section Title with How to Purchase Button */}
         <div className="px-2 mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <div className="text-xs md:text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-gray-800">
-              SELECT YOUR DIAMOND PACK
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-1.5 h-6 bg-black rounded-full"></div>
+              <h2 className="text-lg md:text-xl font-black text-black uppercase tracking-tight">
+                Select Diamond Pack
+              </h2>
             </div>
             <button
               onClick={() => setShowHowToPurchase(true)}
-              className="bg-[#FCF3A4] text-black px-3 py-4 rounded-xl text-xs font-bold hover:shadow-lg hover:shadow-primary/25 hover:scale-105 transition-all duration-300 transform"
+              className="bg-black text-primary px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
             >
-              How to <span className='br'> Purchase</span>
+              How to Purchase
             </button>
           </div>
         </div>
 
+        {/* Category Filter */}
+        {categories.length > 0 && (
+          <div className="px-2 mb-4">
+            <div className="flex flex-wrap gap-1.5">
+              <button
+                onClick={() => setSelectedCategory(null)}
+                className={`px-3.5 py-1.5 rounded-xl font-bold text-xs transition-all duration-300 border-2 ${
+                  selectedCategory === null
+                    ? 'bg-black text-primary border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]'
+                    : 'bg-white/40 text-gray-800 border-transparent hover:bg-white/60'
+                }`}
+              >
+                All Packs
+              </button>
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-3.5 py-1.5 rounded-xl font-bold text-xs transition-all duration-300 border-2 ${
+                    selectedCategory === category
+                      ? 'bg-black text-primary border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]'
+                      : 'bg-white/40 text-gray-800 border-transparent hover:bg-white/60'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Diamond Packs Selectable Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 p-4 mb-8 bg-[#FCF3A4] rounded-2xl">
-          {diamondPacks.map((pack) => {
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 md:gap-4 mb-6">
+          {filteredPacks.map((pack) => {
             const isSelected = selectedPack === pack._id
             return (
               <div
                 key={pack._id}
-                className={`relative group cursor-pointer transform transition-all duration-300 text-gray-800 bg-transparent hover:scale-105 ${isSelected ? 'scale-105' : ''}`}
+                className="relative"
                 onClick={() => setSelectedPack(pack._id)}
               >
-                {/* Card Background with Gradient */}
-                <div className={`relative overflow-hidden rounded-2xl p-4 min-h-[140px] ${isSelected 
-                  ? 'bg-primary border-2 border-primary shadow-2xl rounded-2xl shadow-primary/25' 
-                  : 'border-1 text-gray-800'
-                }`}>
-                  
-                  {/* Animated Background Pattern */}
-                  <div className="absolute inset-0 opacity-10">
-                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/20 to-transparent"></div>
-                    <div className="absolute bottom-0 right-0 w-full h-full bg-gradient-to-tl from-purple-500/20 to-transparent"></div>
-                  </div>
-
+                <div
+                  className={`relative h-full flex flex-col items-center justify-between p-3 rounded-2xl cursor-pointer transition-all duration-300 transform border-2 ${
+                    isSelected
+                      ? 'bg-primary border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] -translate-y-0.5'
+                      : 'bg-[#FCF3A4] border-transparent hover:border-black/10 hover:-translate-y-0.5'
+                  }`}
+                >
                   {/* Selection Indicator */}
-                  <div className="absolute top-3 left-3">
-                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-                      isSelected 
-                        ? 'border-primary bg-primary shadow-lg shadow-primary/50' 
-                        : 'border-gray-500 bg-transparent group-hover:border-primary/50'
-                    }`}>
-                      {isSelected && <FaCheckCircle className="text-gray-800 text-xs" />}
+                  {isSelected && (
+                    <div className="absolute -top-1.5 -right-1.5 bg-black text-primary p-0.5 rounded-full shadow-md z-10">
+                      <FaCheckCircle className="text-sm" />
                     </div>
-                  </div>
+                  )}
 
-
-                  {/* Pack Logo with Glow Effect */}
+                  {/* Pack Logo */}
                   {pack.logo && (
-                    <div className="flex justify-center mb-3">
-                      <div className="relative">
-                        <div className="absolute inset-0 bg-primary/20 rounded-xl blur-md"></div>
+                    <div className="mb-2 relative transition-transform duration-300">
+                      <div className={`w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center overflow-hidden ${isSelected ? 'bg-black/5' : 'bg-black/5'}`}>
                         <img 
                           src={pack.logo} 
                           alt={pack.description}
-                          className="relative w-14 h-14 object-contain rounded-xl border border-gray-600/30"
+                          className="w-full h-full object-contain p-1.5"
                           onError={(e) => {
                             e.target.style.display = 'none';
                           }}
@@ -434,21 +481,23 @@ export default function GameDiamondPacksPage() {
                   )}
 
                   {/* Pack Info */}
-                  <div className="flex flex-col items-center justify-center text-center">
-                    <div className="text-gray-700 font-semibold text-sm md:text-base mb-2 leading-tight">
+                  <div className="text-center w-full mt-auto">
+                    <div className={`font-bold text-xs md:text-sm mb-0.5 line-clamp-2 ${isSelected ? 'text-black' : 'text-gray-800'}`}>
                       {pack.description}
                     </div>
-                    <div className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-white via-yellow-600 to-gray-500 bg-clip-text">
+                    <div className={`text-lg md:text-xl font-black ${isSelected ? 'text-black' : 'text-gray-900'}`}>
                       ₹{pack.amount}
                     </div>
                   </div>
 
-                  {/* Hover Glow Effect */}
-                  <div className={`absolute inset-0 rounded-2xl transition-all duration-300 ${
-                    isSelected 
-                      ? 'shadow-[0_0_30px_rgba(59,130,246,0.5)]' 
-                      : 'group-hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]'
-                  }`}></div>
+                  {/* Bonus Tag */}
+                  {pack.description.toLowerCase().includes('bonus') && (
+                    <div className="absolute top-1.5 left-1.5">
+                      <span className="bg-green-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider">
+                        Bonus
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             )
@@ -457,112 +506,146 @@ export default function GameDiamondPacksPage() {
 
         {/* Payment Section */}
         {selectedPack && (
-          <div className="w-full max-w-xl mx-auto mt-6 mb-8 space-y-4">
+          <div className="w-full max-w-xl mx-auto mt-6 mb-12 space-y-4">
             {/* Payment Selection Card */}
-            <div className="rounded-2xl bg-[#FCF3A4] shadow-lg p-6">
-              <h3 className="text-black text-lg font-bold mb-4">SELECT PAYMENT</h3>
-              <div className="flex gap-4">
+            <div className="rounded-2xl bg-[#FCF3A4] p-5 shadow-xl border-2 border-black/5">
+              <h3 className="text-black text-sm font-black mb-4 flex items-center gap-2">
+                <div className="w-1.5 h-4 bg-black rounded-full"></div>
+                SELECT PAYMENT METHOD
+              </h3>
+              <div className="grid grid-cols-2 gap-3">
                 {/* UPI Payment Option */}
                 <button
                   onClick={() => setSelectedPaymentMethod('upi')}
-                  className={`flex-1 flex items-center justify-center gap-3 py-4 px-4 rounded-xl border-2 transition-all duration-300 ${
+                  className={`relative flex flex-col items-center gap-2 py-4 px-3 rounded-xl border-2 transition-all duration-300 ${
                     selectedPaymentMethod === 'upi'
-                      ? 'bg-[#FECA00] border-black'
-                      : 'bg-white border-black'
+                      ? 'bg-primary border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] scale-[1.02]'
+                      : 'bg-white border-black/5 hover:border-black/10'
                   }`}
                 >
-                  <div className="w-6 h-6 flex text-gray-900 font-bold items-center justify-center">
-                    <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
-                      <rect x="2" y="4" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="2"/>
-                      <path d="M2 10h20" stroke="currentColor" strokeWidth="2"/>
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center ${selectedPaymentMethod === 'upi' ? 'bg-black text-primary' : 'bg-black/10 text-black'}`}>
+                    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor">
+                      <rect x="2" y="4" width="20" height="14" rx="2" strokeWidth="2"/>
+                      <path d="M2 10h20" strokeWidth="2"/>
                     </svg>
                   </div>
-                  <span className="text-black font-semibold">UPI</span>
+                  <span className={`font-bold uppercase tracking-wider text-[10px] ${selectedPaymentMethod === 'upi' ? 'text-black' : 'text-black/60'}`}>UPI</span>
+                  {selectedPaymentMethod === 'upi' && (
+                    <div className="absolute top-1.5 right-1.5">
+                      <FaCheckCircle className="text-black text-sm" />
+                    </div>
+                  )}
                 </button>
 
                 {/* CP Coins Payment Option */}
                 <button
                   onClick={() => setSelectedPaymentMethod('cp-coins')}
-                  className={`flex-1 flex items-center justify-center gap-3 py-4 px-4 rounded-xl border-2 transition-all duration-300 ${
+                  className={`relative flex flex-col items-center gap-2 py-4 px-3 rounded-xl border-2 transition-all duration-300 ${
                     selectedPaymentMethod === 'cp-coins'
-                      ? 'bg-[#FECA00] border-black'
-                      : 'bg-white border-black'
+                      ? 'bg-primary border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] scale-[1.02]'
+                      : 'bg-white border-black/5 hover:border-black/10'
                   }`}
                 >
-                  <div className="w-6 h-6 bg-[#FECA00] rounded-full flex items-center justify-center">
-                    <span className="text-black font-bold text-xs">CP</span>
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center font-black text-xs ${selectedPaymentMethod === 'cp-coins' ? 'bg-black text-primary' : 'bg-black/10 text-black'}`}>
+                    CP
                   </div>
-                  <span className="text-black font-semibold">CP Coins</span>
+                  <span className={`font-bold uppercase tracking-wider text-[10px] ${selectedPaymentMethod === 'cp-coins' ? 'text-black' : 'text-black/60'}`}>CP Coins</span>
+                  {selectedPaymentMethod === 'cp-coins' && (
+                    <div className="absolute top-1.5 right-1.5">
+                      <FaCheckCircle className="text-black text-sm" />
+                    </div>
+                  )}
                 </button>
               </div>
             </div>
 
-            {/* Buy Now Card - Only show after payment method selection */}
-            {true && (
-              <div className="rounded-2xl bg-[#FCF3A4] shadow-lg p-6 mb-28">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-black text-lg font-bold">BUY NOW</h3>
-                  <div className="text-right">
-                    <div className="text-black text-lg font-bold">
-                      ₹{diamondPacks.find(p => p._id === selectedPack)?.amount}
+            {/* Buy Now Card */}
+            {selectedPaymentMethod && (
+              <div className="rounded-2xl bg-white p-5 shadow-xl border-[3px] border-black mb-24 transform transition-all animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div className="flex justify-between items-end mb-4">
+                  <div>
+                    <div className="text-black/50 text-[10px] font-bold uppercase tracking-widest mb-0.5">Total Payable</div>
+                    <div className="text-black text-3xl font-black flex items-center gap-0.5">
+                      <span className="text-xl mt-0.5">₹</span>
+                      {diamondPacks.find(p => p._id === selectedPack)?.amount}
                     </div>
-                    {/* <div className="text-black text-sm">
-                      {diamondPacks.find(p => p._id === selectedPack)?.description} | {selectedPaymentMethod === 'upi' ? 'UPI' : 'CP COINS'}
-                    </div> */}
+                  </div>
+                  <div className="text-right">
+                    <div className="text-black/50 text-[10px] font-bold uppercase tracking-widest mb-0.5">Payment via</div>
+                    <div className="bg-black text-primary px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest">
+                      {selectedPaymentMethod === 'upi' ? 'UPI' : 'CP COINS'}
+                    </div>
                   </div>
                 </div>
                 
                 <button 
-                  className="w-full py-4 rounded-xl bg-[#FECA00] text-black font-black text-xl tracking-wider shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 transform disabled:opacity-50 disabled:cursor-not-allowed" 
+                  className="w-full py-3.5 rounded-xl bg-black text-primary font-black text-lg tracking-[0.15em] shadow-[0_6px_0_0_rgba(0,0,0,0.15)] hover:shadow-none hover:translate-y-0.5 transition-all duration-150 transform disabled:opacity-50 disabled:cursor-not-allowed group flex items-center justify-center gap-3" 
                   onClick={handleCreateOrder} 
                   disabled={orderLoading || upiLoading}
                 >
                   {(orderLoading || upiLoading) ? (
-                    <div className="flex items-center justify-center gap-3">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-black"></div>
-                      Processing Purchase...
-                    </div>
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-primary border-t-transparent"></div>
+                      <span className="text-sm">PROCESSING...</span>
+                    </>
                   ) : (
-                    "BUY NOW"
+                    <>
+                      <span className="text-sm">PROCEED TO PAY</span>
+                      <FaBolt className="text-primary text-sm group-hover:animate-pulse" />
+                    </>
                   )}
                 </button>
+                <p className="text-center text-gray-400 text-[8px] font-bold uppercase tracking-widest mt-3">
+                  Secure Encrypted Transaction
+                </p>
               </div>
             )}
           </div>
         )}
 
-        {diamondPacks.length === 0 && !loading && (
+        {filteredPacks.length === 0 && !loading && (
           <div className="flex items-center justify-center flex-1 px-4">
-            <div className="text-center text-text opacity-70">
-              <div className="text-xl md:text-2xl mb-2">No diamond packs available</div>
-              <div className="text-sm md:text-base">Check back later for new packs</div>
+            <div className="text-center text-gray-800 opacity-70">
+              <div className="text-xl md:text-2xl mb-2">
+                {selectedCategory 
+                  ? `No packs available in "${selectedCategory}" category` 
+                  : 'No diamond packs available'}
+              </div>
+              <div className="text-sm md:text-base">
+                {selectedCategory 
+                  ? 'Try selecting a different category' 
+                  : 'Check back later for new packs'}
+              </div>
             </div>
           </div>
         )}
 
         {/* How to Purchase Modal */}
         {showHowToPurchase && (
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-2">
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-6 max-w-5xl w-full max-h-[95vh] overflow-y-auto border border-gray-600/30 shadow-2xl">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-primary">
-                  How to Purchase
-                </h2>
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-100 p-4">
+            <div className="bg-white border-[6px] border-black rounded-[2.5rem] p-6 md:p-10 max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] relative animate-in zoom-in-95 duration-300">
+              <div className="flex justify-between items-center mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-8 bg-black rounded-full"></div>
+                  <h2 className="text-2xl md:text-3xl font-black text-black uppercase tracking-tight">
+                    How to Purchase
+                  </h2>
+                </div>
                 <button
                   onClick={() => setShowHowToPurchase(false)}
-                  className="text-text hover:text-white transition-colors p-2 hover:bg-gray-700/50 rounded-full"
+                  className="bg-black text-primary w-10 h-10 rounded-full flex items-center justify-center hover:rotate-90 transition-transform"
                 >
                   <FaTimes className="text-xl" />
                 </button>
               </div>
               
               {/* MLBB Purchasing Guide Image */}
-              <div className="flex justify-center mb-6">
-                <div className="relative max-w-full">
+              <div className="flex justify-center mb-8">
+                <div className="relative max-w-full border-4 border-black rounded-3xl overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,0.1)]">
                   <img 
                     src="/mlbb purchasing guide.jpg" 
                     alt="MLBB Purchasing Guide"
-                    className="w-full h-auto max-h-[75vh] object-contain rounded-xl border border-gray-600/30 shadow-lg"
+                    className="w-full h-auto max-h-[60vh] object-contain"
                     onError={(e) => {
                       console.error('Failed to load MLBB purchasing guide image');
                       e.target.style.display = 'none';
@@ -571,68 +654,81 @@ export default function GameDiamondPacksPage() {
                 </div>
               </div>
               
-              <div className="bg-gradient-to-r from-yellow-900/20 to-orange-900/20 rounded-xl p-4 border border-yellow-500/30 mb-6">
-                <p className="text-sm text-text/90 leading-relaxed text-center">
-                  <strong className="text-yellow-400">📱 Follow the guide above</strong> to complete your Mobile Legends diamond purchase successfully!
+              <div className="bg-primary border-4 border-black rounded-3xl p-6 mb-8 text-center">
+                <p className="text-black font-black uppercase text-sm md:text-base tracking-widest leading-relaxed">
+                  📱 FOLLOW THE GUIDE ABOVE TO COMPLETE YOUR PURCHASE SUCCESSFULLY!
                 </p>
               </div>
               
               <button
                 onClick={() => setShowHowToPurchase(false)}
-                className="w-full bg-primary text-black py-4 rounded-xl font-bold text-lg hover:shadow-lg hover:shadow-primary/25 hover:scale-105 transition-all duration-300 transform"
+                className="w-full bg-black text-primary py-5 rounded-2xl font-black text-xl uppercase tracking-[0.2em] shadow-[0_8px_0_0_rgba(0,0,0,0.2)] hover:shadow-none hover:translate-y-1 active:translate-y-2 transition-all"
               >
-                Got it
+                GOT IT!
               </button>
             </div>
           </div>
         )}
 
         {upiModalOpen && upiTransaction && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-            <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 max-w-md w-full border border-gray-600/30 shadow-2xl relative">
+          <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+            <div className="bg-white border-[6px] border-black rounded-[2.5rem] p-8 max-w-md w-full shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] relative animate-in zoom-in-95 duration-300">
               <button
-                className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl"
+                className="absolute -top-4 -right-4 w-12 h-12 flex items-center justify-center bg-black text-primary rounded-full border-[3px] border-white shadow-lg hover:rotate-90 transition-transform duration-300 z-10"
                 onClick={() => setUpiModalOpen(false)}
-                aria-label="Close"
               >
-                &times;
+                <FaTimes className="text-xl" />
               </button>
-              <h2 className="text-2xl font-bold text-center mb-4 text-white">Scan & Pay with UPI</h2>
-              <div className="flex flex-col items-center mb-6">
-                <img
-                  src={upiTransaction.paymentUrl}
-                  alt="UPI QR Code"
-                  className="w-48 h-48 rounded-xl border-4 border-primary bg-white object-contain mb-2"
-                />
-                <span className="text-gray-300 text-sm">Scan this QR with any UPI app</span>
-              </div>
-              <div className="mb-6">
-                <div className="text-center text-gray-400 mb-2">Or pay directly with your favorite app:</div>
-                <div className="flex flex-wrap gap-3 justify-center">
-                  {upiTransaction.upiIntent?.gpay_link && (
-                    <a href={upiTransaction.upiIntent.gpay_link} target="_blank" rel="noopener noreferrer" className="px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-semibold text-sm">GPay</a>
-                  )}
-                  {upiTransaction.upiIntent?.phonepe_link && (
-                    <a href={upiTransaction.upiIntent.phonepe_link} target="_blank" rel="noopener noreferrer" className="px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-semibold text-sm">PhonePe</a>
-                  )}
-                  {upiTransaction.upiIntent?.paytm_link && (
-                    <a href={upiTransaction.upiIntent.paytm_link} target="_blank" rel="noopener noreferrer" className="px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-semibold text-sm">Paytm</a>
-                  )}
-                  {upiTransaction.upiIntent?.bhim_link && (
-                    <a href={upiTransaction.upiIntent.bhim_link} target="_blank" rel="noopener noreferrer" className="px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-semibold text-sm">BHIM</a>
-                  )}
+              
+              <div className="text-center">
+                <h2 className="text-2xl font-black text-black mb-6 uppercase tracking-tight">Scan & Pay</h2>
+                
+                <div className="flex flex-col items-center mb-8">
+                  <div className="p-3 bg-white border-4 border-black rounded-3xl shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] mb-4">
+                    <img
+                      src={upiTransaction.paymentUrl}
+                      alt="UPI QR Code"
+                      className="w-48 h-48 object-contain"
+                    />
+                  </div>
+                  <span className="text-black/50 font-black text-[10px] uppercase tracking-widest">Scan with any UPI app</span>
                 </div>
+
+                <div className="mb-8">
+                  <div className="text-black font-black text-xs uppercase tracking-widest mb-4">Quick Links</div>
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { link: upiTransaction.upiIntent?.gpay_link, label: 'GPay' },
+                      { link: upiTransaction.upiIntent?.phonepe_link, label: 'PhonePe' },
+                      { link: upiTransaction.upiIntent?.paytm_link, label: 'Paytm' },
+                      { link: upiTransaction.upiIntent?.bhim_link, label: 'BHIM' }
+                    ].filter(app => app.link).map((app, i) => (
+                      <a 
+                        key={i}
+                        href={app.link} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="px-4 py-3 rounded-xl bg-black/5 border-2 border-black font-black text-xs uppercase tracking-widest hover:bg-black hover:text-primary transition-all"
+                      >
+                        {app.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  className="w-full py-4 rounded-xl bg-black text-primary font-black text-lg uppercase tracking-widest shadow-[0_6px_0_0_rgba(0,0,0,0.2)] hover:shadow-none hover:translate-y-1 active:translate-y-2 transition-all"
+                  onClick={() => {
+                    setUpiModalOpen(false);
+                    if (upiOrder?.id) router.push(`/status?orderId=${upiOrder.id}`);
+                  }}
+                >
+                  Payment Done
+                </button>
+                <p className="text-[10px] text-black/30 font-black uppercase tracking-widest mt-4 text-center">
+                  Click after completion
+                </p>
               </div>
-              <button
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-green-500 to-teal-600 text-white font-bold text-lg shadow-lg hover:scale-105 transition-all duration-300 mb-2"
-                onClick={() => {
-                  setUpiModalOpen(false);
-                  if (upiOrder?.id) router.push(`/status?orderId=${upiOrder.id}`);
-                }}
-              >
-                Payment Completed
-              </button>
-              <div className="text-xs text-gray-400 text-center mt-2">After payment, click above to complete your order.</div>
             </div>
           </div>
         )}

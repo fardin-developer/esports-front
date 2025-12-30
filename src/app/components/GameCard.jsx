@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 const GameCard = ({ game, gameId }) => {
-  const [isHovered, setIsHovered] = useState(false)
   const router = useRouter()
 
   const handleCardClick = () => {
@@ -15,37 +14,40 @@ const GameCard = ({ game, gameId }) => {
 
   return (
     <div
-      className={`flex flex-col w-full h-full bg-red-400 rounded-xl md:rounded-2xl overflow-hidden border transition-all duration-300 cursor-pointer relative group bg-surface border-border ${isHovered ? 'transform -translate-y-2 md:-translate-y-3 shadow-lg md:shadow-primary border-primary' : ''
-        }`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className="group relative flex flex-col w-full h-full cursor-pointer"
       onClick={handleCardClick}
     >
-      {/* Hover overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-      {/* Game Image - Responsive aspect ratio */}
-      <div className={`aspect-[3/4] sm:aspect-square md:aspect-[4/5] bg-gradient-to-r ${game.gradient || 'from-blue-500 to-purple-600'} relative overflow-hidden`}>
-        <div className="relative z-10 w-full h-full">
+      {/* Neubrutalism Card */}
+      <div className="relative h-full flex flex-col bg-white border-[2.5px] border-black rounded-xl overflow-hidden shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 group-hover:translate-x-px group-hover:translate-y-px group-hover:shadow-none">
+        
+        {/* Game Image Wrapper */}
+        <div className="aspect-square relative bg-black/5 overflow-hidden border-b-[2.5px] border-black">
           <img
             src={game.img}
             alt={game.title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
           />
+          
+          {/* Action Overlay */}
+          <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <div className="bg-black text-primary px-2 py-1 rounded-lg font-black text-[9px] uppercase tracking-[0.15em]">
+              Top Up
+            </div>
+          </div>
         </div>
-        <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform transition-transform duration-500 ${isHovered ? 'translate-x-full' : '-translate-x-full'
-          }`}></div>
-      </div>
 
-      {/* Game Info - Responsive padding and text */}
-      <div className="p-2 sm:p-3 md:p-4 flex flex-col gap-1 md:gap-2 justify-between flex-shrink-0 min-h-[50px] sm:min-h-[60px] md:min-h-[70px] lg:min-h-[80px]">
-        <span className="text-xs sm:text-sm md:text-base font-medium text-text line-clamp-1 sm:line-clamp-2 leading-tight">
-          {game.title}
-        </span>
-        <p className="text-xs sm:text-xs md:text-sm leading-relaxed line-clamp-1 sm:line-clamp-2 text-text opacity-70 sm:block">
-          {game.description}
-        </p>
+        {/* Game Info */}
+        <div className="p-2 flex flex-col justify-center flex-1 bg-white min-h-[44px]">
+          <h3 className="text-[12px] md:text-[14px] font-black text-black uppercase leading-[1.2] line-clamp-2 group-hover:text-primary-dark transition-colors">
+            {game.title}
+          </h3>
+          <div className="mt-0.5 flex items-center justify-between">
+            <span className="text-[8px] md:text-[9px] font-bold text-black/40 uppercase tracking-tight line-clamp-1">
+              {game.description || 'Action'}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   )

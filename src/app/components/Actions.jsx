@@ -57,8 +57,6 @@ const AddBalanceModal = ({ open, onClose }) => {
     setLoading(true)
     try {
       const auth = JSON.parse(localStorage.getItem('auth'))
-      const token = auth?.token
-
       const response = await apiClient.post('/wallet/add', {
         amount: Number(amount),
         redirectUrl: `${window.location.origin}/payment/status`,
@@ -68,7 +66,6 @@ const AddBalanceModal = ({ open, onClose }) => {
         throw new Error(response.message || 'Failed to create payment')
       }
 
-      // Redirect to payment
       window.location.href = response.transaction.paymentUrl
     } catch (err) {
       setError(err.message || 'Payment failed')
@@ -80,48 +77,66 @@ const AddBalanceModal = ({ open, onClose }) => {
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 modal-overlay">
-      <div className="bg-[#18181b] border border-[#334155] rounded-2xl p-6 w-full max-w-sm shadow-2xl relative modal-container">
-
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-300">
+      <div className="bg-white border-4 border-black rounded-[2.5rem] p-8 w-full max-w-sm shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] relative animate-in zoom-in-95 duration-300">
+        
         <button 
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg text-[#94a3b8] hover:text-[#f1f5f9] hover:bg-[#23272f] transition-all duration-200" 
+          className="absolute -top-4 -right-4 w-12 h-12 flex items-center justify-center bg-black text-primary rounded-full border-[3px] border-white shadow-lg hover:rotate-90 transition-transform duration-300 z-10" 
           onClick={onClose}
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
-        <div>
-          <h2 className="text-xl font-semibold text-[#f1f5f9] mb-6 text-center">Add Balance</h2>
-          <div className="space-y-4">
-            <div className="relative">
+        <div className="text-center">
+          <div className="w-20 h-20 bg-primary border-[3px] border-black rounded-3xl flex items-center justify-center mx-auto mb-6 rotate-3">
+            <svg className="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          
+          <h2 className="text-2xl font-black text-black mb-1 uppercase tracking-tight">Add Balance</h2>
+          <p className="text-black/50 font-bold text-xs uppercase tracking-widest mb-8">Fast & Secure Top-up</p>
+          
+          <div className="space-y-6">
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+                <span className="text-black font-black text-xl">₹</span>
+              </div>
               <input
                 type="number"
                 min="1"
                 step="1"
                 value={amount}
                 onChange={e => setAmount(e.target.value)}
-                placeholder="Enter amount"
-                className="w-full rounded-xl px-4 py-3 bg-[#23272f] border border-[#334155] text-[#f1f5f9] placeholder:text-[#94a3b8] focus:outline-none focus:border-[#38bdf8] focus:ring-1 focus:ring-[#38bdf8] transition-all duration-200"
+                placeholder="0.00"
+                className="w-full rounded-2xl pl-12 pr-6 py-4 bg-black/5 border-[3px] border-black text-black text-2xl font-black placeholder:text-black/20 focus:outline-none focus:bg-white transition-all duration-200"
                 disabled={loading}
                 onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
               />
             </div>
 
             {error && (
-              <div className="text-[#ef4444] text-sm text-center bg-[#ef4444]/10 border border-[#ef4444]/20 rounded-lg py-2 px-3">
+              <div className="bg-red-50 border-2 border-red-500 rounded-xl py-2 px-3 text-red-600 text-xs font-bold uppercase">
                 {error}
               </div>
             )}
 
             <button
               onClick={handleSubmit}
-              className="w-full py-3 rounded-xl bg-[#38bdf8] hover:bg-[#0ea5e9] text-white font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-[#38bdf8]/20 active:scale-[0.98]"
+              className="w-full py-5 rounded-2xl bg-black text-primary font-black text-xl tracking-widest shadow-[0_8px_0_0_rgba(0,0,0,0.2)] hover:shadow-none hover:translate-y-1 active:translate-y-2 transition-all duration-100 disabled:opacity-50"
               disabled={loading}
             >
-              {loading ? 'Processing...' : 'Add Balance'}
+              {loading ? 'PROCESSING...' : 'CONFIRM TOP-UP'}
             </button>
+            
+            <div className="flex items-center justify-center gap-2 text-[10px] font-black text-black/30 uppercase tracking-tighter">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+              </svg>
+              Encrypted Checkout
+            </div>
           </div>
         </div>
       </div>
@@ -131,9 +146,8 @@ const AddBalanceModal = ({ open, onClose }) => {
 
 const Actions = () => {
   const [showAddBalance, setShowAddBalance] = useState(false)
-  const [hoveredIndex, setHoveredIndex] = useState(null)
 
-  const handleClick = (action, idx) => {
+  const handleClick = (action) => {
     if (action.action === 'add-balance') {
       setShowAddBalance(true)
     } else if (action.action === 'navigate' && action.href) {
@@ -142,50 +156,46 @@ const Actions = () => {
   }
 
   return (
-    <section className="w-full px-4 py-8 relative ">
+    <section className="w-full px-4 py-6">
       <AddBalanceModal open={showAddBalance} onClose={() => setShowAddBalance(false)} />
 
-      <div className="max-w-5xl mx-auto flex justify-center bg-[#FCF3A4] p-4 rounded-2xl">
-        <div className="grid grid-cols-4 md:grid-cols-4 gap-4 md:gap-6 lg:w-4/5">
-          {actions.map((action, idx) => (
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
+          {actions.map((action) => (
             <button
               key={action.label}
-              className={`
-                group flex flex-col items-center justify-center aspect-square rounded-2xl pt-4 pb-4
-                bg-[#FECA00] border border-yellow-500
-                hover:border-[#38bdf8]/50 hover:-translate-y-1 hover:shadow-xl
-                ${action.glowColor}
-                focus:outline-none focus:ring-2 focus:ring-[#38bdf8]/50 focus:border-[#38bdf8]
-                transition-all duration-300 ease-out transform-gpu
-                active:scale-95 active:translate-y-0 md:w-4/5 lg:w-4/5
-              `}
-              onMouseEnter={() => setHoveredIndex(idx)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              onClick={() => handleClick(action, idx)}
+              className="group relative flex items-center gap-4 p-3 md:p-5 bg-white border-[3px] border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all duration-200"
+              onClick={() => handleClick(action)}
             >
               <div className={`
-                flex items-center justify-center w-8 h-7 md:w-12 md:h-12 rounded-xl mb-3
-                ${action.bgColor} ${action.hoverBg}
-                transition-all duration-300 group-hover:scale-110
+                flex items-center justify-center w-10 h-10 md:w-14 md:h-14 rounded-xl border-2 border-black
+                ${action.bgColor} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-none group-hover:translate-x-px group-hover:translate-y-px transition-all
               `}>
                 <img 
-                  className="w-5 h-4 md:w-6 md:h-6 object-contain filter brightness-0 invert" 
+                  className="w-5 h-5 md:w-7 md:h-7 object-contain brightness-0 invert" 
                   src={action.icon} 
                   alt={action.label} 
                 />
               </div>
 
-              <span className="text-[10px] md:text-base text-gray-900 font-strong text-center transition-colors duration-300 group-hover:text-white">
-                {action.label}
-              </span>
-
-              <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-[#334155] rounded-full transition-all duration-300 group-hover:w-8 group-hover:bg-[#38bdf8]"></div>
+              <div className="flex flex-col items-start">
+                <span className="text-xs md:text-sm font-black text-black uppercase tracking-tight">
+                  {action.label}
+                </span>
+                <span className="text-[9px] md:text-[10px] font-bold text-black/40 uppercase tracking-widest leading-none mt-0.5">
+                  Instant
+                </span>
+              </div>
+              
+              <div className="ml-auto opacity-20 group-hover:opacity-100 transition-opacity">
+                <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
             </button>
           ))}
         </div>
       </div>
-
-
     </section>
   )
 }
