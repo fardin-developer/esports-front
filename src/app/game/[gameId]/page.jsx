@@ -114,69 +114,89 @@ export default function GameDiamondPacksPage() {
 
 
   const handleValidateUser = async () => {
-
     // Use gameInfo._id for validation
     if (!gameInfo?._id) {
       setValidationResult({ status: false, message: 'No game_id found for this game. Cannot validate user.' });
       return;
     }
-    // Prepare data for validation API
-    const data = {
-      // "product-id": String(gameInfo._id),// changgin it temporarily
-      "product-id":"MOBILE_LEGENDS_PRO",
-      ...Object.fromEntries(
-        Object.entries(validationValues).map(([key, value]) => {
-          // Map 'userId' to 'User ID', 'serverId' to 'Server ID', else keep as is with capitalization
-          if (key.toLowerCase() === 'userid') return ['User ID', value];
-          if (key.toLowerCase() === 'serverid') return ['Server ID', value];
-          return [key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim(), value];
-        })
-      )
+
+    // Get the validation fields from gameInfo
+    const validationFields = gameInfo.validationFields || [];
+    
+    // Check if all required fields are filled
+    const missingFields = validationFields.filter(field => !validationValues[field]?.trim());
+    if (missingFields.length > 0) {
+      setValidationResult({ 
+        status: false, 
+        message: `Please fill in: ${missingFields.join(', ')}` 
+      });
+      return;
+    }
+
+    // Map the dynamic validation fields to API expected fields
+    // The backend expects: playerId, serverId, gameId
+    // The validationFields from backend could be: userId, serverId, etc.
+    const getPlayerId = () => {
+      // Check for userId or similar field names
+      return validationValues.userId || validationValues.UserId || validationValues.playerId || validationValues.PlayerId || '';
     };
+
+    const getServerId = () => {
+      // Check for serverId or similar field names
+      return validationValues.serverId || validationValues.ServerId || '';
+    };
+
+    const playerId = getPlayerId();
+    const serverId = getServerId();
+
+    if (!playerId) {
+      setValidationResult({ status: false, message: 'Player ID is required for validation.' });
+      return;
+    }
 
     setValidationLoading(true);
     setValidationResult(null);
     
     try {
-      // Use our backend API route to avoid CORS issues
-      const response = await fetch('/api/validate-user', {
+      // Build the request payload
+      const payload = {
+        playerId: playerId,
+        gameId: gameInfo._id,
+      };
+
+      // Only include serverId if it's provided (some games may not require it)
+      if (serverId) {
+        payload.serverId = serverId;
+      }
+
+      // Call the backend API directly
+      const response = await fetch('https://api.cptopup.in/api/v1/games/validate-user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          game: 'MOBILE_LEGENDS_PRO',
-          userId: validationValues.userId,
-          serverId: validationValues.serverId
-        })
+        body: JSON.stringify(payload)
       });
       
       const result = await response.json();
-      console.log(result);
+      console.log('Validation result:', result);
       
-      // Check if response is false (rate limiting or other error)
-      if (result.response === false) {
+      // Handle response from API
+      // Response format: { valid, name, server, msg, authenticated }
+      if (result.valid === true) {
+        setValidationResult({ 
+          status: true, 
+          message: result.msg || 'User validated successfully!', 
+          username: result.name 
+        });
+      } else {
         setValidationResult({ 
           status: false, 
-          message: "Invalid User ID or Server ID" 
+          message: result.msg || 'Invalid User ID or Server ID' 
         });
-        return;
       }
-      
-      let status = result.data?.status === 200 ? true : false;
-      let message = result.data?.message || 'Validation completed';
-      let username = result.data?.nickname;
-      
-      if (result.data && typeof result.data.status !== 'undefined') {
-        status = result.data.status === 'true' || result.data.status === true || result.data.status === 200;
-        message = result.data.message || message;
-        username = result.data.username || result.data.nickname || username;
-      }
-      const validationObj = { status, message, username };
-      setValidationResult(validationObj);
     } catch (err) {
-      console.log(err);
-      
+      console.error('Validation error:', err);
       setValidationResult({ status: false, message: "Validation failed. Please try again." });
     } finally {
       setValidationLoading(false);

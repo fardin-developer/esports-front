@@ -130,8 +130,8 @@ const Navbar = () => {
               {/* Wallet Balance - Show only when logged in on desktop */}
               {isLoggedIn && (
                 <div className="hidden sm:flex items-center space-x-2 bg-secondary/10 px-4 py-2.5 rounded-full border border-secondary/30 hover:border-secondary/50 transition-all duration-300">
-                  <div className="w-6 h-6 bg-gradient-to-r from-secondary to-accent rounded-full flex items-center justify-center shadow-sm">
-                    <img src="/coin.png" alt="Wallet" className="w-3 h-3" />
+                  <div className="w-6 h-6  rounded-full flex items-center justify-center shadow-sm">
+                    <img src="/coin.png" alt="Wallet" className="w-6 h-6" />
                   </div>
                   <span className="text-sm font-semibold text-text">
                     {balance.toFixed(2)}
