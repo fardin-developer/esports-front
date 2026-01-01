@@ -96,6 +96,23 @@ export default function GameDiamondPacksPage() {
     }
   }, [filteredPacks, selectedPack]);
 
+  // Helpers to consistently resolve player/server ids from dynamic validation fields
+  const resolvePlayerId = () =>
+    validationValues.playerId ||
+    validationValues.PlayerId ||
+    validationValues.userId ||
+    validationValues.UserId ||
+    validationValues['User ID'] ||
+    '';
+
+  const resolveServerId = () =>
+    validationValues.serverId ||
+    validationValues.ServerId ||
+    validationValues.server ||
+    validationValues.Server ||
+    validationValues['Server ID'] ||
+    '';
+
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-primary p-6">
@@ -136,18 +153,8 @@ export default function GameDiamondPacksPage() {
     // Map the dynamic validation fields to API expected fields
     // The backend expects: playerId, serverId, gameId
     // The validationFields from backend could be: userId, serverId, etc.
-    const getPlayerId = () => {
-      // Check for userId or similar field names
-      return validationValues.userId || validationValues.UserId || validationValues.playerId || validationValues.PlayerId || '';
-    };
-
-    const getServerId = () => {
-      // Check for serverId or similar field names
-      return validationValues.serverId || validationValues.ServerId || '';
-    };
-
-    const playerId = getPlayerId();
-    const serverId = getServerId();
+    const playerId = resolvePlayerId();
+    const serverId = resolveServerId();
 
     if (!playerId) {
       setValidationResult({ status: false, message: 'Player ID is required for validation.' });
@@ -229,8 +236,8 @@ export default function GameDiamondPacksPage() {
     try {
       const payload = {
         diamondPackId: pack._id,
-        playerId: validationValues.userId || validationValues.UserId || validationValues['User ID'],
-        server: validationValues.serverId || validationValues.ServerId || validationValues['Server ID'],
+        playerId: resolvePlayerId(),
+        server: resolveServerId(),
         quantity: 1,
       };
   
@@ -267,8 +274,8 @@ export default function GameDiamondPacksPage() {
     try {
       const payload = {
         diamondPackId: pack._id,
-        playerId: validationValues.userId || validationValues.UserId || validationValues['User ID'],
-        server: validationValues.serverId || validationValues.ServerId || validationValues['Server ID'],
+        playerId: resolvePlayerId(),
+        server: resolveServerId(),
         quantity: 1,
         redirectUrl: `${window.location.origin}/status`
       };
