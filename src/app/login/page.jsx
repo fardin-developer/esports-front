@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import { login } from '../features/auth/authSlice';
 import { apiClient } from '../apiClient';
-import { ArrowLeft, AlertCircle, User, Mail, ShieldCheck, ChevronRight } from 'lucide-react';
+import { ArrowLeft, AlertCircle, User, Mail, Lock, ShieldCheck, ChevronRight } from 'lucide-react';
 
 export default function LoginPage() {
   const [step, setStep] = useState('mobile'); 
@@ -14,7 +14,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [timer, setTimer] = useState(0);
-  const [registrationData, setRegistrationData] = useState({ name: '', email: '' });
+  const [registrationData, setRegistrationData] = useState({ name: '', email: '', password: '' });
   const [pendingPhone, setPendingPhone] = useState('');
   
   const otpRefs = useRef([]);
@@ -87,6 +87,50 @@ export default function LoginPage() {
       setError('Invalid code. Please check and try again.');
       setOtp(['', '', '', '', '', '']);
       otpRefs.current[0]?.focus();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRegistrationSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    
+    // Basic validation
+    if (!registrationData.name.trim()) {
+      setError('Please enter your full name');
+      return;
+    }
+    if (!registrationData.email.trim()) {
+      setError('Please enter your email address');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registrationData.email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+    if (!registrationData.password.trim()) {
+      setError('Please enter a password');
+      return;
+    }
+    if (registrationData.password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const data = await apiClient.post('/user/complete-registration', {
+        phone: pendingPhone,
+        name: registrationData.name.trim(),
+        email: registrationData.email.trim(),
+        password: registrationData.password
+      });
+      
+      dispatch(login({ token: data.token || 'demo-token', userMobile: pendingPhone }));
+      router.push(redirectUrl);
+    } catch (err) {
+      setError(err.message || 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -208,12 +252,14 @@ export default function LoginPage() {
 
             {/* STEP 3: REGISTER */}
             {step === 'register' && (
-              <form onSubmit={(e) => e.preventDefault()} className="space-y-3">
+              <form onSubmit={handleRegistrationSubmit} className="space-y-3">
                 <div className="bg-gray-50 rounded-xl border-2 border-transparent focus-within:border-[#FECA00] transition-all px-3 py-3 flex items-center">
                   <User className="w-4 h-4 text-gray-400 mr-2.5" />
                   <input
                     type="text"
                     placeholder="Full Name"
+                    value={registrationData.name}
+                    onChange={(e) => setRegistrationData(prev => ({ ...prev, name: e.target.value }))}
                     className="bg-transparent w-full outline-none text-sm font-bold text-gray-900"
                     required
                   />
@@ -223,14 +269,28 @@ export default function LoginPage() {
                   <input
                     type="email"
                     placeholder="Email Address"
+                    value={registrationData.email}
+                    onChange={(e) => setRegistrationData(prev => ({ ...prev, email: e.target.value }))}
                     className="bg-transparent w-full outline-none text-sm font-bold text-gray-900"
                     required
                   />
                 </div>
+                <div className="bg-gray-50 rounded-xl border-2 border-transparent focus-within:border-[#FECA00] transition-all px-3 py-3 flex items-center">
+                  <Lock className="w-4 h-4 text-gray-400 mr-2.5" />
+                  <input
+                    type="password"
+                    placeholder="Create Password"
+                    value={registrationData.password}
+                    onChange={(e) => setRegistrationData(prev => ({ ...prev, password: e.target.value }))}
+                    className="bg-transparent w-full outline-none text-sm font-bold text-gray-900"
+                    required
+                    minLength={6}
+                  />
+                </div>
                 <button
                   type="submit"
-                  disabled={isLoading}
-                  className="w-full bg-[#1A1A1A] text-white py-3.5 rounded-xl font-black text-sm transition-all shadow-md mt-2"
+                  disabled={isLoading || !registrationData.name.trim() || !registrationData.email.trim() || !registrationData.password.trim()}
+                  className="w-full bg-[#1A1A1A] text-white py-3.5 rounded-xl font-black text-sm transition-all shadow-md mt-2 disabled:opacity-50"
                 >
                   {isLoading ? "Setting up..." : "Complete"}
                 </button>
